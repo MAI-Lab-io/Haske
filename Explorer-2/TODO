@@ -1,0 +1,89 @@
+- show ohif-vr and ohif-tmtv buttons only when relevant (analyse the content of the study)
+- handle the EnableLabels "permission"
+
+- use DatePicker in remote modality study list
+
+- predefined filters in config file to display below Studies:
+  - "Today": {"StudyDate": "$today"}
+  - "CT Last month": {"ModalitiesInStudy": "CT", "StudyDate": "$oneMonthAgo-"}
+    predefined keywords: $today, $yesterday, $oneWeekAgo, $oneMonthAgo, $oneYearAgo
+
+UI improvements:
+- Admin theme including responsive tables (including multiline): https://github.com/lekoala/admini
+- tags: https://github.com/lekoala/bootstrap5-tags
+ 
+
+- modification:
+  - configuration to hide DICOM UID options and select the right one directly for a given setup.
+  - add a Series Description renamer (one dialog to edit SeriesNumber + SeriesDescription of a study)
+
+- ui/app (with missing /) shall open the interface too
+
+- show attachments
+
+- support dicom-web plugin (QIDO-RS UI)
+
+- support neuro plugin (download nifti)
+
+- TagsTree: allow click on "null" tags to open /instances/../content/group,element in new window
+
+- show job details (need improvement in Orthanc API itself)
+- include an "all jobs" panel and not only our jobs (https://discourse.orthanc-server.org/t/oe2-inclusion-of-jobs-panel-in-explorer-2/3708)
+
+- add an "attach PDF button" at study level
+
+- list last studies received (through DICOM or upload)
+
+- UI customization:
+ - add custom actions per study/series/instances
+ - configure other viewers url (ex: radiant://?n=pstv&v=0020000D&v=%22StudyInstanceUID%22 or osirix or horos ...)
+ - hide/show standard actions -> probably to be handled once user management is implemented
+
+- make table sortable and faster search by maintaining a cache DB (SQLite in each Orthanc instance handled by the oe2 plugin)
+  - only for studies.  with a few indexed tags (the ones from the UI table)
+  - plugin monitors /changes route to see changes from all orthancs (instead of reacting to change events)
+  - to monitor deleted studies, react to change event + call other oe2 plugin API ?  (need to list all orthanc urls somewhere)
+  - from OHIF doc for their study list: When the Study List is opened, the application queries the PACS for 101 studies by default. If there are greater than 100 studies    
+       returned, the default sort for the study list is dictated by the image archive that hosts these studies for the viewer and study list sorting will be disabled. If there are less than or equal to 100 studies returned, they will be sorted by study date (most recent to oldest) and study list sorting will be enabled. Whenever a query returns greater than 100 studies, use filters to narrow results below 100 studies to enable Study List sorting.
+
+- orthanc-share should generate QR code with publication links
+
+- Q&R on multiple modalities at a same time (select the modalities you want to Q&R and display the modality in the study list)
+  (same with Q&R for dicom-web and peers)
+
+- in local study list, display the number of studies that are present on a remote modality for this patient (e.g: a cold archive)
+  - Add a button to fetch all these data (todo: find a way to delete them after a while ?)
+  - same with dicom-web and peers ?
+
+- display and search dates with other formats: DD/MM/YYYY (https://discourse.orthanc-server.org/t/date-format-oe2/3833)
+
+
+Configuration management (ideas + implementation notes):
+-------------------------------
+
+- allow Orthanc to store anything in Global Properties.  Maybe not through the API but only through the SDK.
+  Or, only for an "admin" user ?
+
+- Edit configuration through the oe2 UI:
+  - Some immutable configuration in a config file:
+    - DB + storage
+    - Admin user !
+    - HttpPort
+  - Check if we could store a config in Global Properties (probably too early in the Orthanc init process).  We would merge the file config with the config in DB
+  - Otherwise, store the config in a file and restart Orthanc 
+    -> in Windows Service: how to tell Orthanc to use another config file ?
+    -> would be nice to have a SDK route to implement /tools/reboot with a given config file
+  - Could be a combination of 2:
+    - start Orthanc with config from file
+    - plugin reads the config in DB, generates a tmp config file -> /tools/reboot with this file
+    - that's a bit "shaky" since each cold start is made of 2 starts
+
+Ideas bag:
+*********
+
+- allow users to choose the columns in the interface (store in browser LocalStorage ?)
+- browse orthanc peer (probably need to extend the Orthanc API to avoid CORS issues)
+- show statistics/event logs: e.g: would be nice to see how many instances
+  have been received recently (from where)
+- add a button to export a whole series to jpeg (Chamrousse): we could reuse [this python code](https://orthanc.uclouvain.be/book/plugins/python.html#generating-a-mosaic-for-a-dicom-series) and trigger it from a [custom button](https://github.com/orthanc-server/orthanc-explorer-2/issues/18) (once we have implemented them !!!)
+- add a text editor to associate a radiology report or note with a study, storing it as an attachment (cf. https://discourse.orthanc-server.org/t/oe2-inclusion-of-reporting-note/)
