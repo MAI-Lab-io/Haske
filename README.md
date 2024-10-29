@@ -74,7 +74,7 @@ echo "AUTHENTIK_SECRET_KEY=$(openssl rand 60 | base64)" >> .env
 ### Set Orthanc UserName & Password
 > Use you favourite text editor
 ```bash
-nvim ./orthanc/config/orthanc.json
+nano ./orthanc/config/orthanc.json
 ```
 ```json
    "AuthenticationEnabled": false,
@@ -92,7 +92,7 @@ aHlwZXI6bWFwZHI=
 ### Update Nginx config for Ohif to pass http auth for accessing Orthanc
 Edit Nginx reverse proxy
 ```bash
-nvim ./ohif/nginx/ohif.conf
+nano ./ohif/nginx/ohif.conf
 ```
 and paste base64-encoded user name and password
 
