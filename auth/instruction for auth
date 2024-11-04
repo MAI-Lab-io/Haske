@@ -1,0 +1,9 @@
+instructions to start the app authentication(using firebase)
+
+nvm install 16
+nvm use 16
+
+
+
+npm install
+npm start
