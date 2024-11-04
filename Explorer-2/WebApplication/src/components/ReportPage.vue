@@ -86,6 +86,9 @@
         <div class="form-group">
           <textarea v-model="overallImpression" placeholder="Overall Impression"></textarea>
         </div>
+        <div class="form-group">
+          <textarea v-model="comparison" placeholder="Comparison"></textarea>
+        </div>
       </div>
     </section>
 
@@ -150,6 +153,7 @@ export default {
       technique: '',
       findings: '',
       overallImpression: '',
+      comparison: '',
       radiologistName: '',
       signaturePad: null,
       signatureImage: null,
@@ -251,6 +255,7 @@ export default {
         technique: this.technique,
         findings: this.findings,
         overallImpression: this.overallImpression,
+        comparison: this.comparison,
         radiologistName: this.radiologistName,
         signature: this.signaturePad.toDataURL(),
         signatureDate: this.signatureDate,
@@ -280,6 +285,7 @@ export default {
     this.technique = reportData.technique || '';
     this.findings = reportData.findings || '';
     this.overallImpression = reportData.overallImpression || '';
+    this.comparison = reportData.comparison || '';
     this.radiologistName = reportData.radiologistName || '';
      // Load signature
         if (reportData.signature) {
@@ -300,8 +306,7 @@ export default {
     this.manualModality = this.Modality;
     this.manualBodyPartExamined = this.BodyPartExamined;
     this.manualInstitutionName = this.InstitutionName;
-   
-
+  
   }
 },
 
@@ -354,6 +359,7 @@ downloadReportAsWord() {
       createParagraph(`Technique: ${this.technique}`),
       createParagraph(`Findings: ${this.findings}`),
       createParagraph(`Overall Impression: ${this.overallImpression}`),
+      createParagraph(`Comparison: ${this.comparison}`),
       
       // Radiologist Signature Section
       createParagraph("Signed:", true, false, AlignmentType.CENTER),
@@ -488,7 +494,8 @@ downloadReportAsPDF() {
       { label: "Procedure", value: this.procedure },
       { label: "Technique", value: this.technique },
       { label: "Findings", value: this.findings },
-      { label: "Overall Impression", value: this.overallImpression }
+      { label: "Overall Impression", value: this.overallImpression },
+      { label: "Comparison", value: this.comparison}
     ];
 
     reportSections.forEach(section => {
@@ -736,4 +743,3 @@ textarea {
   }
 }
 </style>
-
