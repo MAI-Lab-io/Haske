@@ -16,7 +16,7 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe
-                src="http://192.168.1.158:5000/ui/app/#/" // Replace with your actual URL
+                src="http://51.44.123.184:8042/ui/app/#/" // Replace with your actual URL
                 title="Protected Content"
                 className="protected-iframe"
             ></iframe>
