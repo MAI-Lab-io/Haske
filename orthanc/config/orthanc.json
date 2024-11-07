@@ -10,6 +10,10 @@
   "ConcurrentJobs": 2,
   "HttpServerEnabled": true,
   "OrthancExplorerEnabled": true,
+  "OrthancExplorer2": {
+        "Enable": true,
+        "IsDefaultOrthancUI": true,
+    },
   "HttpPort": 8042,
   "HttpDescribeErrors": true,
   "HttpCompressionEnabled": true,
