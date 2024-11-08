@@ -16,7 +16,7 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe
-                src="https://haskemailab.duckdns.org/ui/app/#/" // Replace with your actual URL
+                src="https://51.44.123.184/ui/app/" // Replace with your actual URL
                 title="Protected Content"
                 className="protected-iframe"
             ></iframe>
