@@ -32,6 +32,21 @@ function SignIn() {
     }
   };
 
+
+  const handleForgotPassword = async () => {
+  if (!email) {
+    setError("Please enter your email address.");
+    return;
+  }
+
+  try {
+    await auth.sendPasswordResetEmail(email);
+    alert("Password reset email sent! Check your inbox.");
+  } catch (error) {
+    setError(error.message);
+  }
+};
+  
   return (
     <div className="signin-container">
       <div className="form-wrapper">
@@ -60,6 +75,8 @@ function SignIn() {
           Don't have an account? <a href="/register">Register</a>
         </p>
         <button onClick={handleGoogleSignIn} className="google-signin-button">Sign In with Google</button>
+        <p className="forgot-password" onClick={handleForgotPassword}>Forgot password?</p>
+
       </div>
     </div>
   );
