@@ -29,7 +29,7 @@
   "UnknownSopClassAccepted": false,
   "DicomScpTimeout": 30,
   "RemoteAccessAllowed": true,
-  "SslEnabled": false,
+  "SslEnabled": true,
   "SslCertificate": "certificate.pem",
   "SslMinimumProtocolVersion": 4,
   "SslVerifyPeers": false,
