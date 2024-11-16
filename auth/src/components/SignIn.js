@@ -15,7 +15,7 @@ function SignIn() {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/protected"); // Redirect to protected content
+      navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
       setError(error.message);
     }
