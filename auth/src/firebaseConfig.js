@@ -3,14 +3,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDY7jtIQOxelvVe8zkFtDGCmMa0X-CpVmc",
-    authDomain: "haske-17982.firebaseapp.com",
-    projectId: "haske-17982",
-    storageBucket: "haske-17982.firebasestorage.app",
-    messagingSenderId: "874070373595",
-    appId: "1:874070373595:web:b4aa36bc05fd5ffebb88fe"
-  };
-
+  apiKey: "AIzaSyBR3tNW1IidpuVSL7evVTfZn1EFWW3eak8",
+  authDomain: "haske-98a95.firebaseapp.com",
+  projectId: "haske-98a95",
+  storageBucket: "haske-98a95.firebasestorage.app",
+  messagingSenderId: "618449217821",
+  appId: "1:618449217821:web:8dd0a1d9f7d020baeb99f4",
+  measurementId: "G-HMMPXF3FQ7"
+};
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
