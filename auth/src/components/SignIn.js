@@ -1,9 +1,8 @@
-// src/components/SignIn.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import "./SignIn.css"; // Import CSS file for styles
+import "./SignIn.css"; 
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -11,10 +10,22 @@ function SignIn() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Sign in with email and password
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      navigate("/patient-details"); 
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Sign in with Google
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
       setError(error.message);
@@ -48,6 +59,7 @@ function SignIn() {
         <p className="signin-footer">
           Don't have an account? <a href="/register">Register</a>
         </p>
+        <button onClick={handleGoogleSignIn} className="google-signin-button">Sign In with Google</button>
       </div>
     </div>
   );
