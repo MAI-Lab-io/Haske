@@ -1,8 +1,9 @@
+// src/components/SignIn.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import "./SignIn.css"; 
+import "./SignIn.css"; // Import CSS file for styles
 
 function SignIn() {
   const [email, setEmail] = useState("");
@@ -10,18 +11,16 @@ function SignIn() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Sign in with email and password
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/patient-details"); 
+      navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
       setError(error.message);
     }
   };
 
-  // Sign in with Google
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
@@ -32,21 +31,6 @@ function SignIn() {
     }
   };
 
-
-  const handleForgotPassword = async () => {
-  if (!email) {
-    setError("Please enter your email address.");
-    return;
-  }
-
-  try {
-    await auth.sendPasswordResetEmail(email);
-    alert("Password reset email sent! Check your inbox.");
-  } catch (error) {
-    setError(error.message);
-  }
-};
-  
   return (
     <div className="signin-container">
       <div className="form-wrapper">
@@ -71,12 +55,15 @@ function SignIn() {
           <button type="submit" className="signin-button">Sign In</button>
         </form>
         {error && <p className="signin-error">{error}</p>}
+
+        {/* Google Sign-In Button */}
+        <button className="google-signin-button" onClick={handleGoogleSignIn}>
+          Sign in with Google
+        </button>
+
         <p className="signin-footer">
           Don't have an account? <a href="/register">Register</a>
         </p>
-        <button onClick={handleGoogleSignIn} className="google-signin-button">Sign In with Google</button>
-        <p className="forgot-password" onClick={handleForgotPassword}>Forgot password?</p>
-
       </div>
     </div>
   );
