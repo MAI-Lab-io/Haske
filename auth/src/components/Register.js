@@ -1,7 +1,7 @@
 // src/components/Register.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./Register.css"; // Import CSS file for styles
 
@@ -17,12 +17,21 @@ function Register() {
       await createUserWithEmailAndPassword(auth, email, password);
       navigate("/patient-details");
     } catch (error) {
-      // Check for specific error codes and set a user-friendly message
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
       } else {
         setError(error.message);
       }
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      navigate("/patient-details"); // Redirect to protected content
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -50,6 +59,12 @@ function Register() {
           <button type="submit" className="register-button">Register</button>
         </form>
         {error && <p className="register-error">{error}</p>}
+
+        {/* Google Sign-In Button */}
+        <button className="google-signin-button" onClick={handleGoogleSignIn}>
+          Sign up with Google
+        </button>
+
         <p className="register-footer">
           Already have an account? <a href="/signin">Sign In</a>
         </p>
