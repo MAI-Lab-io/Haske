@@ -233,11 +233,7 @@ export default {
                         </li>
                     </ul>
 
-                    <li v-if="uiOptions.EnableLinkToLegacyUi" class="d-flex align-items-center fix-router-link">
-                        <a v-bind:href="this.orthancApiUrl + 'app/explorer.html'">
-                            <i class="fa fa-solid fa-backward fa-lg menu-icon"></i>{{ $t('legacy_ui') }}
-                        </a><span class="ms-auto"></span>
-                    </li>
+                    
                     <li v-if="hasLogout" class="d-flex align-items-center" data-bs-toggle="collapse"
                         data-bs-target="#profile-list">
                         <i class="fa fa-user fa-lg menu-icon"></i><span v-if="hasUserProfile">{{ userProfile.name }}</span><span v-if="!hasUserProfile">{{ $t('profile') }}</span>
