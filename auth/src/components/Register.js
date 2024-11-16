@@ -15,7 +15,7 @@ function Register() {
     e.preventDefault();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/protected");
+      navigate("/patient-details");
     } catch (error) {
       // Check for specific error codes and set a user-friendly message
       if (error.code === "auth/email-already-in-use") {
