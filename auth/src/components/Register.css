@@ -69,4 +69,20 @@
   .register-footer a:hover {
     text-decoration: underline; /* Underline on hover */
   }
-  
+
+/* Register.css and SignIn.css */
+.google-signin-button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+}
+
+.google-signin-button:hover {
+  background-color: #357ae8;
+}
