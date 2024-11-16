@@ -16,8 +16,8 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe
-                src="https://51.44.123.184/ui/app/" // Replace with your actual URL
-                title="Protected Content"
+                src="https://52.20.65.245:5000/ui/app/#/" // Replace with your actual URL
+                title="Haske"
                 className="protected-iframe"
             ></iframe>
             <div className="signout-container">
