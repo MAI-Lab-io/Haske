@@ -46,6 +46,19 @@
     font-size: 1rem;
     transition: background-color 0.3s; /* Smooth transition */
   }
+
+/* SignIn.css */
+.toggle-form-link {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 10px;
+}
+
+.toggle-form-link:hover {
+  text-decoration: none;
+}
+
   
   .signin-button:hover {
     background-color: #5d455f; /* Darker on hover */
