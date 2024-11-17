@@ -42,14 +42,13 @@
 
 .password-toggle-button {
   position: absolute;
-  right: 10px;
   top: 50%;
+  right: 10px;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: #007bff;
   cursor: pointer;
-  font-size: 0.9rem;
 }
 
 .signin-button {
@@ -67,21 +66,14 @@
   background-color: #5d455f; /* Darker on hover */
 }
 
+.signin-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .signin-error {
   color: red; /* Error message color */
   margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.toggle-form-link {
-  color: #007bff;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 10px;
-}
-
-.toggle-form-link:hover {
-  text-decoration: none;
 }
 
 .signin-footer {
@@ -112,4 +104,9 @@
 
 .google-signin-button:hover {
   background-color: #357ae8;
+}
+
+.google-signin-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
