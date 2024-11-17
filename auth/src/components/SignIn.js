@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Eye icons for password visibility toggle
@@ -36,7 +36,24 @@ const handleSignIn = async (e) => {
 
 };
 
-
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address to reset your password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage("Password reset email sent! Please check your inbox.");
+      setError(null);
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      if (error.code === "auth/user-not-found") {
+        setError("No account found with this email.");
+      } else {
+        setError("Unable to send password reset email. Please try again later.");
+      }
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
@@ -95,6 +112,9 @@ const handleSignIn = async (e) => {
 
         <p className="signin-footer">
           Don't have an account? <a href="/register">Register</a>
+        </p>
+           <p className="forgot-password-link" onClick={handleForgotPassword}>
+          Forgot Password?
         </p>
       </div>
     </div>
