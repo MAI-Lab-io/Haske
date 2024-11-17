@@ -10,14 +10,17 @@ function SignIn() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+  const [loading, setLoading] = useState(false); // Track loading state
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading state
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
+      setLoading(false); // Reset loading state
       if (error.code === "auth/wrong-password") {
         setError("Oops! The password you entered is incorrect. Please try again.");
       } else if (error.code === "auth/user-not-found") {
@@ -31,9 +34,11 @@ function SignIn() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      setLoading(true); // Set loading state
       await signInWithPopup(auth, provider);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
+      setLoading(false); // Reset loading state
       setError(error.message);
     }
   };
@@ -70,13 +75,15 @@ function SignIn() {
             </button>
           </div>
 
-          <button type="submit" className="signin-button">Sign In</button>
+          <button type="submit" className="signin-button" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
         </form>
-        
+
         {error && <p className="signin-error">{error}</p>}
 
-        <button className="google-signin-button" onClick={handleGoogleSignIn}>
-          Sign in with Google
+        <button className="google-signin-button" onClick={handleGoogleSignIn} disabled={loading}>
+          {loading ? "Signing in..." : "Sign in with Google"}
         </button>
 
         <p className="signin-footer">
