@@ -1,26 +1,26 @@
-// src/components/SignIn.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import "./SignIn.css"; // Import CSS file for styles
+import "./SignIn.css";
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Eye icons for password visibility toggle
 
 function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading state
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
-      setLoading(false); // Reset loading state
+      setLoading(false);
       if (error.code === "auth/wrong-password") {
         setError("Oops! The password you entered is incorrect. Please try again.");
       } else if (error.code === "auth/user-not-found") {
@@ -34,11 +34,11 @@ function SignIn() {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      setLoading(true); // Set loading state
+      setLoading(true);
       await signInWithPopup(auth, provider);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
-      setLoading(false); // Reset loading state
+      setLoading(false);
       setError(error.message);
     }
   };
@@ -59,7 +59,7 @@ function SignIn() {
           
           <div className="password-input-container">
             <input
-              type={showPassword ? "text" : "password"} // Toggle password visibility
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
@@ -69,21 +69,21 @@ function SignIn() {
             <button
               type="button"
               className="password-toggle-button"
-              onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+              onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
 
           <button type="submit" className="signin-button" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? <div className="spinner"></div> : "Sign In"}
           </button>
         </form>
 
         {error && <p className="signin-error">{error}</p>}
 
         <button className="google-signin-button" onClick={handleGoogleSignIn} disabled={loading}>
-          {loading ? "Signing in..." : "Sign in with Google"}
+          {loading ? <div className="spinner"></div> : "Sign in with Google"}
         </button>
 
         <p className="signin-footer">
