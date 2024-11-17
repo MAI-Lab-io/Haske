@@ -1,7 +1,7 @@
 // src/components/SignIn.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css"; // Import CSS file for styles
 
@@ -9,8 +9,7 @@ function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [resetEmail, setResetEmail] = useState(""); // Email for password reset
-  const [isResetMode, setIsResetMode] = useState(false); // Toggle reset mode
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
@@ -19,7 +18,13 @@ function SignIn() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
-      setError(error.message);
+      if (error.code === "auth/wrong-password") {
+        setError("Oops! The password you entered is incorrect. Please try again.");
+      } else if (error.code === "auth/user-not-found") {
+        setError("No account found with this email. Please check the email or register.");
+      } else {
+        setError("An error occurred. Please try again later.");
+      }
     }
   };
 
@@ -33,72 +38,43 @@ function SignIn() {
     }
   };
 
-  const handlePasswordReset = async () => {
-    if (!resetEmail) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    try {
-      await sendPasswordResetEmail(auth, resetEmail);
-      setError(null);
-      alert("Password reset email sent! Please check your inbox.");
-      setIsResetMode(false); // Switch back to sign-in form
-    } catch (error) {
-      setError("Error sending password reset email: " + error.message);
-    }
-  };
-
   return (
     <div className="signin-container">
       <div className="form-wrapper">
-        <h2 className="form-title">{isResetMode ? "Reset Password" : "Sign In"}</h2>
-        
-        {isResetMode ? (
-          // Password reset form
-          <div>
+        <h2 className="form-title">Sign In</h2>
+        <form className="signin-form" onSubmit={handleSignIn}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+            className="signin-input"
+          />
+          
+          <div className="password-input-container">
             <input
-              type="email"
-              value={resetEmail}
-              onChange={(e) => setResetEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              className="signin-input"
-            />
-            <button onClick={handlePasswordReset} className="signin-button">Reset Password</button>
-            <p onClick={() => setIsResetMode(false)} className="toggle-form-link">
-              Back to Sign In
-            </p>
-          </div>
-        ) : (
-          // Sign In form
-          <form className="signin-form" onSubmit={handleSignIn}>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              required
-              className="signin-input"
-            />
-            <input
-              type="password"
+              type={showPassword ? "text" : "password"} // Toggle password visibility
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               required
               className="signin-input"
             />
-            <button type="submit" className="signin-button">Sign In</button>
-            <p onClick={() => setIsResetMode(true)} className="toggle-form-link">
-              Forgot Password?
-            </p>
-          </form>
-        )}
+            <button
+              type="button"
+              className="password-toggle-button"
+              onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
 
+          <button type="submit" className="signin-button">Sign In</button>
+        </form>
+        
         {error && <p className="signin-error">{error}</p>}
 
-        {/* Google Sign-In Button */}
         <button className="google-signin-button" onClick={handleGoogleSignIn}>
           Sign in with Google
         </button>
