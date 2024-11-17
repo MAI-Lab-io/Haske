@@ -32,6 +32,7 @@
   border: 1px solid #ddd; 
   border-radius: 6px;
   font-size: 1rem;
+  width: 100%; /* Ensure both inputs take up full width of the container */
   transition: border-color 0.3s;
 }
 
