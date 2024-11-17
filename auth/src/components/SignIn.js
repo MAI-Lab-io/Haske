@@ -20,18 +20,20 @@ const handleSignIn = async (e) => {
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/patient-details"); // Redirect to protected content
   } catch (error) {
-    setLoading(false);
-    console.error("Error code:", error.code);  // Log the error code for debugging
-    console.error("Error message:", error.message); // Log the error message for debugging
+  console.error("Full error:", error); // Log full error for detailed debugging
+  setLoading(false);
 
-    if (error.code === "auth/invalid-credential") {
-      setError("Oops! The password you entered is incorrect. Please try again. or you have not registered");
-    } else if (error.code === "auth/invalid-credential") {
-      setError("No account found with this email. Please check the email or register.");
-    } else {
-      setError("An error occurred. Please try again later.");
-    }
+  if (error.code === "auth/wrong-password") {
+    setError("Oops! The password you entered is incorrect. Please try again.");
+  } else if (error.code === "auth/user-not-found") {
+    setError("No account found with this email. Please check the email or register.");
+  } else if (error.code === "auth/invalid-credential") {
+    setError("The provided credentials are invalid. Please check your email and password.");
+  } else {
+    setError("An error occurred. Please try again later.");
   }
+}
+
 };
 
 
