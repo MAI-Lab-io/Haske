@@ -36,6 +36,18 @@
   transition: border-color 0.3s;
 }
 
+
+.forgot-password-link {
+  color: blue;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
 .signin-input:focus {
   border-color: #5d455f; /* Highlight border on focus */
 }
