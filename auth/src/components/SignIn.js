@@ -13,23 +13,28 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/patient-details"); // Redirect to protected content
-    } catch (error) {
-      setLoading(false);
-      if (error.code === "auth/wrong-password") {
-        setError("Oops! The password you entered is incorrect. Please try again.");
-      } else if (error.code === "auth/user-not-found") {
-        setError("No account found with this email. Please check the email or register.");
-      } else {
-        setError("An error occurred. Please try again later.");
-      }
+const handleSignIn = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    navigate("/patient-details"); // Redirect to protected content
+  } catch (error) {
+    setLoading(false);
+    console.error("SignIn Error:", error); // Log the full error object for debugging
+
+    // Handle specific error codes
+    if (error.code === "auth/wrong-password") {
+      setError("Oops! The password you entered is incorrect. Please try again.");
+    } else if (error.code === "auth/user-not-found") {
+      setError("No account found with this email. Please check the email or register.");
+    } else {
+      // Provide the error message directly from Firebase, or a fallback message
+      setError(error.message || "An error occurred. Please try again later.");
     }
-  };
+  }
+};
+
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
