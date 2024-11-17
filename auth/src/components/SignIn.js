@@ -24,9 +24,9 @@ const handleSignIn = async (e) => {
     console.error("Error code:", error.code);  // Log the error code for debugging
     console.error("Error message:", error.message); // Log the error message for debugging
 
-    if (error.code === "auth/wrong-password") {
-      setError("Oops! The password you entered is incorrect. Please try again.");
-    } else if (error.code === "auth/user-not-found") {
+    if (error.code === "auth/invalid-credential") {
+      setError("Oops! The password you entered is incorrect. Please try again. or you have not registered");
+    } else if (error.code === "auth/invalid-credential") {
       setError("No account found with this email. Please check the email or register.");
     } else {
       setError("An error occurred. Please try again later.");
