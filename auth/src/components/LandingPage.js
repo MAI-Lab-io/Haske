@@ -5,8 +5,8 @@ import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
 import sponsor1 from "../assets/mailablogo.png"; // Replace with actual sponsor logos
-// import sponsor2 from "../assets/sponsor2.png";
-// import sponsor3 from "../assets/sponsor3.png";
+import sponsor2 from "../assets/sponsor2.png";
+import sponsor3 from "../assets/sponsor3.png";
 
 // Footer Component
 const Footer = () => {
