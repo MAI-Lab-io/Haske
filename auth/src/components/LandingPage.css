@@ -55,10 +55,7 @@
   }
 
 
-.mailab-logo {
-  height: 35px; /* Adjust the size */
-  margin-top: 10px; /* Optional margin */
-}
+
   
   .landing-content {
     text-align: center;
@@ -99,11 +96,52 @@
     background-color: #555;
   }
   
-  .landing-footer {
-    text-align: center;
-    padding: 20px;
-    background: #222;
-    color: #ffff;
-  }
+.landing-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000; /* Tesla's classic black footer */
+  color: #fff;
+  padding: 20px;
+  font-size: 14px;
+}
 
+
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.footer-left {
+  text-align: left;
+}
+
+.footer-right {
+  display: flex;
+  align-items: center;
+  text-align: right;
+}
+
+.footer-right span {
+  margin-right: 10px;
+}
+
+.mailab-link {
+  display: inline-block;
+}
+
+.mailab-logo {
+  height: 24px;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+
+.mailab-logo:hover {
+  transform: scale(1.1);
+}
 
