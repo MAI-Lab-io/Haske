@@ -5,17 +5,21 @@ import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png"; // Ensure this path is correct
 
-// Footer Component
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Automatically fetch the current year
   return (
     <footer className="landing-footer">
-      <p>
-        &copy; {currentYear} Haske. Powered by{" "}
-        <a href="https://mailab.io" target="_blank" rel="noopener noreferrer" className="mailab-link">
-          <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
-        </a>
-      </p>
+      <div className="footer-content">
+        <div className="footer-left">
+          <p>&copy; {currentYear} Haske</p>
+        </div>
+        <div className="footer-right">
+          <span>Powered by</span>
+          <a href="https://mailab.io" target="_blank" rel="noopener noreferrer" className="mailab-link">
+            <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
+          </a>
+        </div>
+      </div>
     </footer>
   );
 };
