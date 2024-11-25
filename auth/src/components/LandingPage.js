@@ -2,18 +2,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
-import logo from "../assets/haske.png"
+import logo from "../assets/haske.png";
+import mailabLogo from "../assets/mailablogo.png"; // Ensure this path is correct
 
-
+// Footer Component
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Automatically fetch the current year
+  return (
+    <footer className="landing-footer">
+      <p>&copy; {currentYear} Haske. Powered by</p>
+      <div>
+        <a href="https://mailab.io" target="_blank" rel="noopener noreferrer">
+          <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
+        </a>
+      </div>
+    </footer>
+  );
+};
 
-
+// LandingPage Component
 function LandingPage() {
   return (
     <div className="landing-container">
       <header className="landing-header">
-      <img src={logo} alt="Haske" className="logo" />
+        <img src={logo} alt="Haske" className="logo" />
         <nav className="nav-links">
           <Link to="/register" className="nav-button">Register</Link>
           <Link to="/signin" className="nav-button">Sign In</Link>
@@ -34,21 +46,8 @@ function LandingPage() {
           </Link>
         </div>
       </main>
-      
-    <footer className="landing-footer">
-      <p>&copy; {currentYear} Haske. Powered by.</p>
-      <div>
-        <a href="https://mailab.io" target="_blank" rel="noopener noreferrer">
-          <img 
-            src="../assets/mailablogo.png" 
-            alt="MAILAB Logo" 
-            className="mailab-logo" 
-          />
-        </a>
-      </div>
-    </footer>
 
-              
+      <Footer />
     </div>
   );
 }
