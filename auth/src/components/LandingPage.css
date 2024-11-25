@@ -99,4 +99,8 @@
     background: #222;
     color: #aaa;
   }
-  
+
+.mailab-logo {
+  height: 40px; /* Adjust the size */
+  margin-top: 10px; /* Optional margin */
+}
