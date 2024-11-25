@@ -47,7 +47,6 @@ function LandingPage() {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 }
