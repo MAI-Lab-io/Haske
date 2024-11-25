@@ -100,8 +100,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000; /* Tesla's classic black footer */
-  color: #fff;
+  background-color: #fff; /* Tesla's classic black footer */
+  color: #000;
   padding: 20px;
   font-size: 14px;
 }
