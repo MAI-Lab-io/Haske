@@ -53,6 +53,12 @@
     background-color: #333;
     color: #fff;
   }
+
+
+.mailab-logo {
+  height: 35px; /* Adjust the size */
+  margin-top: 10px; /* Optional margin */
+}
   
   .landing-content {
     text-align: center;
@@ -97,10 +103,7 @@
     text-align: center;
     padding: 20px;
     background: #222;
-    color: #aaa;
+    color: #ffff;
   }
 
-.mailab-logo {
-  height: 40px; /* Adjust the size */
-  margin-top: 10px; /* Optional margin */
-}
+
