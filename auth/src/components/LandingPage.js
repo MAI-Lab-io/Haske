@@ -10,12 +10,12 @@ const Footer = () => {
   const currentYear = new Date().getFullYear(); // Automatically fetch the current year
   return (
     <footer className="landing-footer">
-      <p>&copy; {currentYear} Haske. Powered by</p>
-      <div>
-        <a href="https://mailab.io" target="_blank" rel="noopener noreferrer">
+      <p>
+        &copy; {currentYear} Haske. Powered by{" "}
+        <a href="https://mailab.io" target="_blank" rel="noopener noreferrer" className="mailab-link">
           <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
         </a>
-      </div>
+      </p>
     </footer>
   );
 };
@@ -27,8 +27,12 @@ function LandingPage() {
       <header className="landing-header">
         <img src={logo} alt="Haske" className="logo" />
         <nav className="nav-links">
-          <Link to="/register" className="nav-button">Register</Link>
-          <Link to="/signin" className="nav-button">Sign In</Link>
+          <Link to="/register" className="nav-button">
+            Register
+          </Link>
+          <Link to="/signin" className="nav-button">
+            Sign In
+          </Link>
         </nav>
       </header>
 
@@ -47,6 +51,7 @@ function LandingPage() {
         </div>
       </main>
 
+      <Footer />
     </div>
   );
 }
