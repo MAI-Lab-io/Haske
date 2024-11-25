@@ -2,7 +2,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./LandingPage.css";
-import logo from "../assets/haske.png";
+import logo from "../assets/haske.png"
+
 
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Automatically fetch the current year
@@ -39,7 +40,7 @@ function LandingPage() {
       <div>
         <a href="https://mailab.io" target="_blank" rel="noopener noreferrer">
           <img 
-            src="/assets/mailablogo.png" 
+            src="../assets/mailablogo.png" 
             alt="MAILAB Logo" 
             className="mailab-logo" 
           />
