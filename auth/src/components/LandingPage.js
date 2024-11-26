@@ -29,7 +29,7 @@ const Footer = () => {
 };
 
 // Sponsors Section
-const Sponsors = () => (
+/*const Sponsors = () => (
   <section className="sponsors-section">
     <h3 className="sponsors-title">Our Partners & Sponsors</h3>
     <div className="sponsors-logos">
@@ -37,9 +37,10 @@ const Sponsors = () => (
       <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
       <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
       {/* Add more sponsor logos as needed */}
-    </div>
+  /*  </div>
   </section>
-);
+);    
+*/
 
 // LandingPage Component
 function LandingPage() {
