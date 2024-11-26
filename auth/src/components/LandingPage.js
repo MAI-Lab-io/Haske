@@ -59,8 +59,6 @@ function LandingPage() {
         </div>
       </main>
 
-      {/* Add Sponsors Section */}
-      //<Sponsors />
 
       <Footer />
     </div>
