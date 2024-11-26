@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
-//import sponsor1 from "../assets/sponsor1.png"; // Replace with actual sponsor logos
-//import sponsor2 from "../assets/sponsor2.png";
-//import sponsor3 from "../assets/sponsor3.png";
+// import sponsor1 from "../assets/sponsor1.png"; // Replace with actual sponsor logos
+// import sponsor2 from "../assets/sponsor2.png";
+// import sponsor3 from "../assets/sponsor3.png";
 
 // Footer Component
 const Footer = () => {
@@ -27,20 +27,6 @@ const Footer = () => {
     </footer>
   );
 };
-
-// Sponsors Section
-/*const Sponsors = () => (
-  <section className="sponsors-section">
-    <h3 className="sponsors-title">Our Partners & Sponsors</h3>
-    <div className="sponsors-logos">
-      <img src={sponsor1} alt="Sponsor 1" className="sponsor-logo" />
-      <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
-      <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
-      {/* Add more sponsor logos as needed */}
-  /*  </div>
-  </section>
-);    
-*/
 
 // LandingPage Component
 function LandingPage() {
