@@ -1,75 +1,60 @@
-// src/components/Register.js
-import React, { useState } from "react";
-import { auth } from "../firebaseConfig";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./Register.css"; // Import CSS file for styles
+// Register.js
+import React, { useState } from "react";
+import { auth, firestore } from "../firebaseConfig"; // Ensure Firestore is initialized
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore"; 
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [institution, setInstitution] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/patient-details");
-    } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        setError("This email is already registered. Please sign in.");
-      } else {
-        setError(error.message);
-      }
-    }
-  };
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Add user data to Firestore with 'isApproved' set to false initially
+      await setDoc(doc(firestore, "users", user.uid), {
+        firstName,
+        lastName,
+        institution,
+        role,
+        isApproved: false,
+        isActivated: false,
+      });
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      navigate("/patient-details"); // Redirect to protected content
+      // Send email to admin for approval or use a notification system for admin
+      setError("Registration successful, please wait for admin approval.");
     } catch (error) {
       setError(error.message);
     }
   };
 
   return (
-    <div className="register-container">
-      <div className="form-wrapper">
-        <h2 className="form-title">Create an Account</h2>
-        <form className="register-form" onSubmit={handleRegister}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="register-input"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="register-input"
-          />
-          <button type="submit" className="register-button">Register</button>
-        </form>
-        {error && <p className="register-error">{error}</p>}
-
-        {/* Google Sign-In Button */}
-        <button className="google-signin-button" onClick={handleGoogleSignIn}>
-          Sign up with Google
-        </button>
-
-        <p className="register-footer">
-          Already have an account? <a href="/signin">Sign In</a>
-        </p>
-      </div>
-    </div>
+    <form onSubmit={handleRegister}>
+      {/* Your form inputs */}
+      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+      <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+      <input type="text" value={institution} onChange={(e) => setInstitution(e.target.value)} required />
+      <select value={role} onChange={(e) => setRole(e.target.value)} required>
+        <option value="">Select Role</option>
+        <option value="Radiologist">Radiologist</option>
+        <option value="IT">IT</option>
+        <option value="Staff">Staff</option>
+      </select>
+      <button type="submit">Register</button>
+      {error && <p>{error}</p>}
+    </form>
   );
 }
 
