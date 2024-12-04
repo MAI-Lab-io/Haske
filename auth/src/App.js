@@ -5,6 +5,8 @@ import SignIn from "./components/SignIn";
 import Register from "./components/Register";
 import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage"; // Import LandingPage
+import VerifyPage from "./components/VerifyPage";
+import AdminPage from "./AdminPage";
 import { auth } from "./firebaseConfig";
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} /> {/* LandingPage as the default route */}
         <Route path="/signin" element={user ? <Navigate to="/patient-details" replace /> : <SignIn />} />
+        <Route path="/verification" element={<VerifyPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/register" element={user ? <Navigate to="/patient-details" replace /> : <Register />} />
         <Route
           path="/patient-details"
