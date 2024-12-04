@@ -2,76 +2,77 @@ import React, { useState } from "react";
 
 const VerifyPage = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    institutionName: "",
-    institutionAddress: "",
+    first_name: "",
+    last_name: "",
+    institution_name: "",
+    institution_address: "",
     role: "",
     email: "",
   });
 
-  const [message, setMessage] = useState("");
-
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        "https://haske.onrender.com/api/verification/submit-verification/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch("https://haske.onrender.com/api/verification/submit-verification/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
       const result = await response.json();
-      setMessage(result.message);
+      alert(result.message);
+      setFormData({
+        first_name: "",
+        last_name: "",
+        institution_name: "",
+        institution_address: "",
+        role: "",
+        email: "",
+      });
     } catch (error) {
-      setMessage("Something went wrong. Please try again.");
+      console.error("Error submitting verification:", error);
+      alert("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="verify-page">
+    <div>
       <h2>Verify Your Role</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="firstName"
+          name="first_name"
           placeholder="First Name"
-          value={formData.firstName}
+          value={formData.first_name}
           onChange={handleChange}
           required
         />
         <input
           type="text"
-          name="lastName"
+          name="last_name"
           placeholder="Last Name"
-          value={formData.lastName}
+          value={formData.last_name}
           onChange={handleChange}
           required
         />
         <input
           type="text"
-          name="institutionName"
+          name="institution_name"
           placeholder="Institution Name"
-          value={formData.institutionName}
+          value={formData.institution_name}
           onChange={handleChange}
           required
         />
         <textarea
-          name="institutionAddress"
+          name="institution_address"
           placeholder="Institution Address"
-          value={formData.institutionAddress}
+          value={formData.institution_address}
           onChange={handleChange}
           required
-        />
+        ></textarea>
         <input
           type="text"
           name="role"
@@ -90,7 +91,6 @@ const VerifyPage = () => {
         />
         <button type="submit">Verify Your Role</button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 };
