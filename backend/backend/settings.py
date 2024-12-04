@@ -94,7 +94,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://www.haske.online",
-    "https://www.haske.online/verification"
 ]
 
 
