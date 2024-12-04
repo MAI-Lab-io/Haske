@@ -26,7 +26,13 @@ SECRET_KEY = 'django-insecure-q+lyerw$y9=ecg5lucon0fpjj^%ww0mx_cc=9%q2zm2z19)eqc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'haske.onrender.com',
+    'https://haske-phi.vercel.app/',
+    'localhost',  # if you are running locally
+    '127.0.0.1',  # for local testing
+    # Add any other domains if needed
+]
 
 
 # Application definition
@@ -84,13 +90,7 @@ DATABASES = {
     }
 }
 
-ALLOWED_HOSTS = [
-    'haske.onrender.com',
-    'https://haske-phi.vercel.app/',
-    'localhost',  # if you are running locally
-    '127.0.0.1',  # for local testing
-    # Add any other domains if needed
-]
+
 CORS_ALLOWED_ORIGINS = [
     "https://www.haske.online",
 ]
@@ -102,6 +102,8 @@ CORS_ALLOW_METHODS = [
     "DELETE",
     "OPTIONS",
 ]
+
+PORT = os.environ.get('PORT', 8000)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
