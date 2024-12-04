@@ -86,6 +86,7 @@ DATABASES = {
 
 ALLOWED_HOSTS = [
     'haske.onrender.com',
+    'https://haske-phi.vercel.app/',
     'localhost',  # if you are running locally
     '127.0.0.1',  # for local testing
     # Add any other domains if needed
