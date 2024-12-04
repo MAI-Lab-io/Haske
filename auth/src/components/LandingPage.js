@@ -35,6 +35,9 @@ function LandingPage() {
       <header className="landing-header">
         <img src={logo} alt="Haske" className="logo" />
         <nav className="nav-links">
+           <Link to="/verification" className="nav-button">
+            Verification
+          </Link>
           <Link to="/register" className="nav-button">
             Register
           </Link>
