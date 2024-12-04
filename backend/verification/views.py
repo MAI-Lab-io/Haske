@@ -5,6 +5,10 @@ from django.core.mail import send_mail
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import UserVerification
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to the Django app!")
 
 @api_view(["POST"])
 def submit_verification(request):
