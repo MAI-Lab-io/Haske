@@ -92,7 +92,7 @@ ALLOWED_HOSTS = [
     # Add any other domains if needed
 ]
 CORS_ALLOWED_ORIGINS = [
-    "www.haske.online",
+    "https://www.haske.online",
 ]
 
 CORS_ALLOW_METHODS = [
