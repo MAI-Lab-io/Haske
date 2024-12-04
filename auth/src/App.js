@@ -5,7 +5,7 @@ import Register from "./components/Register";
 import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
-import AdminPage from "./AdminPage";
+import AdminPage from "./components/AdminPage";
 import { auth } from "./firebaseConfig";
 
 function App() {
