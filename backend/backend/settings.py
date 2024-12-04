@@ -103,6 +103,13 @@ CORS_ALLOW_METHODS = [
     "OPTIONS",
 ]
 
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'Authorization',
+    'X-Requested-With',
+]
+
+
 PORT = os.environ.get('PORT', 8000)
 
 # Password validation
