@@ -10,20 +10,31 @@ const VerifyPage = () => {
     email: "",
   });
 
+  const [notification, setNotification] = useState(""); // State to hold the notification message
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNotification(""); // Reset notification on new submission
+
     try {
       const response = await fetch("https://haske.onrender.com/api/verification/submit-verification/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
       const result = await response.json();
-      alert(result.message);
+
+      if (response.ok) {
+        setNotification("Verification request submitted successfully! You will be contacted shortly.");
+      } else {
+        setNotification("Error: " + result.message || "An error occurred. Please try again.");
+      }
+
       setFormData({
         first_name: "",
         last_name: "",
@@ -32,9 +43,10 @@ const VerifyPage = () => {
         role: "",
         email: "",
       });
+
     } catch (error) {
       console.error("Error submitting verification:", error);
-      alert("An error occurred. Please try again.");
+      setNotification("An error occurred. Please try again.");
     }
   };
 
@@ -91,6 +103,9 @@ const VerifyPage = () => {
         />
         <button type="submit">Verify Your Role</button>
       </form>
+
+      {/* Display Notification */}
+      {notification && <p>{notification}</p>}
     </div>
   );
 };
