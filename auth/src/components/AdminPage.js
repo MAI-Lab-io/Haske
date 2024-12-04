@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
+  const [notification, setNotification] = useState(""); // State for success or error message
 
   const fetchUsers = async () => {
     try {
@@ -19,11 +20,16 @@ const AdminPage = () => {
         method: "POST",
       });
       const result = await response.json();
-      alert(result.message);
-      fetchUsers(); // Refresh the user list
+      
+      if (response.ok) {
+        setNotification("User approved successfully and notified!");
+        fetchUsers(); // Refresh the user list after approval
+      } else {
+        setNotification("Error: " + result.message || "An error occurred. Please try again.");
+      }
     } catch (error) {
       console.error("Error approving user:", error);
-      alert("An error occurred. Please try again.");
+      setNotification("An error occurred while approving the user. Please try again.");
     }
   };
 
@@ -34,6 +40,10 @@ const AdminPage = () => {
   return (
     <div>
       <h2>Admin Page</h2>
+
+      {/* Display Notification */}
+      {notification && <p>{notification}</p>}
+
       {users.length === 0 ? (
         <p>No users awaiting verification.</p>
       ) : (
