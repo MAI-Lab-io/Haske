@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'verification',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,17 @@ ALLOWED_HOSTS = [
     '127.0.0.1',  # for local testing
     # Add any other domains if needed
 ]
+CORS_ALLOWED_ORIGINS = [
+    "www.haske.online",
+]
 
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+    "OPTIONS",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
