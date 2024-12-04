@@ -55,6 +55,7 @@ function LandingPage() {
         <div className="action-buttons">
           <Link to="/verification" className="action-button">
             Verification
+          </Link>
           <Link to="/register" className="action-button">
             Register
           </Link>
