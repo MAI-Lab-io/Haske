@@ -32,6 +32,15 @@ def get_users(request):
         }
         for user in users
     ])
+    
+@api_view(["POST"])
+def is_verified(request):
+    email = request.data.get("email")
+    try:
+        user = UserVerification.objects.get(email=email)
+        return Response({"is_verified": user.is_verified})
+    except UserVerification.DoesNotExist:
+        return Response({"is_verified": False})
 
 @api_view(["POST"])
 def approve_user(request, user_id):
@@ -42,7 +51,7 @@ def approve_user(request, user_id):
     # Send approval email
     send_mail(
         subject="Verification Approved",
-        message=f"Hello {user.first_name}, your verification is approved. Please register here: https://your-app.vercel.app/register",
+        message=f"Hello {user.first_name}, your verification is approved. Please register here: www.haske.online/register",
         from_email=None,
         recipient_list=[user.email],
     )
