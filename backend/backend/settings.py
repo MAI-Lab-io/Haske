@@ -90,10 +90,12 @@ DATABASES = {
     }
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://www.haske.online",
 ]
+
 
 CORS_ALLOW_METHODS = [
     "GET",
