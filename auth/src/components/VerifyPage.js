@@ -17,7 +17,7 @@ const VerifyPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://haske-phi.vercel.app/api/verification/submit-verification/", {
+      const response = await fetch("https://haske.onrender.com/api/verification/submit-verification/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
