@@ -53,6 +53,8 @@ function LandingPage() {
           Open-source Picture Archiving Communication System
         </p>
         <div className="action-buttons">
+          <Link to="/verification" className="action-button">
+            Verification
           <Link to="/register" className="action-button">
             Register
           </Link>
