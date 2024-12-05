@@ -4,7 +4,6 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPa
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password visibility toggle
-import axios from "axios"; // Add axios to make API requests
 
 function SignIn() {
   const [email, setEmail] = useState("");
