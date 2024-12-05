@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+/verification" - "import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ function Register() {
   const checkUserVerification = async (email) => {
     try {
       // Make API call to check if the user is verified
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+      const response = await fetch(https://haske.online:8080/api/verification/check-verification?email=${email});
 
       // Check if response is successful
       if (response.ok) {
@@ -25,7 +25,6 @@ function Register() {
           if (!data.isVerified) {
             setIsVerified(false);
             alert("Sorry, you have not been verified. Please kindly go ahead to verify at the Home page.");
-            navigate("/verification"); // Redirect to verification page if not verified
             return false; // Return false for unverified users
           } else {
             setIsVerified(true);
@@ -64,7 +63,7 @@ function Register() {
       // Proceed with registration only if verified
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       alert("Registration successful!");
-      navigate("/patient-details"); // Navigate to patient details page after successful registration
+      navigate("/patient-details");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
@@ -85,9 +84,8 @@ function Register() {
       const isUserVerified = await checkUserVerification(email);
 
       if (!isUserVerified) {
-        // If the user is not verified, stop the process and redirect to verification page
+        // If the user is not verified, stop the process
         alert("You are not verified. Please go ahead and verify your email.");
-        navigate("/verification"); // Redirect to verification page if not verified
         return; // Prevent further action (i.e., redirect or account creation)
       }
 
