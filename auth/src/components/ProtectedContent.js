@@ -41,7 +41,7 @@ function ProtectedContent() {
     }
 
     if (isVerified === false) {
-        navigate("/verification", { state: { message: "Please verify your account" } }); // Redirect to homepage if not verified with message
+        navigate("/register"); // Redirect to homepage if not verified with message
         return null; // Prevent further rendering
     }
 
