@@ -71,7 +71,7 @@ function SignIn() {
       const email = user.email;
 
       // Check user verification status from your backend API
-      const response = await fetch(`/api/check-user-verification?email=${email}`);
+      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
       const data = await response.json();
 
       if (!data.isVerified) {
