@@ -12,7 +12,7 @@ function ProtectedContent() {
         const user = auth.currentUser;
         if (user) {
             // Call backend to check if the user is verified using fetch
-            fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
+            fetch(`/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json()) // Parse the JSON response
                 .then((data) => {
                     if (data.isVerified) {
@@ -32,7 +32,7 @@ function ProtectedContent() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/"); // Redirect to LandingPage on sign out
+            navigate("/", { state: { message: "Please verify your account" } }); // Redirect to LandingPage with a message
         });
     };
 
@@ -41,7 +41,7 @@ function ProtectedContent() {
     }
 
     if (isVerified === false) {
-        navigate("/"); // Redirect to homepage if not verified
+        navigate("/", { state: { message: "Please verify your account" } }); // Redirect to homepage if not verified with message
         return null; // Prevent further rendering
     }
 
