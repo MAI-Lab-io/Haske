@@ -37,6 +37,7 @@ const VerifyPage = () => {
         setNotification(
           "Verification request submitted successfully! You will be contacted shortly."
         );
+        navigate("/"});
       } else {
         setNotification(
           "Error: " + result.message || "An error occurred. Please try again."
