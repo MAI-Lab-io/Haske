@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import navigate from React Router
 import "./VerifyPage.css"; // Import CSS file for styles
 
 const VerifyPage = () => {
+  const navigate = useNavigate(); // Initialize navigation
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -37,21 +39,20 @@ const VerifyPage = () => {
         setNotification(
           "Verification request submitted successfully! You will be contacted shortly."
         );
-        navigate("/"});
+        setFormData({
+          first_name: "",
+          last_name: "",
+          institution_name: "",
+          institution_address: "",
+          role: "",
+          email: "",
+        });
+        navigate("/"); // Navigate to home or another page after success
       } else {
         setNotification(
-          "Error: " + result.message || "An error occurred. Please try again."
+          "Error: " + (result.message || "An error occurred. Please try again.")
         );
       }
-
-      setFormData({
-        first_name: "",
-        last_name: "",
-        institution_name: "",
-        institution_address: "",
-        role: "",
-        email: "",
-      });
     } catch (error) {
       console.error("Error submitting verification:", error);
       setNotification("An error occurred. Please try again.");
