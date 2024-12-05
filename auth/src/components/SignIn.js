@@ -86,27 +86,30 @@ function SignIn() {
     }
   };
 
-  // Handle Google sign-in
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    setLoading(true);
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      const email = user.email;
+const handleGoogleSignIn = async () => {
+  const provider = new GoogleAuthProvider();
+  setLoading(true);
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const email = user.email;
 
-      // Check if the user is verified before allowing access
-      const isVerified = await checkUserVerification(email);
-      if (!isVerified) return;
-
+    // Check if the user is verified before allowing access
+    const isVerified = await checkUserVerification(email);
+    if (!isVerified) {
       setLoading(false);
-      navigate("/patient-details"); // Redirect to protected content
-    } catch (error) {
-      console.error("Google sign-in error:", error);
-      setLoading(false);
-      setError("An error occurred during Google sign-in. Please try again later.");
+      return; // Stop further action if the user is not verified
     }
-  };
+
+    setLoading(false);
+    navigate("/patient-details"); // Redirect to protected content if verified
+  } catch (error) {
+    console.error("Google sign-in error:", error);
+    setLoading(false);
+    setError("An error occurred during Google sign-in. Please try again later.");
+  }
+};
+
 
   return (
     <div className="signin-container">
