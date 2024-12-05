@@ -22,6 +22,7 @@ function SignIn() {
 
       if (!data.isVerified) {
         setError("Your account is not verified. Please kindly go ahead to verify at the Home page.");
+        navigate("/verification");
         setLoading(false);
 
         // Sign out the user if they are not verified
