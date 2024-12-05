@@ -6,7 +6,7 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("https://haske.onrender.com/api/verification/get-users/");
+      const response = await fetch("https://haske.online:8080/api/verification/get-users");
       const data = await response.json();
       setUsers(data);
     } catch (error) {
@@ -16,7 +16,7 @@ const AdminPage = () => {
 
   const handleApprove = async (userId) => {
     try {
-      const response = await fetch(`https://haske.onrender.com/api/verification/approve-user/${userId}/`, {
+      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}/`, {
         method: "POST",
       });
       const result = await response.json();
