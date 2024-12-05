@@ -58,18 +58,17 @@ const AdminPage = () => {
   return (
     <div className="admin-container">
       {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <div className="sidebar-logo">
-          <h2>Admin Dashboard</h2>
-        </div>
-        <nav>
-          <ul className="sidebar-menu">
-            <li><a href="#users">Manage Users</a></li>
-            <li><a href="#analytics">Analytics</a></li>
-            <li><a href="#settings">Settings</a></li>
-          </ul>
-        </nav>
-      </aside>
+    <aside class="admin-sidebar">
+  <div class="sidebar-logo">Admin Panel</div>
+  <nav>
+    <ul class="sidebar-menu">
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#users">Manage Users</a></li>
+      <li><a href="#analytics">Analytics</a></li>
+      <li><a href="#settings">Settings</a></li>
+    </ul>
+  </nav>
+</aside>
 
       {/* Main Content */}
       <main className="admin-content">
