@@ -24,7 +24,7 @@ const checkUserVerification = async (email) => {
       if (data && data.isVerified !== undefined) {
         if (!data.isVerified) {
           setIsVerified(false);
-          alert("Sorry, you have not been verified.");
+          alert("Sorry, you have not been verified. Please kindly go ahead to verify at the Home page.");
           return false; // Return false for unverified users
         } else {
           setIsVerified(true);
