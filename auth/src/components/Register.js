@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Add axios to make API requests
 import "./Register.css"; // Import CSS file for styles
 
 function Register() {
@@ -15,7 +14,7 @@ function Register() {
   // Function to check if the user is verified
   const checkUserVerification = async (email) => {
     try {
-      const response = await axios.get(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
       if (!response.data.isVerified) {
         setIsVerified(false);
         alert("Sorry, you have not been verified.");
