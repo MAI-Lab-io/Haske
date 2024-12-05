@@ -14,21 +14,46 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Check user verification status from the backend
+  const checkUserVerification = async (email) => {
+    try {
+      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+      const data = await response.json();
+
+      if (!data.isVerified) {
+        setError("Your account is not verified. Please contact the admin for verification.");
+        setLoading(false);
+        return false; // User is not verified
+      }
+      return true; // User is verified
+    } catch (error) {
+      console.error("Verification check error:", error);
+      setError("An error occurred while verifying your account. Please try again later.");
+      setLoading(false);
+      return false; // Treat as unverified in case of error
+    }
+  };
+
   // Handle user sign-in
   const handleSignIn = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Clear previous errors
-    setMessage(null); // Clear previous success messages
+    setError(null);
+    setMessage(null);
 
     try {
+      // Check if the user is verified before signing in
+      const isVerified = await checkUserVerification(email);
+      if (!isVerified) return;
+
+      // Proceed with Firebase authentication
       await signInWithEmailAndPassword(auth, email, password);
+      setLoading(false);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
-      console.error("Full error:", error); // Log full error for debugging
+      console.error("Sign-in error:", error);
       setLoading(false);
 
-      // Handle specific error cases
       if (error.code === "auth/wrong-password") {
         setError("Oops! The password you entered is incorrect. Please try again.");
       } else if (error.code === "auth/user-not-found") {
@@ -61,31 +86,25 @@ function SignIn() {
     }
   };
 
-  // Handle Google sign-in and verification check
+  // Handle Google sign-in
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
+    setLoading(true);
     try {
-      setLoading(true);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
       const email = user.email;
 
-      // Check user verification status from your backend API
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-      const data = await response.json();
+      // Check if the user is verified before allowing access
+      const isVerified = await checkUserVerification(email);
+      if (!isVerified) return;
 
-      if (!data.isVerified) {
-        setError("Your account is not verified. Please contact the admin for verification.");
-        setLoading(false);
-        return; // Stop the sign-in process if not verified
-      }
-
-      // Proceed if the user is verified
+      setLoading(false);
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
       console.error("Google sign-in error:", error);
       setLoading(false);
-      setError(error.message);
+      setError("An error occurred during Google sign-in. Please try again later.");
     }
   };
 
