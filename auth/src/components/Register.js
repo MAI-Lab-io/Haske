@@ -15,21 +15,30 @@ const checkUserVerification = async (email) => {
   try {
     // Make API call to check if the user is verified
     const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-    
-    // Check if response.data is valid and has the isVerified field
-    if (response && response.data && response.data.isVerified !== undefined) {
-      if (!response.data.isVerified) {
-        setIsVerified(false);
-        alert("Sorry, you have not been verified.");
-        return false; // Return false for unverified users
+
+    // Check if response is successful
+    if (response.ok) {
+      const data = await response.json(); // Parse JSON response
+
+      // Check if the expected field exists in the response
+      if (data && data.isVerified !== undefined) {
+        if (!data.isVerified) {
+          setIsVerified(false);
+          alert("Sorry, you have not been verified.");
+          return false; // Return false for unverified users
+        } else {
+          setIsVerified(true);
+          return true; // Return true for verified users
+        }
       } else {
-        setIsVerified(true);
-        return true; // Return true for verified users
+        console.error("Invalid response structure:", data);
+        alert("Failed to verify the email. Please try again later.");
+        return false; // Return false if the structure is invalid
       }
     } else {
-      console.error("Invalid response structure:", response);
-      alert("Failed to verify the email. Please try again later.");
-      return false; // Return false in case of invalid response
+      console.error("Failed to fetch verification status:", response.status);
+      alert("An error occurred while checking verification. Please try again later.");
+      return false; // Return false if the request fails
     }
   } catch (err) {
     console.error("Verification check failed", err);
@@ -37,6 +46,7 @@ const checkUserVerification = async (email) => {
     return false; // Return false if the API call fails
   }
 };
+
 
 
   // Function to handle registration
