@@ -61,12 +61,26 @@ function SignIn() {
     }
   };
 
-  // Handle Google sign-in
+  // Handle Google sign-in and verification check
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
       setLoading(true);
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const email = user.email;
+
+      // Check user verification status from your backend API
+      const response = await fetch(`/api/check-user-verification?email=${email}`);
+      const data = await response.json();
+
+      if (!data.isVerified) {
+        setError("Your account is not verified. Please contact the admin for verification.");
+        setLoading(false);
+        return; // Stop the sign-in process if not verified
+      }
+
+      // Proceed if the user is verified
       navigate("/patient-details"); // Redirect to protected content
     } catch (error) {
       console.error("Google sign-in error:", error);
