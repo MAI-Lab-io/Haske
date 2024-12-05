@@ -14,7 +14,7 @@ function Register() {
   const checkUserVerification = async (email) => {
     try {
       // Make API call to check if the user is verified
-      const response = await fetch(https://haske.online:8080/api/verification/check-verification?email=${email});
+      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
 
       // Check if response is successful
       if (response.ok) {
