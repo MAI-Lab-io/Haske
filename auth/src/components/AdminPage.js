@@ -16,7 +16,7 @@ const AdminPage = () => {
 
   const handleApprove = async (userId) => {
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}/`, {
+      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
         method: "POST",
       });
       const result = await response.json();
