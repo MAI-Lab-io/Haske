@@ -7,7 +7,7 @@
 
 .admin-sidebar {
   width: 250px;
-  background-color: #5d455f; /* Darker purple for sidebar */
+  background-color: #1c1c1c; /* Darker gray for sidebar */
   color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -126,7 +126,7 @@
 
 .approve-button {
   padding: 8px 12px;
-  background-color: #5d455f; /* Tesla-inspired blue button */
+  background-color: #0073e6; /* Tesla-inspired blue button */
   color: #ffffff;
   border: none;
   border-radius: 4px;
