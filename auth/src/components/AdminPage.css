@@ -1,107 +1,140 @@
 .admin-container {
-  padding: 20px;
-  background-color: #f9f9f9;
-  min-height: 100vh;
+  display: flex;
+  height: 100vh;
+  background-color: #f4f4f4; /* Light gray background */
+  font-family: "Roboto", sans-serif; /* Clean, modern font */
 }
 
-.admin-wrapper {
-  max-width: 800px;
-  margin: auto;
-  background: #ffffff;
+.admin-sidebar {
+  width: 250px;
+  background-color: #1c1c1c; /* Darker gray for sidebar */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.admin-title {
+.sidebar-logo {
   text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: #e3e3e3;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin: 15px 0;
+}
+
+.sidebar-menu a {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.sidebar-menu a:hover {
+  color: #ffffff;
+  transform: translateX(5px); /* Sleek hover animation */
+}
+
+.admin-content {
+  flex: 1;
+  padding: 20px;
+  background-color: #e9ecef; /* Slightly darker gray for main content */
+  color: #333333; /* Text in dark gray */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header {
+  margin-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
+  color: #1c1c1c;
 }
 
-.admin-notification {
-  color: #007bff;
-  text-align: center;
-  margin-bottom: 10px;
+.notification {
+  background-color: #323232; /* Dark gray */
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
 .filter-section {
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  gap: 10px;
 }
 
-.filter-label {
-  margin-right: 10px;
-  font-weight: 500;
+.filter-section label {
+  font-weight: bold;
+  color: #333;
 }
 
-.filter-select {
+.filter-section select {
   padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  border: 1px solid #ddd;
-  outline: none;
+  background-color: #f7f7f7;
 }
 
-.admin-table {
+.user-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  background-color: #f9f9f9; /* Very light gray */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.admin-table th, .admin-table td {
-  padding: 12px;
+.user-table th,
+.user-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
   text-align: left;
-  border: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
 }
 
-.admin-table th {
-  background-color: #f5f5f5;
+.user-table th {
+  background-color: #2c2c2c; /* Darker header */
+  color: #ffffff;
   font-weight: bold;
 }
 
 .verified-row {
-  background-color: #e6ffe6;
+  background-color: #d1f7d6; /* Subtle green for verified */
 }
 
 .unverified-row {
-  background-color: #ffe6e6;
-}
-
-.status-button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.status-button.verified {
-  background-color: #4caf50;
-  color: white;
-}
-
-.status-button.unverified {
-  background-color: #ff5722;
-  color: white;
+  background-color: #ffe9e9; /* Subtle red for unverified */
 }
 
 .approve-button {
-  background-color: #007bff;
-  color: white;
-  padding: 5px 10px;
+  padding: 8px 12px;
+  background-color: #0073e6; /* Tesla-inspired blue button */
+  color: #ffffff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease-in-out;
 }
 
 .approve-button:hover {
-  background-color: #0056b3;
-}
-
-.no-users {
-  text-align: center;
-  color: #999;
-  font-size: 16px;
+  background-color: #005bb5; /* Darker blue on hover */
 }
