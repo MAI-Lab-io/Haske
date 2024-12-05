@@ -24,7 +24,7 @@ const AdminPage = () => {
         method: "POST",
       });
       const result = await response.json();
-      
+
       if (response.ok) {
         setNotification("User approved successfully and notified!");
         fetchUsers(); // Refresh the user list after approval
@@ -37,7 +37,6 @@ const AdminPage = () => {
     }
   };
 
-  // Filter users based on verification status
   const handleFilterChange = (e) => {
     const filterValue = e.target.value;
     setFilter(filterValue);
@@ -56,64 +55,65 @@ const AdminPage = () => {
   }, []);
 
   return (
-    <div className="admin-page">
-      <h2 className="admin-page-title">Admin Page</h2>
+    <div className="admin-container">
+      <div className="admin-wrapper">
+        <h2 className="admin-title">Admin Dashboard</h2>
 
-      {/* Display Notification */}
-      {notification && <p className="notification">{notification}</p>}
+        {notification && <p className="admin-notification">{notification}</p>}
 
-      <div className="filter-container">
-        <label htmlFor="filter">Filter Users:</label>
-        <select id="filter" value={filter} onChange={handleFilterChange}>
-          <option value="all">All Users</option>
-          <option value="verified">Verified</option>
-          <option value="unverified">Unverified</option>
-        </select>
-      </div>
+        <div className="filter-section">
+          <label htmlFor="filter" className="filter-label">Filter Users:</label>
+          <select id="filter" value={filter} onChange={handleFilterChange} className="filter-select">
+            <option value="all">All Users</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Unverified</option>
+          </select>
+        </div>
 
-      {filteredUsers.length === 0 ? (
-        <p>No users to display.</p>
-      ) : (
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Institution</th>
-              <th>Institution Address</th>
-              <th>Role</th>
-              <th>Email</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className={user.isVerified ? "verified" : "unverified"}>
-                <td>{user.name}</td>
-                <td>{user.institution_name}</td>
-                <td>{user.institution_address}</td>
-                <td>{user.role}</td>
-                <td>{user.email}</td>
-                <td>
-                  <button
-                    className={user.isVerified ? "verify-button verified" : "verify-button unverified"}
-                    disabled={user.isVerified}
-                  >
-                    {user.isVerified ? "Verified" : "Verify"}
-                  </button>
-                </td>
-                <td>
-                  {!user.isVerified && (
-                    <button className="approve-button" onClick={() => handleApprove(user.id)}>
-                      Approve
-                    </button>
-                  )}
-                </td>
+        {filteredUsers.length === 0 ? (
+          <p className="no-users">No users to display.</p>
+        ) : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Institution</th>
+                <th>Address</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className={user.isVerified ? "verified-row" : "unverified-row"}>
+                  <td>{user.name}</td>
+                  <td>{user.institution_name}</td>
+                  <td>{user.institution_address}</td>
+                  <td>{user.role}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <button
+                      className={`status-button ${user.isVerified ? "verified" : "unverified"}`}
+                      disabled={user.isVerified}
+                    >
+                      {user.isVerified ? "Verified" : "Pending"}
+                    </button>
+                  </td>
+                  <td>
+                    {!user.isVerified && (
+                      <button className="approve-button" onClick={() => handleApprove(user.id)}>
+                        Approve
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
