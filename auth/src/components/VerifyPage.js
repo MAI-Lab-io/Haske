@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./VerifyPage.css"; // Import CSS file for styles
 
 const VerifyPage = () => {
   const [formData, setFormData] = useState({
@@ -21,18 +22,25 @@ const VerifyPage = () => {
     setNotification(""); // Reset notification on new submission
 
     try {
-      const response = await fetch("https://haske.online:8080/api/verification/submit-verification", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://haske.online:8080/api/verification/submit-verification",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const result = await response.json();
 
       if (response.ok) {
-        setNotification("Verification request submitted successfully! You will be contacted shortly.");
+        setNotification(
+          "Verification request submitted successfully! You will be contacted shortly."
+        );
       } else {
-        setNotification("Error: " + result.message || "An error occurred. Please try again.");
+        setNotification(
+          "Error: " + result.message || "An error occurred. Please try again."
+        );
       }
 
       setFormData({
@@ -43,7 +51,6 @@ const VerifyPage = () => {
         role: "",
         email: "",
       });
-
     } catch (error) {
       console.error("Error submitting verification:", error);
       setNotification("An error occurred. Please try again.");
@@ -51,61 +58,71 @@ const VerifyPage = () => {
   };
 
   return (
-    <div>
-      <h2>Verify Your Role</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="first_name"
-          placeholder="First Name"
-          value={formData.first_name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="last_name"
-          placeholder="Last Name"
-          value={formData.last_name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="institution_name"
-          placeholder="Institution Name"
-          value={formData.institution_name}
-          onChange={handleChange}
-          required
-        />
-        <textarea
-          name="institution_address"
-          placeholder="Institution Address"
-          value={formData.institution_address}
-          onChange={handleChange}
-          required
-        ></textarea>
-        <input
-          type="text"
-          name="role"
-          placeholder="Role"
-          value={formData.role}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Verify Your Role</button>
-      </form>
+    <div className="verify-container">
+      <div className="form-wrapper">
+        <h2 className="form-title">Verify Your Role</h2>
+        <form className="verify-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="first_name"
+            placeholder="First Name"
+            value={formData.first_name}
+            onChange={handleChange}
+            required
+            className="verify-input"
+          />
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Last Name"
+            value={formData.last_name}
+            onChange={handleChange}
+            required
+            className="verify-input"
+          />
+          <input
+            type="text"
+            name="institution_name"
+            placeholder="Institution Name"
+            value={formData.institution_name}
+            onChange={handleChange}
+            required
+            className="verify-input"
+          />
+          <textarea
+            name="institution_address"
+            placeholder="Institution Address"
+            value={formData.institution_address}
+            onChange={handleChange}
+            required
+            className="verify-textarea"
+          ></textarea>
+          <input
+            type="text"
+            name="role"
+            placeholder="Role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+            className="verify-input"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="verify-input"
+          />
+          <button type="submit" className="verify-button">
+            Verify Your Role
+          </button>
+        </form>
 
-      {/* Display Notification */}
-      {notification && <p>{notification}</p>}
+        {/* Display Notification */}
+        {notification && <p className="verify-notification">{notification}</p>}
+      </div>
     </div>
   );
 };
