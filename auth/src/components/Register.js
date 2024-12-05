@@ -25,7 +25,7 @@ function Register() {
           if (!data.isVerified) {
             setIsVerified(false);
             alert("Sorry, you have not been verified. Please kindly go ahead to verify at the Home page.");
-            navigate("/verification"); // Redirect to verification page
+            navigate("/verification"); // Redirect to verification page if not verified
             return false; // Return false for unverified users
           } else {
             setIsVerified(true);
@@ -64,7 +64,7 @@ function Register() {
       // Proceed with registration only if verified
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       alert("Registration successful!");
-      navigate("/patient-details");
+      navigate("/patient-details"); // Navigate to patient details page after successful registration
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
@@ -85,9 +85,9 @@ function Register() {
       const isUserVerified = await checkUserVerification(email);
 
       if (!isUserVerified) {
-        // If the user is not verified, stop the process
+        // If the user is not verified, stop the process and redirect to verification page
         alert("You are not verified. Please go ahead and verify your email.");
-        navigate("/verification"); // Redirect to verification page
+        navigate("/verification"); // Redirect to verification page if not verified
         return; // Prevent further action (i.e., redirect or account creation)
       }
 
