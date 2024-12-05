@@ -88,27 +88,32 @@ function SignIn() {
 
 const handleGoogleSignIn = async () => {
   const provider = new GoogleAuthProvider();
-  setLoading(true);
   try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const email = user.email;
+    // Perform Google sign-in
+    const userCredential = await signInWithPopup(auth, provider);
 
-    // Check if the user is verified before allowing access
-    const isVerified = await checkUserVerification(email);
-    if (!isVerified) {
-      setLoading(false);
-      return; // Stop further action if the user is not verified
+    // Extract email from the userCredential
+    const email = userCredential.user.email;
+
+    console.log("Google sign-in successful, checking verification for:", email);
+
+    // Verify the user after sign-in
+    const isUserVerified = await checkUserVerification(email);
+
+    if (!isUserVerified) {
+      // If the user is not verified, return without further action
+      return;
     }
 
-    setLoading(false);
-    navigate("/patient-details"); // Redirect to protected content if verified
+    // Proceed to patient details page if verified
+    alert("Google sign-in successful!");
+    navigate("/patient-details");
   } catch (error) {
-    console.error("Google sign-in error:", error);
-    setLoading(false);
-    setError("An error occurred during Google sign-in. Please try again later.");
+    console.error("Google Sign-In Error:", error);
+    setError("Error with Google sign-in: " + error.message);
   }
 };
+
 
 
   return (
