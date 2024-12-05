@@ -1,12 +1,9 @@
 // src/components/LandingPage.js
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
-// import sponsor1 from "../assets/sponsor1.png"; // Replace with actual sponsor logos
-// import sponsor2 from "../assets/sponsor2.png";
-// import sponsor3 from "../assets/sponsor3.png";
 
 // Footer Component
 const Footer = () => {
@@ -30,12 +27,28 @@ const Footer = () => {
 
 // LandingPage Component
 function LandingPage() {
+  const location = useLocation();
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message); // Set the message if it exists in the state
+    }
+  }, [location]);
+
   return (
     <div className="landing-container">
+      {/* Conditional message popup */}
+      {message && (
+        <div className="message-popup">
+          <p>{message}</p>
+        </div>
+      )}
+
       <header className="landing-header">
         <img src={logo} alt="Haske" className="logo" />
         <nav className="nav-links">
-           <Link to="/verification" className="nav-button">
+          <Link to="/verification" className="nav-button">
             Verification
           </Link>
           <Link to="/register" className="nav-button">
@@ -64,7 +77,6 @@ function LandingPage() {
           </Link>
         </div>
       </main>
-
 
       <Footer />
     </div>
