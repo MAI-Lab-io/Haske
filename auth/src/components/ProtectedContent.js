@@ -12,7 +12,7 @@ function ProtectedContent() {
         const user = auth.currentUser;
         if (user) {
             // Call backend to check if the user is verified using fetch
-            fetch(`/api/verification/check-verification?email=${user.email}`)
+            fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json()) // Parse the JSON response
                 .then((data) => {
                     if (data.isVerified) {
