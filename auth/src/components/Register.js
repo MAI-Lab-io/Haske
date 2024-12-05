@@ -1,4 +1,3 @@
-// src/components/Register.js
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -20,22 +19,35 @@ function Register() {
       if (!response.data.isVerified) {
         setIsVerified(false);
         alert("Sorry, you have not been verified.");
+        return false; // Return false for unverified users
       } else {
         setIsVerified(true);
+        return true; // Return true for verified users
       }
     } catch (err) {
       console.error("Verification check failed", err);
+      alert("An error occurred while checking verification.");
+      return false; // Treat it as unverified in case of errors
     }
   };
 
+  // Function to handle registration
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError(null);
+
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      checkUserVerification(email);  // Check verification after registering
-      if (isVerified) {
-        navigate("/patient-details");
+      // Verify user first
+      const isUserVerified = await checkUserVerification(email);
+
+      if (!isUserVerified) {
+        return; // Stop if the user is not verified
       }
+
+      // Proceed with registration only if verified
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      alert("Registration successful!");
+      navigate("/patient-details");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
@@ -45,14 +57,19 @@ function Register() {
     }
   };
 
+  // Function to handle Google Sign-In
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
-      checkUserVerification(userCredential.user.email);  // Check verification after Google sign-in
-      if (isVerified) {
-        navigate("/patient-details");
+      const isUserVerified = await checkUserVerification(userCredential.user.email);
+
+      if (!isUserVerified) {
+        return; // Stop if the user is not verified
       }
+
+      alert("Google sign-in successful!");
+      navigate("/patient-details");
     } catch (error) {
       setError(error.message);
     }
@@ -79,12 +96,12 @@ function Register() {
             required
             className="register-input"
           />
-          <button type="submit" className="register-button" disabled={!isVerified}>Register</button>
+          <button type="submit" className="register-button">Register</button>
         </form>
         {error && <p className="register-error">{error}</p>}
 
         {/* Google Sign-In Button */}
-        <button className="google-signin-button" onClick={handleGoogleSignIn} disabled={!isVerified}>
+        <button className="google-signin-button" onClick={handleGoogleSignIn}>
           Sign up with Google
         </button>
 
