@@ -157,8 +157,9 @@ const handleGoogleSignIn = async () => {
         {error && <p className="signin-error">{error}</p>}
         {message && <p className="signin-message">{message}</p>}
 
-        <button className="google-signin-button" onClick={handleGoogleSignIn} disabled={loading}>
-          {loading ? <div className="spinner"></div> : "Sign in with Google"}
+  {/* Google Sign-In Button */}
+        <button className="google-signin-button" onClick={handleGoogleSignIn}>
+          Sign up with Google
         </button>
 
         <p className="signin-footer">
