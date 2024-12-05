@@ -1,17 +1,49 @@
-// src/components/ProtectedContent.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
+    const [isVerified, setIsVerified] = useState(null); // State to track verification status
     const navigate = useNavigate();
+
+    useEffect(() => {
+        // Get the current user and check verification status
+        const user = auth.currentUser;
+        if (user) {
+            // Call backend to check if the user is verified using fetch
+            fetch(`/api/verification/check-verification?email=${user.email}`)
+                .then((response) => response.json()) // Parse the JSON response
+                .then((data) => {
+                    if (data.isVerified) {
+                        setIsVerified(true);
+                    } else {
+                        setIsVerified(false);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking verification:", error);
+                    setIsVerified(false);
+                });
+        } else {
+            setIsVerified(false);
+        }
+    }, []);
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
             navigate("/"); // Redirect to LandingPage on sign out
         });
     };
+
+    if (isVerified === null) {
+        return <div>Loading...</div>; // Wait for verification check response
+    }
+
+    if (isVerified === false) {
+        navigate("/"); // Redirect to homepage if not verified
+        return null; // Prevent further rendering
+    }
 
     return (
         <div className="protected-container">
