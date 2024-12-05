@@ -21,7 +21,7 @@ function SignIn() {
       const data = await response.json();
 
       if (!data.isVerified) {
-        setError("Your account is not verified. Please contact the admin for verification.");
+        setError("Your account is not verified. Please kindly go ahead to verify at the Home page.");
         setLoading(false);
         return false; // User is not verified
       }
