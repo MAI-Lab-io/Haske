@@ -6,29 +6,18 @@ import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
-import { auth } from "./firebaseConfig";
+import { auth } from "./firebaseConfig"; // Firebase auth import
 
-function App() {
+const App = () => {
   const [user, setUser] = useState(null);
-  const [isVerified, setIsVerified] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
-      setUser(currentUser);
-      if (currentUser) {
-        try {
-          const response = await fetch("https://your-backend.onrender.com/api/verification/is-verified/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: currentUser.email }),
-          });
-          const result = await response.json();
-          setIsVerified(result.is_verified);
-        } catch (error) {
-          console.error("Error checking verification status:", error);
-        }
-      }
+    // Listen to authentication state changes
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user); // Set user to state when authentication state changes
     });
+
+    // Cleanup listener on unmount
     return () => unsubscribe();
   }, []);
 
@@ -36,23 +25,13 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signin" element={user ? <Navigate to="/patient-details" replace /> : <SignIn />} />
+        <Route
+          path="/signin"
+          element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
+        />
         <Route path="/verification" element={<VerifyPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route
-          path="/register"
-          element={
-            user ? (
-              isVerified ? (
-                <Register />
-              ) : (
-                <Navigate to="/verification" replace />
-              )
-            ) : (
-              <Navigate to="/patient-details" replace />
-            )
-          }
-        />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/patient-details"
           element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
@@ -60,6 +39,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
