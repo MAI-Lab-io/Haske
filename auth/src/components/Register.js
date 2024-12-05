@@ -75,24 +75,34 @@ const checkUserVerification = async (email) => {
       }
     }
   };
+const handleGoogleSignIn = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    // Perform Google sign-in
+    const userCredential = await signInWithPopup(auth, provider);
 
-  // Function to handle Google Sign-In
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const userCredential = await signInWithPopup(auth, provider);
-      const isUserVerified = await checkUserVerification(userCredential.user.email);
+    // Extract email from the userCredential
+    const email = userCredential.user.email;
 
-      if (!isUserVerified) {
-        return; // Stop if the user is not verified
-      }
+    console.log("Google sign-in successful, checking verification for:", email);
 
-      alert("Google sign-in successful!");
-      navigate("/patient-details");
-    } catch (error) {
-      setError(error.message);
+    // Verify the user after sign-in
+    const isUserVerified = await checkUserVerification(email);
+
+    if (!isUserVerified) {
+      // If the user is not verified, return without further action
+      return;
     }
-  };
+
+    // Proceed to patient details page if verified
+    alert("Google sign-in successful!");
+    navigate("/patient-details");
+  } catch (error) {
+    console.error("Google Sign-In Error:", error);
+    setError("Error with Google sign-in: " + error.message);
+  }
+};
+
 
   return (
     <div className="register-container">
