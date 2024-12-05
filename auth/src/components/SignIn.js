@@ -160,7 +160,7 @@ function SignIn() {
 
         {/* Google Sign-In Button */}
         <button className="google-signin-button" onClick={handleGoogleSignIn}>
-          Sign up with Google
+          Sign in with Google
         </button>
 
         <p className="signin-footer">
