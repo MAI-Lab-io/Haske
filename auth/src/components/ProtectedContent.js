@@ -32,7 +32,7 @@ function ProtectedContent() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/verification", { state: { message: "Please verify your account" } }); // Redirect to LandingPage with a message
+             // Redirect to LandingPage with a message
         });
     };
 
@@ -41,7 +41,7 @@ function ProtectedContent() {
     }
 
     if (isVerified === false) {
-        navigate("/", { state: { message: "Please verify your account" } }); // Redirect to homepage if not verified with message
+        navigate("/verification", { state: { message: "Please verify your account" } }); // Redirect to homepage if not verified with message
         return null; // Prevent further rendering
     }
 
