@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password visibility toggle
@@ -23,6 +23,9 @@ function SignIn() {
       if (!data.isVerified) {
         setError("Your account is not verified. Please kindly go ahead to verify at the Home page.");
         setLoading(false);
+
+        // Sign out the user if they are not verified
+        await signOut(auth);
         return false; // User is not verified
       }
       return true; // User is verified
@@ -86,35 +89,33 @@ function SignIn() {
     }
   };
 
-const handleGoogleSignIn = async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    // Perform Google sign-in
-    const userCredential = await signInWithPopup(auth, provider);
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      // Perform Google sign-in
+      const userCredential = await signInWithPopup(auth, provider);
 
-    // Extract email from the userCredential
-    const email = userCredential.user.email;
+      // Extract email from the userCredential
+      const email = userCredential.user.email;
 
-    console.log("Google sign-in successful, checking verification for:", email);
+      console.log("Google sign-in successful, checking verification for:", email);
 
-    // Verify the user after sign-in
-    const isUserVerified = await checkUserVerification(email);
+      // Verify the user after sign-in
+      const isUserVerified = await checkUserVerification(email);
 
-    if (!isUserVerified) {
-      // If the user is not verified, return without further action
-      return;
+      if (!isUserVerified) {
+        // If the user is not verified, sign them out and return without further action
+        return;
+      }
+
+      // Proceed to patient details page if verified
+      alert("Google sign-in successful!");
+      navigate("/patient-details");
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      setError("Error with Google sign-in: " + error.message);
     }
-
-    // Proceed to patient details page if verified
-    alert("Google sign-in successful!");
-    navigate("/patient-details");
-  } catch (error) {
-    console.error("Google Sign-In Error:", error);
-    setError("Error with Google sign-in: " + error.message);
-  }
-};
-
-
+  };
 
   return (
     <div className="signin-container">
@@ -157,7 +158,7 @@ const handleGoogleSignIn = async () => {
         {error && <p className="signin-error">{error}</p>}
         {message && <p className="signin-message">{message}</p>}
 
-  {/* Google Sign-In Button */}
+        {/* Google Sign-In Button */}
         <button className="google-signin-button" onClick={handleGoogleSignIn}>
           Sign up with Google
         </button>
