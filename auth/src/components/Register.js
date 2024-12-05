@@ -25,6 +25,7 @@ function Register() {
           if (!data.isVerified) {
             setIsVerified(false);
             alert("Sorry, you have not been verified. Please kindly go ahead to verify at the Home page.");
+            navigate("/verification");
             return false; // Return false for unverified users
           } else {
             setIsVerified(true);
@@ -86,6 +87,7 @@ function Register() {
       if (!isUserVerified) {
         // If the user is not verified, stop the process
         alert("You are not verified. Please go ahead and verify your email.");
+        navigate("/verification");
         return; // Prevent further action (i.e., redirect or account creation)
       }
 
