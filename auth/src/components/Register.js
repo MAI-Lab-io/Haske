@@ -11,10 +11,13 @@ function Register() {
   const [isVerified, setIsVerified] = useState(true); // Track verification status
   const navigate = useNavigate();
 
-  // Function to check if the user is verified
-  const checkUserVerification = async (email) => {
-    try {
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+const checkUserVerification = async (email) => {
+  try {
+    // Make API call to check if the user is verified
+    const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+    
+    // Check if response.data is valid and has the isVerified field
+    if (response && response.data && response.data.isVerified !== undefined) {
       if (!response.data.isVerified) {
         setIsVerified(false);
         alert("Sorry, you have not been verified.");
@@ -23,12 +26,18 @@ function Register() {
         setIsVerified(true);
         return true; // Return true for verified users
       }
-    } catch (err) {
-      console.error("Verification check failed", err);
-      alert("An error occurred while checking verification.");
-      return false; // Treat it as unverified in case of errors
+    } else {
+      console.error("Invalid response structure:", response);
+      alert("Failed to verify the email. Please try again later.");
+      return false; // Return false in case of invalid response
     }
-  };
+  } catch (err) {
+    console.error("Verification check failed", err);
+    alert("An error occurred while checking verification. Please try again later.");
+    return false; // Return false if the API call fails
+  }
+};
+
 
   // Function to handle registration
   const handleRegister = async (e) => {
