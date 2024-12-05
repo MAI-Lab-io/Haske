@@ -18,9 +18,9 @@ const checkUserVerification = async (email) => {
 
     // Check if response is successful
     if (response.ok) {
-      const data = await response.json(); // Parse JSON response
+      const data = await response.json(); // Parse the JSON response
 
-      // Check if the expected field exists in the response
+      // Check if the isVerified field exists in the response
       if (data && data.isVerified !== undefined) {
         if (!data.isVerified) {
           setIsVerified(false);
@@ -46,6 +46,7 @@ const checkUserVerification = async (email) => {
     return false; // Return false if the API call fails
   }
 };
+
 
 
 
