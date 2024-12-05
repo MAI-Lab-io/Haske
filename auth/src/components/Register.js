@@ -16,7 +16,7 @@ function Register() {
   // Function to check if the user is verified
   const checkUserVerification = async (email) => {
     try {
-      const response = await axios.get(`/api/verification/check-verification?email=${email}`);
+      const response = await axios.get(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
       if (!response.data.isVerified) {
         setIsVerified(false);
         alert("Sorry, you have not been verified.");
