@@ -80,7 +80,7 @@ const AdminPage = () => {
     fetchUsers();
 
     // Auto-refresh the user data every 60 seconds
-    const interval = setInterval(fetchUsers, 60000);
+    const interval = setInterval(fetchUsers, 30000);
 
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
