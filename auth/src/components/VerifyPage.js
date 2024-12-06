@@ -47,7 +47,7 @@ const VerifyPage = () => {
           role: "",
           email: "",
         });
-        navigate("/"); // Navigate to home or another page after success
+        navigate("/verify-waiting"); // Navigate to home or another page after success
       } else {
         setNotification(
           "Error: " + (result.message || "An error occurred. Please try again.")
