@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AdminPage.css"; // For styling
+import { FaTrash } from "react-icons/fa"; // Importing Font Awesome Trash icon
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -44,21 +45,21 @@ const AdminPage = () => {
     }
 
     try {
-    const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
-      method: "DELETE",
-    });
+      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
+        method: "DELETE",
+      });
 
-    if (response.ok) {
-      setNotification("User deleted successfully!");
-      fetchUsers(); // Refresh user list after deletion
-    } else {
-      const result = await response.json();
-      setNotification("Error: " + result.message || "Failed to delete user.");
+      if (response.ok) {
+        setNotification("User deleted successfully!");
+        fetchUsers(); // Refresh user list after deletion
+      } else {
+        const result = await response.json();
+        setNotification("Error: " + result.message || "Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setNotification("An error occurred while deleting the user.");
     }
-  } catch (error) {
-    console.error("Error deleting user:", error);
-    setNotification("An error occurred while deleting the user.");
-  }
   };
 
   const handleFilterChange = (e) => {
@@ -76,6 +77,12 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetchUsers();
+
+    // Auto-refresh the user data every 60 seconds
+    const interval = setInterval(fetchUsers, 60000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -143,9 +150,12 @@ const AdminPage = () => {
                         Approve
                       </button>
                     )}
-                    <button className="delete-button" onClick={() => handleDelete(user.id)}>
-                      Delete
-                    </button>
+                    <FaTrash
+                      className="delete-icon"
+                      title="Delete User"
+                      onClick={() => handleDelete(user.id)}
+                      style={{ cursor: "pointer", color: "red", fontSize: "1.2em" }}
+                    />
                   </td>
                 </tr>
               ))}
