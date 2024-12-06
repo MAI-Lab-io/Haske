@@ -38,18 +38,19 @@ const AdminPage = () => {
     }
   };
 
-  const handleFilterChange = (e) => {
-    const filterValue = e.target.value;
-    setFilter(filterValue);
+const handleFilterChange = (e) => {
+  const filterValue = e.target.value;
+  setFilter(filterValue);
 
-    if (filterValue === "verified") {
-      setFilteredUsers(users.filter((user) => user.isVerified));
-    } else if (filterValue === "unverified") {
-      setFilteredUsers(users.filter((user) => !user.isVerified));
-    } else {
-      setFilteredUsers(users);
-    }
-  };
+  if (filterValue === "verified") {
+    setFilteredUsers(users.filter((user) => user.approved)); // Use `approved`
+  } else if (filterValue === "unverified") {
+    setFilteredUsers(users.filter((user) => !user.approved)); // Use `approved`
+  } else {
+    setFilteredUsers(users); // Show all users
+  }
+};
+
 
   useEffect(() => {
     fetchUsers();
