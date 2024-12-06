@@ -13,7 +13,7 @@ const AdminPage = () => {
       const response = await fetch("https://haske.online:8080/api/verification/get-users");
       const data = await response.json();
       setUsers(data);
-      setFilteredUsers(data);
+      setFilteredUsers(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))); // Sort by created_at
     } catch (error) {
       console.error("Error fetching users:", error);
       setNotification("Failed to load users. Please try again.");
@@ -87,7 +87,6 @@ const AdminPage = () => {
 
   return (
     <div className="admin-container">
-      {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="sidebar-logo">Admin Panel</div>
         <nav>
@@ -100,16 +99,13 @@ const AdminPage = () => {
         </nav>
       </aside>
 
-      {/* Main Content */}
       <main className="admin-content">
         <header className="admin-header">
           <h1>User Management</h1>
         </header>
 
-        {/* Notification */}
         {notification && <div className="notification">{notification}</div>}
 
-        {/* Filter Section */}
         <div className="filter-section">
           <label htmlFor="filter">Filter Users:</label>
           <select id="filter" value={filter} onChange={handleFilterChange}>
@@ -119,7 +115,6 @@ const AdminPage = () => {
           </select>
         </div>
 
-        {/* User Table */}
         {filteredUsers.length === 0 ? (
           <p>No users to display.</p>
         ) : (
@@ -127,7 +122,7 @@ const AdminPage = () => {
             <thead>
               <tr>
                 <th>Last Name / Surname</th>
-                <th> First Name</th>
+                <th>First Name</th>
                 <th>Institution</th>
                 <th>Institution Address</th>
                 <th>Role</th>
