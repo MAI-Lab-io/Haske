@@ -7,7 +7,7 @@ import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
 import { auth } from "./firebaseConfig"; // Firebase auth import
-import VerifyWaiting from "./VerifyWaiting";
+import VerifyWaiting from "./components/VerifyWaiting";
 
 const App = () => {
   const [user, setUser] = useState(null);
