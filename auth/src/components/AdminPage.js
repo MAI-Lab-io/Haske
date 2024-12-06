@@ -126,7 +126,8 @@ const AdminPage = () => {
           <table className="user-table">
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Last Name / Surname</th>
+                <th> First Name</th>
                 <th>Institution</th>
                 <th>Institution Address</th>
                 <th>Role</th>
@@ -138,7 +139,8 @@ const AdminPage = () => {
             <tbody>
               {filteredUsers.map((user) => (
                 <tr key={user.id} className={user.approved ? "verified-row" : "unverified-row"}>
-                  <td>{user.name}</td>
+                  <td>{user.last_name}</td>
+                  <td>{user.first_name}</td>
                   <td>{user.institution_name}</td>
                   <td>{user.institution_address}</td>
                   <td>{user.role}</td>
