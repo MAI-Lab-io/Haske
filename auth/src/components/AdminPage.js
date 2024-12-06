@@ -28,7 +28,7 @@ const AdminPage = () => {
 
       if (response.ok) {
         setNotification("User approved successfully!");
-        fetchUsers();
+        fetchUsers(); // Refresh user data after approval
       } else {
         setNotification("Error: " + result.message || "Approval failed.");
       }
@@ -38,19 +38,18 @@ const AdminPage = () => {
     }
   };
 
-const handleFilterChange = (e) => {
-  const filterValue = e.target.value;
-  setFilter(filterValue);
+  const handleFilterChange = (e) => {
+    const filterValue = e.target.value;
+    setFilter(filterValue);
 
-  if (filterValue === "verified") {
-    setFilteredUsers(users.filter((user) => user.approved)); // Use `approved`
-  } else if (filterValue === "unverified") {
-    setFilteredUsers(users.filter((user) => !user.approved)); // Use `approved`
-  } else {
-    setFilteredUsers(users); // Show all users
-  }
-};
-
+    if (filterValue === "verified") {
+      setFilteredUsers(users.filter((user) => user.approved)); // Consistent usage of `approved`
+    } else if (filterValue === "unverified") {
+      setFilteredUsers(users.filter((user) => !user.approved)); // Consistent usage of `approved`
+    } else {
+      setFilteredUsers(users); // Show all users
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
@@ -59,17 +58,17 @@ const handleFilterChange = (e) => {
   return (
     <div className="admin-container">
       {/* Sidebar */}
-    <aside class="admin-sidebar">
-  <div class="sidebar-logo">Admin Panel</div>
-  <nav>
-    <ul class="sidebar-menu">
-      <li><a href="#dashboard">Dashboard</a></li>
-      <li><a href="#users">Manage Users</a></li>
-      <li><a href="#analytics">Analytics</a></li>
-      <li><a href="#settings">Settings</a></li>
-    </ul>
-  </nav>
-</aside>
+      <aside className="admin-sidebar">
+        <div className="sidebar-logo">Admin Panel</div>
+        <nav>
+          <ul className="sidebar-menu">
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#users">Manage Users</a></li>
+            <li><a href="#analytics">Analytics</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </nav>
+      </aside>
 
       {/* Main Content */}
       <main className="admin-content">
@@ -97,7 +96,8 @@ const handleFilterChange = (e) => {
           <table className="user-table">
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Surname/Last Name</th>
+                <th>First Name</th>
                 <th>Institution</th>
                 <th>Institution Address</th>
                 <th>Role</th>
@@ -108,15 +108,16 @@ const handleFilterChange = (e) => {
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user.id} className={user.isVerified ? "verified-row" : "unverified-row"}>
-                  <td>{user.name}</td>
+                <tr key={user.id} className={user.approved ? "verified-row" : "unverified-row"}>
+                  <td>{user.last_name}</td>
+                  <td>{user.first_name}</td>
                   <td>{user.institution_name}</td>
                   <td>{user.institution_address}</td>
                   <td>{user.role}</td>
                   <td>{user.email}</td>
-                  <td>{user.isVerified ? "Verified" : "Unverified"}</td>
+                  <td>{user.approved ? "Verified" : "Unverified"}</td>
                   <td>
-                    {!user.isVerified && (
+                    {!user.approved && (
                       <button className="approve-button" onClick={() => handleApprove(user.id)}>
                         Approve
                       </button>
