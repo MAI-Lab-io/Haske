@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AdminPage.css"; // For styling
 import { FaTrash } from "react-icons/fa"; // Importing Font Awesome Trash icon
-import { FaCheck } from "react-icons/fa"; // Importing Font Awesome Check icon
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -21,22 +20,27 @@ const AdminPage = () => {
     }
   };
 
-  const handleApprove = async (userId) => {
+  const handleApprove = async (userId, approved) => {
     try {
       const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ approved }),
       });
+
       const result = await response.json();
 
       if (response.ok) {
-        setNotification("User approved successfully!");
-        fetchUsers(); // Refresh user data after approval
+        setNotification("User updated successfully!");
+        fetchUsers(); // Refresh user data after update
       } else {
         setNotification("Error: " + result.message || "Approval failed.");
       }
     } catch (error) {
-      console.error("Error approving user:", error);
-      setNotification("An error occurred while approving the user.");
+      console.error("Error updating user:", error);
+      setNotification("An error occurred while updating the user.");
     }
   };
 
@@ -151,13 +155,12 @@ const AdminPage = () => {
                     />
                   </td>
                   <td>
-                    {!user.approved && (
-                      <FaCheck
-                        className="approve-icon"
-                        title="Approve User"
-                        onClick={() => handleApprove(user.id)}
-                      />
-                    )}
+                    <input
+                      type="checkbox"
+                      checked={user.approved}
+                      onChange={() => handleApprove(user.id, !user.approved)}
+                      title="Approve User"
+                    />
                   </td>
                 </tr>
               ))}
