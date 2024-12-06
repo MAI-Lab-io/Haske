@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminPage.css"; // For styling
 import { FaTrash } from "react-icons/fa"; // Importing Font Awesome Trash icon
+import { FaCheck } from "react-icons/fa"; // Importing Font Awesome Check icon
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -129,6 +130,7 @@ const AdminPage = () => {
                 <th>Email</th>
                 <th>Status</th>
                 <th>Actions</th>
+                <th>Approve</th> {/* New column for approval */}
               </tr>
             </thead>
             <tbody>
@@ -142,16 +144,20 @@ const AdminPage = () => {
                   <td>{user.email}</td>
                   <td>{user.approved ? "Verified" : "Unverified"}</td>
                   <td>
-                    {!user.approved && (
-                      <button className="approve-button" onClick={() => handleApprove(user.id)}>
-                        Approve
-                      </button>
-                    )}
                     <FaTrash
                       className="delete-icon"
                       title="Delete User"
                       onClick={() => handleDelete(user.id)}
                     />
+                  </td>
+                  <td>
+                    {!user.approved && (
+                      <FaCheck
+                        className="approve-icon"
+                        title="Approve User"
+                        onClick={() => handleApprove(user.id)}
+                      />
+                    )}
                   </td>
                 </tr>
               ))}
