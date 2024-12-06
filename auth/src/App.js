@@ -7,6 +7,7 @@ import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
 import { auth } from "./firebaseConfig"; // Firebase auth import
+import VerifyWaiting from "./VerifyWaiting";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -30,6 +31,7 @@ const App = () => {
           element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
         />
         <Route path="/verification" element={<VerifyPage />} />
+        <Route path="/verify-waiting" element={<VerifyWaiting />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/register" element={<Register />} />
         <Route
