@@ -1,154 +1,86 @@
 .admin-container {
   display: flex;
-  height: 100vh;
-  background-color: #f4f4f4; /* Light gray background */
-  font-family: "Roboto", sans-serif; /* Clean, modern font */
 }
 
 .admin-sidebar {
   width: 250px;
-  background-color: #1c1c1c; /* Darker gray for sidebar */
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
+  background-color: #2c3e50;
+  color: white;
   padding: 20px;
-  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-}
-
-.sidebar-logo {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: bold;
-  letter-spacing: 1.5px;
-  color: #e3e3e3;
-}
-
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-menu li {
-  margin: 15px 0;
-}
-
-.sidebar-menu a {
-  color: #b0b0b0;
-  text-decoration: none;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  transition: all 0.3s ease-in-out;
-}
-
-.sidebar-menu a:hover {
-  color: #ffffff;
-  transform: translateX(5px); /* Sleek hover animation */
-}
-
-.admin-content {
-  flex: 1;
-  padding: 20px;
-  background-color: #e9ecef; /* Slightly darker gray for main content */
-  color: #333333; /* Text in dark gray */
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
 }
 
 .admin-header {
-  margin-bottom: 20px;
+  background-color: #34495e;
+  color: white;
+  padding: 15px;
+  text-align: center;
   font-size: 24px;
-  font-weight: bold;
-  color: #1c1c1c;
-}
-
-.notification {
-  background-color: #323232; /* Dark gray */
-  color: #ffffff;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  font-size: 14px;
 }
 
 .filter-section {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.filter-section label {
-  font-weight: bold;
-  color: #333;
+  margin: 20px 0;
 }
 
 .filter-section select {
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f7f7f7;
+  font-size: 16px;
 }
 
 .user-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #f9f9f9; /* Very light gray */
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .user-table th,
 .user-table td {
-  border: 1px solid #e0e0e0;
-  padding: 12px 15px;
+  padding: 12px;
   text-align: left;
-  font-size: 14px;
-  color: #333;
 }
 
 .user-table th {
-  background-color: #2c2c2c; /* Darker header */
-  color: #ffffff;
+  background-color: #3498db;
+  color: white;
   font-weight: bold;
 }
 
+.user-table td {
+  border-bottom: 1px solid #ddd;
+}
+
+.user-table tr:hover {
+  background-color: #f1f1f1;
+}
+
 .verified-row {
-  background-color: #d1f7d6; /* Subtle green for verified */
+  background-color: #f9f9f9;
 }
 
 .unverified-row {
-  background-color: #ffe9e9; /* Subtle red for unverified */
+  background-color: #ffe6e6;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: red;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.delete-icon:hover {
+  color: darkred;
 }
 
 .approve-button {
-  padding: 8px 12px;
-  background-color: #0073e6; /* Tesla-inspired blue button */
-  color: #ffffff;
+  background-color: #27ae60;
+  color: white;
   border: none;
-  border-radius: 4px;
+  padding: 8px 16px;
   cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .approve-button:hover {
-  background-color: #005bb5; /* Darker blue on hover */
+  background-color: #2ecc71;
 }
-
-.delete-button {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  background-color: #c0392b;
-}
-
