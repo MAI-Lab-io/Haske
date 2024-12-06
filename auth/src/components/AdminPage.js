@@ -38,16 +38,39 @@ const AdminPage = () => {
     }
   };
 
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setNotification("User deleted successfully!");
+        setUsers(users.filter((user) => user.id !== userId)); // Update local state
+        setFilteredUsers(filteredUsers.filter((user) => user.id !== userId));
+      } else {
+        const result = await response.json();
+        setNotification("Error: " + result.message || "Deletion failed.");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setNotification("An error occurred while deleting the user.");
+    }
+  };
+
   const handleFilterChange = (e) => {
     const filterValue = e.target.value;
     setFilter(filterValue);
 
     if (filterValue === "verified") {
-      setFilteredUsers(users.filter((user) => user.approved)); // Consistent usage of `approved`
+      setFilteredUsers(users.filter((user) => user.approved));
     } else if (filterValue === "unverified") {
-      setFilteredUsers(users.filter((user) => !user.approved)); // Consistent usage of `approved`
+      setFilteredUsers(users.filter((user) => !user.approved));
     } else {
-      setFilteredUsers(users); // Show all users
+      setFilteredUsers(users);
     }
   };
 
@@ -96,8 +119,7 @@ const AdminPage = () => {
           <table className="user-table">
             <thead>
               <tr>
-                <th>Surname/Last Name</th>
-                <th>First Name</th>
+                <th>Name</th>
                 <th>Institution</th>
                 <th>Institution Address</th>
                 <th>Role</th>
@@ -109,8 +131,7 @@ const AdminPage = () => {
             <tbody>
               {filteredUsers.map((user) => (
                 <tr key={user.id} className={user.approved ? "verified-row" : "unverified-row"}>
-                  <td>{user.last_name}</td>
-                  <td>{user.first_name}</td>
+                  <td>{user.name}</td>
                   <td>{user.institution_name}</td>
                   <td>{user.institution_address}</td>
                   <td>{user.role}</td>
@@ -122,6 +143,9 @@ const AdminPage = () => {
                         Approve
                       </button>
                     )}
+                    <button className="delete-button" onClick={() => handleDelete(user.id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
