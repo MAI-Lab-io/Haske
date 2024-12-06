@@ -151,7 +151,6 @@ const AdminPage = () => {
                       className="delete-icon"
                       title="Delete User"
                       onClick={() => handleDelete(user.id)}
-                      style={{ cursor: "pointer", color: "red", fontSize: "1.2em" }}
                     />
                   </td>
                 </tr>
