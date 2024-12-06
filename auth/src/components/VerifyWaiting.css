@@ -1,34 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;500&display=swap");
+
 .verify-waiting-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f4f4f4;
-  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #ff8a00, #e52e71);
+  font-family: "Roboto", sans-serif;
 }
 
-.verify-waiting-message {
+.verify-waiting-card {
+  background-color: #ffffff;
+  padding: 40px 60px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   text-align: center;
-  background: #fff;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  width: 90%;
 }
 
-.verify-waiting-message h1 {
+.verify-title {
+  font-family: "Playfair Display", serif;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: #ff5722;
-  margin-bottom: 15px;
-  font-size: 2rem;
+  margin-bottom: 20px;
+  text-transform: uppercase;
 }
 
-.verify-waiting-message p {
-  margin: 5px 0;
+.verify-text {
+  font-size: 1.2rem;
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.verify-signature {
   font-size: 1rem;
-  color: #555;
-}
-
-.signature {
-  margin-top: 20px;
   font-style: italic;
-  color: #888;
+  color: #777777;
 }
