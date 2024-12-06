@@ -44,21 +44,21 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        setNotification("User deleted successfully!");
-        setUsers(users.filter((user) => user.id !== userId)); // Update local state
-        setFilteredUsers(filteredUsers.filter((user) => user.id !== userId));
-      } else {
-        const result = await response.json();
-        setNotification("Error: " + result.message || "Deletion failed.");
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      setNotification("An error occurred while deleting the user.");
+    const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setNotification("User deleted successfully!");
+      fetchUsers(); // Refresh user list after deletion
+    } else {
+      const result = await response.json();
+      setNotification("Error: " + result.message || "Failed to delete user.");
     }
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    setNotification("An error occurred while deleting the user.");
+  }
   };
 
   const handleFilterChange = (e) => {
