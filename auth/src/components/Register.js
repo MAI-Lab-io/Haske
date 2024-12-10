@@ -8,45 +8,7 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [isVerified, setIsVerified] = useState(true); // Track verification status
   const navigate = useNavigate();
-
-  const checkUserVerification = async (email) => {
-    try {
-      // Make API call to check if the user is verified
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-
-      // Check if response is successful
-      if (response.ok) {
-        const data = await response.json(); // Parse the JSON response
-
-        // Check if the isVerified field exists in the response
-        if (data && data.isVerified !== undefined) {
-          if (!data.isVerified) {
-            setIsVerified(false);
-            alert("Click ok, to complete your profile.");
-            navigate("/verification");
-            return false; // Return false for unverified users
-          } else {
-            setIsVerified(true);
-            return true; // Return true for verified users
-          }
-        } else {
-          console.error("Invalid response structure:", data);
-          alert("Failed to verify the email. Please try again later.");
-          return false; // Return false if the structure is invalid
-        }
-      } else {
-        console.error("Failed to fetch verification status:", response.status);
-        alert("An error occurred. Please try again later.");
-        return false; // Return false if the request fails
-      }
-    } catch (err) {
-      console.error("Verification check failed", err);
-      alert("An error occurred. Please try again later.");
-      return false; // Return false if the API call fails
-    }
-  };
 
   // Function to handle registration
   const handleRegister = async (e) => {
@@ -54,17 +16,12 @@ function Register() {
     setError(null);
 
     try {
-      // Verify user first
-      const isUserVerified = await checkUserVerification(email);
-
-      if (!isUserVerified) {
-        return; // Stop if the user is not verified
-      }
-
-      // Proceed with registration only if verified
+      // Create user on Firebase
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      alert("Registration successful!");
-      navigate("/patient-details");
+      alert("Registration successful! Please complete your profile.");
+      
+      // Redirect to verify-waiting page
+      navigate("/verify-waiting");
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
