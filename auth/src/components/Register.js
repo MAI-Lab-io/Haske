@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./Register.css"; // Import CSS file for styles
 
@@ -24,7 +24,7 @@ function Register() {
         if (data && data.isVerified !== undefined) {
           if (!data.isVerified) {
             setIsVerified(false);
-            alert("Sorry, you have not been verified. Please kindly go ahead to verify at the Home page.");
+            alert("Click ok, to complete your profile.");
             navigate("/verification");
             return false; // Return false for unverified users
           } else {
@@ -38,12 +38,12 @@ function Register() {
         }
       } else {
         console.error("Failed to fetch verification status:", response.status);
-        alert("An error occurred while checking verification. Please try again later.");
+        alert("An error occurred. Please try again later.");
         return false; // Return false if the request fails
       }
     } catch (err) {
       console.error("Verification check failed", err);
-      alert("An error occurred while checking verification. Please try again later.");
+      alert("An error occurred. Please try again later.");
       return false; // Return false if the API call fails
     }
   };
@@ -74,32 +74,6 @@ function Register() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      // Perform Google sign-in
-      const userCredential = await signInWithPopup(auth, provider);
-      const email = userCredential.user.email;
-
-      // Verify the user after sign-in
-      const isUserVerified = await checkUserVerification(email);
-
-      if (!isUserVerified) {
-        // If the user is not verified, stop the process
-        alert("You are not verified. Please go ahead and verify your email.");
-        navigate("/verification");
-        return; // Prevent further action (i.e., redirect or account creation)
-      }
-
-      // Proceed to the patient details page if verified
-      alert("Google sign-in successful!");
-      navigate("/patient-details");
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      setError("Error with Google sign-in: " + error.message);
-    }
-  };
-
   return (
     <div className="register-container">
       <div className="form-wrapper">
@@ -124,12 +98,6 @@ function Register() {
           <button type="submit" className="register-button">Register</button>
         </form>
         {error && <p className="register-error">{error}</p>}
-
-        {/* Google Sign-In Button */}
-        <button className="google-signin-button" onClick={handleGoogleSignIn}>
-          Sign up with Google
-        </button>
-
         <p className="register-footer">
           Already have an account? <a href="/signin">Sign In</a>
         </p>
