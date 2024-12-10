@@ -1,144 +1,73 @@
-# H A S K E
+# **HAske - DICOM PACS Website** 🌍📊
 
-
-# OHIF v3 with Orthanc(PostgresDB) with Authentik for Auth and Nginx Proxy Manager for Proxy Plus Orthanc Explorer 2
-
-## Intro:
-> **🩻 Ohif v3:** (OHIF) Viewer is an open source, web-based, medical imaging platform.
-
-> **📀 Orthanc:** Its free and open-source, lightweight DICOM server for medical imaging.
-
-> **🐘 PostgreSQL:** It is a powerful open-source relational database management system known for its reliability, extensibility, and advanced features.
-
-> **🔐 Authentik:** It is an open-source authentication and authorization server that provides secure access control and identity management for web applications.
-
-> **🌐 Nginx Proxy Manager:** It is a simple yet powerful web-based tool for managing Nginx proxy servers, enabling easy configuration and management of reverse proxies and SSL/TLS termination.
-> **Orthanc Explorer 2 is the frontend UI that runs on the Orthanc Server.
+**HAske** is a powerful, cloud-based **DICOM PACS (Picture Archiving and Communication System)** website hosted on **AWS**, designed to enable the **storage**, **transfer**, and **management** of medical images for healthcare centers across Africa. With a focus on accessibility, security, and scalability, HAske provides a streamlined solution for handling medical imaging data in a diverse range of healthcare facilities.
 
 ---
-## First Stage is to Run the Ohif, Orthanc, Authentik and Nginx Proxy Manager on Docker container
-### Create new docker network `proxy`
+![Uploading image.png…]()
 
-```bash
-docker network create proxy
-```
-### Clone This Repo
-```bash
-git clone https://github.com/Heartz00/ohif-orthanc-pacs-haske.git
-cd ohif-orthanc-pacs-haske
-```
+## **Key Features**
+✨ **HAske** offers the following capabilities:
 
-### File Structure
+- 📁 **DICOM Storage**: Securely stores medical images in compliance with industry standards.  
+- 🔄 **Image Transfer**: Enables fast and seamless sharing of medical images between healthcare centers.  
+- 🩺 **PACS Management**: Provides tools for organizing and retrieving patient data and imaging records.  
+- 🔒 **User Authentication**: Implements secure user authentication, ensuring authorized access only.  
+- 🏥 **Multi-Center Support**: Designed to support multiple healthcare centers across Africa.  
+- ☁️ **Cloud-Based Hosting**: Hosted on **AWS** for scalability, reliability, and accessibility.
 
-```bash
+---
 
-├── authentik
-│   ├── certs
-│   ├── custom-templates
-│   ├── database
-│   ├── media
-│   └── redis
-├── docker-compose.yml
-├── Explorer-2
-│   ├── build.sh
-│   ├── CITATION.cff
-│   ├── CMakeLists.txt
-│   ├── LICENSE
-│   ├── package-lock.json
-│   ├── Plugin
-│   ├── Resources
-│   ├── scripts
-│   ├── tests
-│   ├── TODO
-│   └── WebApplication
-├── ohif
-│   ├── config
-│   └── nginx
-├── orthanc
-│   ├── config
-│   ├── database
-│   └── dicomImages
-└── proxy
-    ├── data
-    └── letsencrypt
+## **Why HAske?**
+With Africa's diverse healthcare challenges, **HAske** aims to provide a **centralized solution** for managing medical images, improving collaboration among medical professionals, and enhancing patient care by enabling:  
 
-```
+- 🌐 **Interconnectivity** across health centers.  
+- 📈 **Streamlined workflows** for medical imaging.  
+- 🛡️ **Data security** in compliance with healthcare standards.
 
-### Set `.env` variable for Authentik
+---
 
-```bash
-echo "PG_PASS=$(openssl rand 36 | base64)" >> .env
-echo "AUTHENTIK_SECRET_KEY=$(openssl rand 60 | base64)" >> .env
-```
+## **How It Works**
+1. **User Authentication**:  
+   Health professionals log in securely using their credentials.  
 
-### Set Orthanc UserName & Password
-> Use you favourite text editor
-```bash
-nano ./orthanc/config/orthanc.json
-```
-```json
-   "AuthenticationEnabled": false,
-  "RegisteredUsers": {
-    "haske": "haske"
-  },
-```
+2. **DICOM Image Management**:  
+   - Upload, view, and store DICOM files.  
+   - Search and retrieve patient imaging data effortlessly.  
 
-### Create generate the base64-encoded string
-```bash
-echo -n 'haske:haske' | base64.
-aHlwZXI6bWFwZHI=
-```
+3. **Multi-Center Collaboration**:  
+   Supports multiple facilities, allowing them to share and manage patient imaging data through a unified platform.  
 
-### Update Nginx config for Ohif to pass http auth for accessing Orthanc
-Edit Nginx reverse proxy
-```bash
-nano ./ohif/nginx/ohif.conf
-```
-and paste base64-encoded user name and password
+4. **Cloud Hosting**:  
+   Built on AWS to ensure fast, secure, and reliable access to the system.
 
-```conf
-proxy_set_header Authorization "Basic aHlwZXI6bWFwZHI=";  # Replace with base64-encoded credentials
-```
-> Whenever you access OHIF it won't ask for Orthanc auth and password. 
+---
 
-### Spin up containers
-```bash
-docker-compose up -d
-```
+## **Technology Stack**
+HAske is built using modern and scalable technologies:  
 
-## Second Stage is to Run the Orthanc Explorer Frontend - this frontend can be modified
-The source code for Orthanc Explorer 2 can be found in the Explorer-2 folder 
-#### Front-end development
-> Prerequisites:
-install nodejs version 14 or higher and npm version 6 or higher
-install nginx
+- **Frontend**: React.js. vue.js 
+- **Backend**: Node.js
+- **Database**: AWS S3 bucket
+- **Cloud Hosting**: AWS (Amazon Web Services) , firebase
+- **Medical Imaging**: DICOM standards and PACS framework  
 
-Then, to continuously build and serve the front-end code on your machine, in a shell, type:
-```
-cd WebApplication
-npm install
-npm run dev
-```
-Npm will then serve the /ui/app/ static code (HTML/JS).
+---
 
-> In third shell, type:
-```
-cd ..
-sudo ./scripts/start-nginx.sh
-```
-This will launch an nginx server that will implement reverse proxies to serve both the static code and the Orthanc Rest API on a single endpoind. You may then open http://localhost:5000/ui/app/ to view and debug your current front-end code. As soon as you modify a WebApplication source file, the UI shall reload automatically in the browser.
-### Build Frontend
-Prerequisites to build the frontend: you need nodejs version 14 or higher and npm version 6 or higher.
+## **Future Enhancements**
+🚀 Planned updates include:  
+- **AI Integration** for diagnostic support.  
+- Advanced **image analytics and visualization** tools.  
+- Role-based access control for enhanced security.  
+- Integration with **mobile platforms** for on-the-go access.
 
-To build the frontend:
-```
-cd WebApplication
-npm install
-npm run build
-```
-And then, to build the C++ plugin:
-```
-cd /build
-cmake -DWEBAPP_DIST_SOURCE=LOCAL -DALLOW_DOWNLOADS=ON -DCMAKE_BUILD_TYPE:STRING=Release -DUSE_SYSTEM_ORTHANC_SDK=OFF /sources/Explorer-2/
-make -j 4
-```
+---
+
+## **Contributing**
+We welcome contributions to improve **HAske**! Please follow these steps:  
+1. Fork the repository.  
+2. Create a feature branch: `git checkout -b feature-name`.  
+3. Commit your changes: `git commit -m "Add feature"`.  
+4. Push to the branch: `git push origin feature-name`.  
+5. Create a pull request.  
+
+---
