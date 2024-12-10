@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import navigate from React Router
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
 import "./VerifyPage.css"; // Import CSS file for styles
 
 const VerifyPage = () => {
   const navigate = useNavigate(); // Initialize navigation
+  const location = useLocation(); // Access state passed from registration page
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -11,9 +12,20 @@ const VerifyPage = () => {
     institution_address: "",
     role: "",
     email: "",
+    phone_number: "", // New phone number field
   });
 
   const [notification, setNotification] = useState(""); // State to hold the notification message
+
+  // Pre-fill email from registration page
+  useEffect(() => {
+    if (location.state?.email) {
+      setFormData((prevData) => ({
+        ...prevData,
+        email: location.state.email,
+      }));
+    }
+  }, [location.state]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,7 +49,7 @@ const VerifyPage = () => {
 
       if (response.ok) {
         setNotification(
-          "Verification request submitted successfully! You will be contacted shortly."
+          "Account Approval in progress..! You will be contacted shortly."
         );
         setFormData({
           first_name: "",
@@ -46,8 +58,9 @@ const VerifyPage = () => {
           institution_address: "",
           role: "",
           email: "",
+          phone_number: "",
         });
-        navigate("/verify-waiting"); // Navigate to home or another page after success
+        navigate("/verify-waiting"); // Navigate to verify-waiting page
       } else {
         setNotification(
           "Error: " + (result.message || "An error occurred. Please try again.")
@@ -113,6 +126,16 @@ const VerifyPage = () => {
             name="email"
             placeholder="Email"
             value={formData.email}
+            onChange={handleChange}
+            required
+            readOnly // Make email field read-only since it's pre-filled
+            className="verify-input"
+          />
+          <input
+            type="text"
+            name="phone_number"
+            placeholder="Phone Number"
+            value={formData.phone_number}
             onChange={handleChange}
             required
             className="verify-input"
