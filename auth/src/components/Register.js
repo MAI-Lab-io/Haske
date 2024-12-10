@@ -21,7 +21,7 @@ function Register() {
       alert("Registration successful! Please complete your profile.");
       
       // Redirect to verify-waiting page
-      navigate("/verification");
+      navigate("/verification", { state: { email } });
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         setError("This email is already registered. Please sign in.");
