@@ -144,6 +144,24 @@
   align-items: center;
 }
 
+.action-icon {
+  margin: 0 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.delete-icon {
+  color: red;
+}
+
+.activate-icon {
+  color: green;
+}
+
+.deactivate-icon {
+  color: orange;
+}
+
 .user-table th:last-child {
   width: 100px;
 }
