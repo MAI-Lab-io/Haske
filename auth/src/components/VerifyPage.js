@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import "./VerifyPage.css";
+import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
+import "./VerifyPage.css"; // Import CSS file for styles
 
 const VerifyPage = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const navigate = useNavigate(); // Initialize navigation
+  const location = useLocation(); // Access state passed from registration page
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -12,10 +12,19 @@ const VerifyPage = () => {
     institution_address: "",
     role: "",
     email: "",
-    phone_number: "",
+    phone_number: "", // New phone number field
   });
 
-  const [notification, setNotification] = useState("");
+  const [notification, setNotification] = useState(""); // State to hold the notification message
+
+  const roles = ["Radiologist", "Radiographer", "Front Desk", "IT Specialist"];
+  const institutions = [
+    "Crestview Igbobi",
+    "Crestview Ikeja",
+    "Crestview Ilorin",
+    "Crestview VI",
+    "OOUTH",
+  ];
 
   // Pre-fill email from registration page
   useEffect(() => {
@@ -28,13 +37,12 @@ const VerifyPage = () => {
   }, [location.state]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setNotification("");
+    setNotification(""); // Reset notification on new submission
 
     try {
       const response = await fetch(
@@ -61,7 +69,7 @@ const VerifyPage = () => {
           email: "",
           phone_number: "",
         });
-        navigate("/verify-waiting");
+        navigate("/verify-waiting"); // Navigate to verify-waiting page
       } else {
         setNotification(
           "Error: " + (result.message || "An error occurred. Please try again.")
@@ -96,31 +104,28 @@ const VerifyPage = () => {
             required
             className="verify-input"
           />
-          <input
-            type="text"
-            name="institution_name"
-            placeholder="Institution Name"
-            value={formData.institution_name}
-            onChange={handleChange}
-            required
-            className="verify-input"
-          />
           <select
-            name="institution_address"
-            value={formData.institution_address}
+            name="institution_name"
+            value={formData.institution_name}
             onChange={handleChange}
             required
             className="verify-select"
           >
-            <option value="" disabled>
-              Select Institution Address
-            </option>
-            <option value="Crestview Igbobi">Crestview Igbobi</option>
-            <option value="Crestview Ikeja">Crestview Ikeja</option>
-            <option value="Crestview Ilorin">Crestview Ilorin</option>
-            <option value="Crestview VI">Crestview VI</option>
-            <option value="OOUTH">OOUTH</option>
+            <option value="">Select Institution Name</option>
+            {institutions.map((inst, index) => (
+              <option key={index} value={inst}>
+                {inst}
+              </option>
+            ))}
           </select>
+          <textarea
+            name="institution_address"
+            placeholder="Institution Address"
+            value={formData.institution_address}
+            onChange={handleChange}
+            required
+            className="verify-textarea"
+          ></textarea>
           <select
             name="role"
             value={formData.role}
@@ -128,13 +133,12 @@ const VerifyPage = () => {
             required
             className="verify-select"
           >
-            <option value="" disabled>
-              Select Role
-            </option>
-            <option value="Radiologist">Radiologist</option>
-            <option value="Radiographer">Radiographer</option>
-            <option value="Front Desk">Front Desk</option>
-            <option value="IT Specialist">IT Specialist</option>
+            <option value="">Select Role</option>
+            {roles.map((role, index) => (
+              <option key={index} value={role}>
+                {role}
+              </option>
+            ))}
           </select>
           <input
             type="email"
@@ -143,7 +147,7 @@ const VerifyPage = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            readOnly
+            readOnly // Make email field read-only since it's pre-filled
             className="verify-input"
           />
           <input
@@ -160,6 +164,7 @@ const VerifyPage = () => {
           </button>
         </form>
 
+        {/* Display Notification */}
         {notification && <p className="verify-notification">{notification}</p>}
       </div>
     </div>
