@@ -22,6 +22,7 @@ function SignIn() {
 
       if (!data.isVerified) {
         setError("Your profile has not been completed/approved. Please kindly complete your profile.");
+        alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
         navigate("/verification");
         setLoading(false);
 
