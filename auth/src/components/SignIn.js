@@ -21,7 +21,7 @@ function SignIn() {
       const data = await response.json();
 
       if (!data.isVerified) {
-        setError("Your account is not verified. Please kindly go ahead to verify at the Home page.");
+        setError("Your profile has not been completed/approved. Please kindly complete your profile.");
         navigate("/verification");
         setLoading(false);
 
