@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AdminPage.css"; // For styling
-import { FaTrash } from "react-icons/fa"; // Importing Font Awesome Trash icon
+import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa"; // Importing icons
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -20,30 +20,6 @@ const AdminPage = () => {
     }
   };
 
-  const handleApprove = async (userId, approved) => {
-    try {
-      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ approved }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setNotification("User updated successfully!");
-        fetchUsers(); // Refresh user data after update
-      } else {
-        setNotification("Error: " + result.message || "Approval failed.");
-      }
-    } catch (error) {
-      console.error("Error updating user:", error);
-      setNotification("An error occurred while updating the user.");
-    }
-  };
-
   const handleDeactivate = async (userId, deactivated) => {
     try {
       const response = await fetch(`https://haske.online:8080/api/verification/deactivate-user/${userId}`, {
@@ -54,12 +30,11 @@ const AdminPage = () => {
         body: JSON.stringify({ deactivated }),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
         setNotification(deactivated ? "User deactivated successfully!" : "User activated successfully!");
-        fetchUsers(); // Refresh user data after update
+        fetchUsers();
       } else {
+        const result = await response.json();
         setNotification("Error: " + result.message || "Failed to update user status.");
       }
     } catch (error) {
@@ -69,9 +44,7 @@ const AdminPage = () => {
   };
 
   const handleDelete = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) {
-      return;
-    }
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
       const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
@@ -80,7 +53,7 @@ const AdminPage = () => {
 
       if (response.ok) {
         setNotification("User deleted successfully!");
-        fetchUsers(); // Refresh user list after deletion
+        fetchUsers();
       } else {
         const result = await response.json();
         setNotification("Error: " + result.message || "Failed to delete user.");
@@ -108,11 +81,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetchUsers();
-
-    // Auto-refresh the user data every 60 seconds
     const interval = setInterval(fetchUsers, 30000);
-
-    // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -162,8 +131,6 @@ const AdminPage = () => {
                 <th>Phone Number</th>
                 <th>Status</th>
                 <th>Actions</th>
-                <th>Approve</th>
-                <th>Deactivate</th> {/* New column for deactivation */}
               </tr>
             </thead>
             <tbody>
@@ -178,28 +145,12 @@ const AdminPage = () => {
                   <td>{user.phone_number}</td>
                   <td>{user.deactivated ? "Deactivated" : user.approved ? "Verified" : "Unverified"}</td>
                   <td>
-                    <FaTrash
-                      className="delete-icon"
-                      title="Delete User"
-                      onClick={() => handleDelete(user.id)}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={user.approved}
-                      onChange={() => handleApprove(user.id, !user.approved)}
-                      title="Approve User"
-                      disabled={user.deactivated}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      className={user.deactivated ? "activate-button" : "deactivate-button"}
-                      onClick={() => handleDeactivate(user.id, !user.deactivated)}
-                    >
-                      {user.deactivated ? "Activate" : "Deactivate"}
-                    </button>
+                    <FaTrash className="action-icon delete-icon" title="Delete User" onClick={() => handleDelete(user.id)} />
+                    {user.deactivated ? (
+                      <FaToggleOn className="action-icon activate-icon" title="Activate User" onClick={() => handleDeactivate(user.id, false)} />
+                    ) : (
+                      <FaToggleOff className="action-icon deactivate-icon" title="Deactivate User" onClick={() => handleDeactivate(user.id, true)} />
+                    )}
                   </td>
                 </tr>
               ))}
