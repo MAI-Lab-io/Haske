@@ -14,8 +14,8 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check user verification status from the backend
-  const checkUserVerification = async (email) => {
+  // Check user verification and deactivation status from the backend
+  const checkUserStatus = async (email) => {
     try {
       const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
       const data = await response.json();
@@ -30,12 +30,23 @@ function SignIn() {
         await signOut(auth);
         return false; // User is not verified
       }
-      return true; // User is verified
+
+      if (data.isDeactivated) {
+        setError("Your account has been deactivated. Please contact support for assistance.");
+        alert("Your account has been deactivated. You cannot access this page.");
+        setLoading(false);
+
+        // Sign out the user if they are deactivated
+        await signOut(auth);
+        return false; // User is deactivated
+      }
+
+      return true; // User is verified and not deactivated
     } catch (error) {
-      console.error("Verification check error:", error);
-      setError("An error occurred while verifying your account. Please try again later.");
+      console.error("User status check error:", error);
+      setError("An error occurred while checking your account status. Please try again later.");
       setLoading(false);
-      return false; // Treat as unverified in case of error
+      return false; // Treat as invalid in case of error
     }
   };
 
@@ -47,9 +58,9 @@ function SignIn() {
     setMessage(null);
 
     try {
-      // Check if the user is verified before signing in
-      const isVerified = await checkUserVerification(email);
-      if (!isVerified) return;
+      // Check if the user is verified and not deactivated before signing in
+      const isValidUser = await checkUserStatus(email);
+      if (!isValidUser) return;
 
       // Proceed with Firebase authentication
       await signInWithEmailAndPassword(auth, email, password);
