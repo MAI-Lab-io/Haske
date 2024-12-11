@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
-import "./VerifyPage.css"; // Import CSS file for styles
+import { useNavigate, useLocation } from "react-router-dom";
+import "./VerifyPage.css";
 
 const VerifyPage = () => {
-  const navigate = useNavigate(); // Initialize navigation
-  const location = useLocation(); // Access state passed from registration page
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -12,10 +12,10 @@ const VerifyPage = () => {
     institution_address: "",
     role: "",
     email: "",
-    phone_number: "", // New phone number field
+    phone_number: "",
   });
 
-  const [notification, setNotification] = useState(""); // State to hold the notification message
+  const [notification, setNotification] = useState("");
 
   // Pre-fill email from registration page
   useEffect(() => {
@@ -28,12 +28,13 @@ const VerifyPage = () => {
   }, [location.state]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setNotification(""); // Reset notification on new submission
+    setNotification("");
 
     try {
       const response = await fetch(
@@ -60,7 +61,7 @@ const VerifyPage = () => {
           email: "",
           phone_number: "",
         });
-        navigate("/verify-waiting"); // Navigate to verify-waiting page
+        navigate("/verify-waiting");
       } else {
         setNotification(
           "Error: " + (result.message || "An error occurred. Please try again.")
@@ -104,23 +105,37 @@ const VerifyPage = () => {
             required
             className="verify-input"
           />
-          <textarea
+          <select
             name="institution_address"
-            placeholder="Institution Address"
             value={formData.institution_address}
             onChange={handleChange}
             required
-            className="verify-textarea"
-          ></textarea>
-          <input
-            type="text"
+            className="verify-select"
+          >
+            <option value="" disabled>
+              Select Institution Address
+            </option>
+            <option value="Crestview Igbobi">Crestview Igbobi</option>
+            <option value="Crestview Ikeja">Crestview Ikeja</option>
+            <option value="Crestview Ilorin">Crestview Ilorin</option>
+            <option value="Crestview VI">Crestview VI</option>
+            <option value="OOUTH">OOUTH</option>
+          </select>
+          <select
             name="role"
-            placeholder="Role"
             value={formData.role}
             onChange={handleChange}
             required
-            className="verify-input"
-          />
+            className="verify-select"
+          >
+            <option value="" disabled>
+              Select Role
+            </option>
+            <option value="Radiologist">Radiologist</option>
+            <option value="Radiographer">Radiographer</option>
+            <option value="Front Desk">Front Desk</option>
+            <option value="IT Specialist">IT Specialist</option>
+          </select>
           <input
             type="email"
             name="email"
@@ -128,7 +143,7 @@ const VerifyPage = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            readOnly // Make email field read-only since it's pre-filled
+            readOnly
             className="verify-input"
           />
           <input
@@ -145,7 +160,6 @@ const VerifyPage = () => {
           </button>
         </form>
 
-        {/* Display Notification */}
         {notification && <p className="verify-notification">{notification}</p>}
       </div>
     </div>
