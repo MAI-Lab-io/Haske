@@ -75,7 +75,7 @@ const VerifyPage = () => {
   return (
     <div className="verify-container">
       <div className="form-wrapper">
-        <h2 className="form-title">Verify Your Role</h2>
+        <h2 className="form-title">Users Profile</h2>
         <form className="verify-form" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -141,7 +141,7 @@ const VerifyPage = () => {
             className="verify-input"
           />
           <button type="submit" className="verify-button">
-            Verify Your Role
+            Complete Profile
           </button>
         </form>
 
