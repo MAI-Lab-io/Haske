@@ -44,6 +44,30 @@ const AdminPage = () => {
     }
   };
 
+  const handleDeactivate = async (userId, deactivated) => {
+    try {
+      const response = await fetch(`https://haske.online:8080/api/verification/deactivate-user/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ deactivated }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setNotification(deactivated ? "User deactivated successfully!" : "User activated successfully!");
+        fetchUsers(); // Refresh user data after update
+      } else {
+        setNotification("Error: " + result.message || "Failed to update user status.");
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      setNotification("An error occurred while updating the user status.");
+    }
+  };
+
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) {
       return;
@@ -72,9 +96,11 @@ const AdminPage = () => {
     setFilter(filterValue);
 
     if (filterValue === "verified") {
-      setFilteredUsers(users.filter((user) => user.approved));
+      setFilteredUsers(users.filter((user) => user.approved && !user.deactivated));
     } else if (filterValue === "unverified") {
       setFilteredUsers(users.filter((user) => !user.approved));
+    } else if (filterValue === "deactivated") {
+      setFilteredUsers(users.filter((user) => user.deactivated));
     } else {
       setFilteredUsers(users);
     }
@@ -117,6 +143,7 @@ const AdminPage = () => {
             <option value="all">All Users</option>
             <option value="verified">Verified</option>
             <option value="unverified">Unverified</option>
+            <option value="deactivated">Deactivated</option>
           </select>
         </div>
 
@@ -128,25 +155,28 @@ const AdminPage = () => {
               <tr>
                 <th>Last Name / Surname</th>
                 <th>First Name</th>
-                <th>Institution</th>
+                <th>Institution Name</th>
                 <th>Institution Address</th>
                 <th>Role</th>
                 <th>Email</th>
+                <th>Phone Number</th>
                 <th>Status</th>
                 <th>Actions</th>
-                <th>Approve</th> {/* New column for approval */}
+                <th>Approve</th>
+                <th>Deactivate</th> {/* New column for deactivation */}
               </tr>
             </thead>
             <tbody>
               {filteredUsers.map((user) => (
-                <tr key={user.id} className={user.approved ? "verified-row" : "unverified-row"}>
+                <tr key={user.id} className={user.deactivated ? "deactivated-row" : user.approved ? "verified-row" : "unverified-row"}>
                   <td>{user.last_name}</td>
                   <td>{user.first_name}</td>
                   <td>{user.institution_name}</td>
                   <td>{user.institution_address}</td>
                   <td>{user.role}</td>
                   <td>{user.email}</td>
-                  <td>{user.approved ? "Verified" : "Unverified"}</td>
+                  <td>{user.phone_number}</td>
+                  <td>{user.deactivated ? "Deactivated" : user.approved ? "Verified" : "Unverified"}</td>
                   <td>
                     <FaTrash
                       className="delete-icon"
@@ -160,7 +190,16 @@ const AdminPage = () => {
                       checked={user.approved}
                       onChange={() => handleApprove(user.id, !user.approved)}
                       title="Approve User"
+                      disabled={user.deactivated}
                     />
+                  </td>
+                  <td>
+                    <button
+                      className={user.deactivated ? "activate-button" : "deactivate-button"}
+                      onClick={() => handleDeactivate(user.id, !user.deactivated)}
+                    >
+                      {user.deactivated ? "Activate" : "Deactivate"}
+                    </button>
                   </td>
                 </tr>
               ))}
