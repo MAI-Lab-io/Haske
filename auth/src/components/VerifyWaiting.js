@@ -5,9 +5,9 @@ const VerifyWaiting = () => {
   return (
     <div className="verify-waiting-container">
       <div className="verify-waiting-card">
-        <h1 className="verify-title">🎉 Thank You! 🎉</h1>
+        <h1 className="verify-title">Thank You!</h1>
         <p className="verify-text">
-          Your verification request has been received.  
+          Your registration has been successfully completed.   
           <br />
           We'll get back to you shortly via email.
         </p>
