@@ -24,7 +24,9 @@ function Register() {
       navigate("/verification", { state: { email } });
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
-        setError("This email is already registered. Please sign in.");
+        setError("This email is already registered but not yet approved. Please sign in.");
+        alert("Please complete your profile.");
+        navigate("/verification", { state: { email } });
       } else {
         setError(error.message);
       }
