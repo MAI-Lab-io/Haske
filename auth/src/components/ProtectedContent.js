@@ -5,18 +5,20 @@ import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null); // State to track verification status
+    const [institutionName, setInstitutionName] = useState(""); // State to track the institution name
     const navigate = useNavigate();
 
     useEffect(() => {
         // Get the current user and check verification status
         const user = auth.currentUser;
         if (user) {
-            // Call backend to check if the user is verified using fetch
+            // Call backend to check if the user is verified
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json()) // Parse the JSON response
                 .then((data) => {
                     if (data.isVerified) {
                         setIsVerified(true);
+                        setInstitutionName(data.institution_name); // Set institution name from the response
                     } else {
                         setIsVerified(false);
                     }
@@ -30,9 +32,16 @@ function ProtectedContent() {
         }
     }, []);
 
+    useEffect(() => {
+        const iframe = document.querySelector(".protected-iframe");
+        if (iframe && institutionName) {
+            iframe.contentWindow.postMessage({ institutionName }, "*");
+        }
+    }, [institutionName]);
+
     const handleSignOut = () => {
         auth.signOut().then(() => {
-             // Redirect to LandingPage with a message
+            navigate("/landing", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
         });
     };
 
@@ -41,7 +50,7 @@ function ProtectedContent() {
     }
 
     if (isVerified === false) {
-        navigate("/register"); // Redirect to homepage if not verified with message
+        navigate("/register"); // Redirect to register page if not verified
         return null; // Prevent further rendering
     }
 
