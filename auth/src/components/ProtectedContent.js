@@ -5,7 +5,7 @@ import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null); // State to track verification status
-    const [institutionName, setInstitutionName] = useState(""); // State to track the institution name
+    const [InstitutionName, setInstitutionName] = useState(""); // State to track the institution name
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,8 +34,8 @@ function ProtectedContent() {
 
     useEffect(() => {
         const iframe = document.querySelector(".protected-iframe");
-        if (iframe && institutionName) {
-            iframe.contentWindow.postMessage({ institutionName }, "*");
+        if (iframe && InstitutionName) {
+            iframe.contentWindow.postMessage({ InstitutionName }, "*");
         }
     }, [institutionName]);
 
