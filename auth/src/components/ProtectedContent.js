@@ -37,7 +37,7 @@ function ProtectedContent() {
         if (iframe && InstitutionName) {
             iframe.contentWindow.postMessage({ InstitutionName }, "*");
         }
-    }, [institutionName]);
+    }, [InstitutionName]);
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
