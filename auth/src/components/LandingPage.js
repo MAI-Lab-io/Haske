@@ -34,19 +34,30 @@ const Footer = () => {
   );
 };
 
-// Sponsors Section
+// Sponsors Section with improved structure
 const Sponsors = () => (
   <section className="sponsors-section">
     <h3 className="sponsors-title">Our Partners & Sponsors</h3>
+    <p className="sponsors-description">
+      We are proud to collaborate with leading organizations and institutions supporting our mission.
+    </p>
     <div className="sponsors-logos">
-      <img src={sponsor1} alt="Sponsor 1" className="sponsor-logo" />
-      <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
-      <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
-      <img src={sponsor4} alt="Sponsor 4" className="sponsor-logo" />
-      {/* Add more sponsor logos as needed */}
+      <div className="sponsor-logo-wrapper">
+        <img src={sponsor1} alt="Sponsor 1" className="sponsor-logo" />
+      </div>
+      <div className="sponsor-logo-wrapper">
+        <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
+      </div>
+      <div className="sponsor-logo-wrapper">
+        <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
+      </div>
+      <div className="sponsor-logo-wrapper">
+        <img src={sponsor4} alt="Sponsor 4" className="sponsor-logo" />
+      </div>
     </div>
   </section>
 );
+
 
 // LandingPage Component
 function LandingPage() {
