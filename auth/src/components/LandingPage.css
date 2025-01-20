@@ -5,120 +5,114 @@
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-  }
-  
-  .landing-container {
+}
+
+.landing-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     background: #f8f9fa;
     color: #333;
-  }
-  
-  .landing-header {
+}
+
+.landing-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 50px;
     background: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .logo {
+}
+
+.logo {
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
-  }
-  
-  .nav-links {
+}
+
+.nav-links {
     display: flex;
     gap: 20px;
-  }
-
-
+}
 
 /* Sponsors Section Styling */
 .sponsors-section {
-  padding: 50px 20px;
-  background-color: #f8f9fa; /* Light background for contrast */
-  text-align: center;
+    padding: 50px 20px;
+    background-color: #f8f9fa; /* Light background for contrast */
+    text-align: center;
 }
 
 .sponsors-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333; /* Neutral dark text color */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333; /* Neutral dark text color */
 }
 
 .sponsors-logos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px; /* Space between logos */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between logos */
 }
 
 .sponsor-logo {
-  height: 60px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
+    height: 60px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
 }
 
 .sponsor-logo:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-  
-  .nav-button {
+.nav-button {
     color: #333;
     text-decoration: none;
     padding: 10px 20px;
     font-weight: bold;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
-  }
+}
 
-  .logo {
+.logo {
     height: 50px; /* Adjust the height as necessary */
     width: auto;  /* Maintain aspect ratio */
-  }
-  
-  .nav-button:hover {
+}
+
+.nav-button:hover {
     background-color: #333;
     color: #fff;
-  }
+}
 
-
-
-  
-  .landing-content {
+.landing-content {
     text-align: center;
     flex: 1;
     padding: 100px 20px;
     background: linear-gradient(135deg, #333, #777);
     color: #fff;
-  }
-  
-  .landing-content h2 {
+}
+
+.landing-content h2 {
     font-size: 2.5rem;
     margin-bottom: 20px;
-  }
-  
-  .landing-subtitle {
+}
+
+.landing-subtitle {
     font-size: 1.25rem;
     margin-bottom: 40px;
     color: #ddd;
-  }
-  
-  .action-buttons {
+}
+
+.action-buttons {
     display: flex;
     justify-content: center;
     gap: 20px;
-  }
-  
-  .action-button {
+}
+
+.action-button {
     padding: 15px 30px;
     border-radius: 5px;
     background-color: #333;
@@ -126,59 +120,57 @@
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.3s ease;
-  }
-  
-  .action-button:hover {
-    background-color: #555;
-  }
-  
-.landing-footer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #D3D3D3; /* Tesla's classic black footer */
-  color: #000;
-  padding: 20px;
-  font-size: 14px;
 }
 
+.action-button:hover {
+    background-color: #555;
+}
 
+.landing-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #D3D3D3; /* Tesla's classic black footer */
+    color: #000;
+    padding: 20px;
+    font-size: 14px;
+}
 
 .footer-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
 }
 
 .footer-left {
-  text-align: left;
+    text-align: left;
 }
 
 .footer-right {
-  display: flex;
-  align-items: center;
-  text-align: right;
+    display: flex;
+    align-items: center;
+    text-align: right;
 }
 
 .footer-right span {
-  margin-right: 10px;
+    margin-right: 10px;
 }
 
 .mailab-link {
-  display: inline-block;
+    display: inline-block;
 }
 
 .mailab-logo {
-  height: 24px;
-  vertical-align: middle;
-  transition: transform 0.3s ease;
+    height: 24px;
+    vertical-align: middle;
+    transition: transform 0.3s ease;
 }
 
 .mailab-logo:hover {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 /* Add this to your LandingPage.css or global CSS file */
@@ -195,5 +187,3 @@
     font-size: 16px;
     z-index: 9999;
 }
-
-
