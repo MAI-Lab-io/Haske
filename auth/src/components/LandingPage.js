@@ -4,10 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
-import sponsor1 from "../assets/sponsor1.png"
-import sponsor2 from "../assets/sponsor2.png"
-import sponsor3 from "../assets/sponsor3.png"
-import sponsor4 from "../assets/sponsor4.png"
+import sponsor1 from "../assets/sponsor1.png"; // Example sponsor logo
+import sponsor2 from "../assets/sponsor2.png"; // Example sponsor logo
+import sponsor3 from "../assets/sponsor3.png"; // Example sponsor logo
 
 // Footer Component
 const Footer = () => {
@@ -20,7 +19,12 @@ const Footer = () => {
         </div>
         <div className="footer-right">
           <span>Powered by</span>
-          <a href="https://mailab.io" target="_blank" rel="noopener noreferrer" className="mailab-link">
+          <a
+            href="https://mailab.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mailab-link"
+          >
             <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
           </a>
         </div>
@@ -37,11 +41,10 @@ const Sponsors = () => (
       <img src={sponsor1} alt="Sponsor 1" className="sponsor-logo" />
       <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
       <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
-      <img src={sponsor4} alt="Sponsor 3" className="sponsor-logo" />
-  {/* Add more sponsor logos as needed */}
-   </div>
+      {/* Add more sponsor logos as needed */}
+    </div>
   </section>
-);    
+);
 
 // LandingPage Component
 function LandingPage() {
@@ -90,6 +93,10 @@ function LandingPage() {
         </div>
       </main>
 
+      {/* Sponsors Section */}
+      <Sponsors />
+
+      {/* Footer Section */}
       <Footer />
     </div>
   );
