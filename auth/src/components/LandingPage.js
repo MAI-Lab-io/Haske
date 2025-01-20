@@ -42,6 +42,7 @@ const Sponsors = () => (
       <img src={sponsor1} alt="Sponsor 1" className="sponsor-logo" />
       <img src={sponsor2} alt="Sponsor 2" className="sponsor-logo" />
       <img src={sponsor3} alt="Sponsor 3" className="sponsor-logo" />
+      <img src={sponsor4} alt="Sponsor 4" className="sponsor-logo" />
       {/* Add more sponsor logos as needed */}
     </div>
   </section>
