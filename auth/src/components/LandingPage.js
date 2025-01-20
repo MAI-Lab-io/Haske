@@ -8,6 +8,8 @@ import sponsor1 from "../assets/sponsor1.png";
 import sponsor2 from "../assets/sponsor2.png"; 
 import sponsor3 from "../assets/sponsor3.png"; 
 import sponsor4 from "../assets/sponsor4.png";
+import sponsor5 from "../assets/mailablogo.png";
+
 
 // Footer Component
 const Footer = () => {
@@ -53,6 +55,9 @@ const Sponsors = () => (
       </div>
       <div className="sponsor-logo-wrapper">
         <img src={sponsor4} alt="Sponsor 4" className="sponsor-logo" />
+      </div>
+   <div className="sponsor-logo-wrapper">
+        <img src={sponsor5} alt="Sponsor 5" className="sponsor-logo" />
       </div>
     </div>
   </section>
