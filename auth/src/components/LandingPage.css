@@ -38,7 +38,7 @@
 /* Sponsors Section Styling */
 /* Sponsors Section Styling */
 .sponsors-section {
-    padding: 60px 20px;
+    padding: 20px 5px;
     background-color: #f4f4f4; /* Light gray background for better contrast */
     text-align: center;
     border-top: 1px solid #ddd; /* Add a subtle top border */
@@ -70,7 +70,7 @@
     justify-content: center;
     align-items: center;
     background-color: #fff; /* White background for logo emphasis */
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
