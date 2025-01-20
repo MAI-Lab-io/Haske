@@ -36,17 +36,25 @@
 }
 
 /* Sponsors Section Styling */
+/* Sponsors Section Styling */
 .sponsors-section {
-    padding: 50px 20px;
-    background-color: #f8f9fa; /* Light background for contrast */
+    padding: 60px 20px;
+    background-color: #f4f4f4; /* Light gray background for better contrast */
     text-align: center;
+    border-top: 1px solid #ddd; /* Add a subtle top border */
 }
 
 .sponsors-title {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
-    margin-bottom: 20px;
-    color: #333; /* Neutral dark text color */
+    margin-bottom: 15px;
+    color: #222; /* Slightly darker for better readability */
+}
+
+.sponsors-description {
+    font-size: 16px;
+    color: #666; /* Neutral gray for the description text */
+    margin-bottom: 30px;
 }
 
 .sponsors-logos {
@@ -54,19 +62,30 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px; /* Space between logos */
+    gap: 30px; /* Larger gap for better spacing */
+}
+
+.sponsor-logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff; /* White background for logo emphasis */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sponsor-logo-wrapper:hover {
+    transform: scale(1.1); /* Scale effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
 }
 
 .sponsor-logo {
-    height: 60px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+    max-height: 80px; /* Ensure all logos are uniform in size */
+    max-width: 100%; /* Keep aspect ratio intact */
 }
 
-.sponsor-logo:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
 
 .nav-button {
     color: #333;
