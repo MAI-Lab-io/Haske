@@ -4,9 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
-import sponsor1 from "../assets/sponsor1.png"; // Example sponsor logo
-import sponsor2 from "../assets/sponsor2.png"; // Example sponsor logo
-import sponsor3 from "../assets/sponsor3.png"; // Example sponsor logo
+import sponsor1 from "../assets/sponsor1.png";
+import sponsor2 from "../assets/sponsor2.png"; 
+import sponsor3 from "../assets/sponsor3.png"; 
+import sponsor4 from "../assets/sponsor4.png";
 
 // Footer Component
 const Footer = () => {
