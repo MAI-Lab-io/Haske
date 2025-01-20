@@ -8,7 +8,7 @@ import sponsor1 from "../assets/sponsor1.png";
 import sponsor2 from "../assets/sponsor2.png"; 
 import sponsor3 from "../assets/sponsor3.png"; 
 import sponsor4 from "../assets/sponsor4.png";
-import sponsor5 from "../assets/mailablogo.png";
+import sponsor5 from "../assets/sponsor5.png";
 
 
 // Footer Component
@@ -44,10 +44,7 @@ const Sponsors = () => (
       We are proud to collaborate with leading organizations and institutions supporting our mission.
     </p>
     <div className="sponsors-logos">
-    <div className="sponsor-logo-wrapper">
-        <img src={sponsor5} alt="MAILab" className="sponsor-logo" />
-      </div>
-      <div className="sponsor-logo-wrapper">
+         <div className="sponsor-logo-wrapper">
         <img src={sponsor1} alt="Upenn" className="sponsor-logo" />
       </div>
       <div className="sponsor-logo-wrapper">
@@ -58,6 +55,9 @@ const Sponsors = () => (
       </div>
       <div className="sponsor-logo-wrapper">
         <img src={sponsor4} alt="Lacuna" className="sponsor-logo" />
+      </div>
+   <div className="sponsor-logo-wrapper">
+        <img src={sponsor5} alt="NAIRS" className="sponsor-logo" />
       </div>
     </div>
   </section>
