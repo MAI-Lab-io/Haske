@@ -33,7 +33,7 @@
     border-radius: 4px; /* Rounded corners */
     cursor: pointer; /* Pointer on hover */
     font-size: 1rem; /* Font size */
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .signout-button:hover {
@@ -41,6 +41,8 @@
 }
 
 /* Responsive Design */
+
+/* For tablets and medium-sized screens */
 @media screen and (max-width: 768px) {
     .protected-iframe {
         height: 70vh; /* Adjust iframe height for smaller screens */
@@ -52,6 +54,7 @@
     }
 }
 
+/* For smaller mobile devices */
 @media screen and (max-width: 480px) {
     .protected-container {
         padding: 10px; /* Reduce padding on very small devices */
