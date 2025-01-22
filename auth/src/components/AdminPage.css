@@ -1,6 +1,5 @@
 .admin-container {
   display: flex;
-  flex-direction: row;
   height: 100vh;
   background-color: #e8e9ed; /* Light cool-gray */
   font-family: "Roboto", sans-serif; /* Modern font */
@@ -80,7 +79,6 @@
   display: flex;
   gap: 20px;
   align-items: center;
-  flex-wrap: wrap;
 }
 
 .filter-section label {
@@ -97,13 +95,7 @@
   font-weight: 500;
 }
 
-.user-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.user-table th,
-.user-table td {
+.user-table th, .user-table td {
   padding: 12px 20px;
   text-align: left;
   font-size: 15px;
@@ -124,21 +116,11 @@
   background-color: #ffcdd2; /* Soft red for unverified */
 }
 
-.user-table td:last-child {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.delete-icon,
-.approve-icon {
+.delete-icon {
+  color: #e53935;
   font-size: 18px;
   cursor: pointer;
   transition: all 0.3s ease;
-}
-
-.delete-icon {
-  color: red;
 }
 
 .delete-icon:hover {
@@ -146,22 +128,42 @@
 }
 
 .approve-icon {
-  color: #1de9b6;
+  color: #1de9b6; /* Cyan color for approval check */
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .approve-icon:hover {
-  color: #00bfae;
+  color: #00bfae; /* Darker cyan on hover */
 }
 
-@media (max-width: 1024px) {
-  .admin-sidebar {
-    width: 200px;
-    padding: 15px;
-  }
+.user-table td:last-child {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
-  .admin-header {
-    font-size: 24px;
-  }
+.action-icon {
+  margin: 0 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.delete-icon {
+  color: red;
+}
+
+.activate-icon {
+  color: green;
+}
+
+.deactivate-icon {
+  color: orange;
+}
+
+.user-table th:last-child {
+  width: 100px;
 }
 
 @media (max-width: 768px) {
@@ -174,44 +176,7 @@
     box-shadow: none;
   }
 
-  .sidebar-logo {
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-
   .admin-content {
     padding: 10px;
-  }
-
-  .user-table th,
-  .user-table td {
-    font-size: 14px;
-    padding: 8px 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar-menu a {
-    font-size: 14px;
-  }
-
-  .filter-section {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .admin-header {
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
-
-  .notification {
-    font-size: 12px;
-  }
-
-  .user-table th:last-child,
-  .user-table td:last-child {
-    flex-direction: column;
-    align-items: center;
   }
 }
