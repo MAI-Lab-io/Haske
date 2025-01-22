@@ -58,7 +58,7 @@
 }
 
 /* Responsive Header */
-@media (max-width: 1700px) {
+@media (max-width: 200px) {
     .nav-links {
         flex-direction: column;
         gap: 10px;
