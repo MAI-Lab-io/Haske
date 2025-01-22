@@ -51,6 +51,7 @@ function ProtectedContent() {
     const checkInactivity = () => {
         const lastActivityTime = localStorage.getItem("lastActivity");
         if (lastActivityTime && Date.now() - lastActivityTime > inactivityLimit) {
+            localStorage.removeItem("lastActivity"); // Clear session if expired
             navigate("/"); // Redirect to landing page after 15 minutes of inactivity
         }
     };
@@ -75,14 +76,15 @@ function ProtectedContent() {
 
     // Check inactivity on every page load
     useEffect(() => {
-        checkInactivity();
-    }, []);
-
-    // Handle session expiration on page reload
-    useEffect(() => {
+        // Check if session is still valid when page is reloaded
         const sessionExpiration = localStorage.getItem("lastActivity");
-        if (sessionExpiration && Date.now() - sessionExpiration > inactivityLimit) {
-            navigate("/"); // Redirect to the landing page after inactivity
+        if (!sessionExpiration) {
+            // If there's no stored last activity, redirect immediately
+            navigate("/"); // Redirect to the landing page if no session exists
+        } else if (Date.now() - sessionExpiration > inactivityLimit) {
+            // If session has expired, clear session and redirect
+            localStorage.removeItem("lastActivity"); // Clear session
+            navigate("/"); // Redirect to landing page after inactivity
         }
     }, [navigate]);
 
