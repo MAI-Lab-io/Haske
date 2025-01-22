@@ -88,6 +88,15 @@ function ProtectedContent() {
         }
     }, [navigate]);
 
+    // Auto-refresh the page every 10 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            window.location.reload(); // Reload the page
+        }, 10000); // 10000ms = 10 seconds
+
+        return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, []);
+
     if (isVerified === null) {
         return <div>Loading...</div>; // Wait for verification check response
     }
