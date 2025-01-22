@@ -28,7 +28,7 @@
 }
 
 .logo {
-    font-size: 1.5rem;
+    font-size: 0.9rem;
     font-weight: bold;
     color: #333;
 }
@@ -58,7 +58,7 @@
 }
 
 /* Responsive Header */
-@media (max-width: 700px) {
+@media (max-width: 1700px) {
     .nav-links {
         flex-direction: column;
         gap: 10px;
@@ -71,7 +71,7 @@
     }
 
     .logo {
-        font-size: 1.0rem;
+        font-size: 0.9rem;
     }
 }
 
