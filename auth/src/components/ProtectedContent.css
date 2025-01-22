@@ -5,13 +5,15 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh; /* Full viewport height */
+    min-height: 100vh; /* Full viewport height */
     background-color: #f0f4f8; /* Light background color */
     padding: 20px; /* Padding around the content */
+    box-sizing: border-box; /* Include padding in total width/height */
 }
 
 .protected-iframe {
     width: 100%;
+    max-width: 1200px; /* Limit iframe width on larger screens */
     height: 90vh; /* Iframe height */
     border: none; /* No border for iframe */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for iframe */
@@ -35,5 +37,32 @@
 }
 
 .signout-button:hover {
-    background-color: #5d455f; /* Darker blue on hover */
+    background-color: #4a374b; /* Slightly darker color on hover */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .protected-iframe {
+        height: 70vh; /* Adjust iframe height for smaller screens */
+    }
+
+    .signout-button {
+        font-size: 0.9rem; /* Smaller font size for buttons */
+        padding: 10px 16px; /* Adjust padding */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .protected-container {
+        padding: 10px; /* Reduce padding on very small devices */
+    }
+
+    .protected-iframe {
+        height: 60vh; /* Further adjust iframe height for smaller screens */
+    }
+
+    .signout-button {
+        font-size: 0.8rem; /* Further reduce font size for small devices */
+        padding: 8px 14px; /* Adjust padding for compact view */
+    }
 }
