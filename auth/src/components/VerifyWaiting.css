@@ -7,6 +7,7 @@
   height: 100vh;
   background: linear-gradient(135deg, #ff8a00, #e52e71);
   font-family: "Roboto", sans-serif;
+  padding: 20px; /* Ensure content is not cut off on smaller screens */
 }
 
 .verify-waiting-card {
@@ -20,7 +21,6 @@
 }
 
 .verify-title {
-  
   font-size: 2.5rem;
   font-weight: 700;
   color: #ff5722;
@@ -39,4 +39,44 @@
   font-size: 1rem;
   font-style: italic;
   color: #777777;
+}
+
+/* Media Queries for Responsiveness */
+
+/* For screens smaller than 768px (e.g., tablets and small devices) */
+@media (max-width: 768px) {
+  .verify-waiting-card {
+    padding: 30px 20px; /* Reduce padding for smaller screens */
+  }
+
+  .verify-title {
+    font-size: 2rem; /* Adjust title font size */
+  }
+
+  .verify-text {
+    font-size: 1rem; /* Adjust text font size */
+  }
+
+  .verify-signature {
+    font-size: 0.9rem; /* Adjust signature font size */
+  }
+}
+
+/* For screens smaller than 480px (e.g., mobile phones) */
+@media (max-width: 480px) {
+  .verify-waiting-card {
+    padding: 20px 15px; /* Further reduce padding */
+  }
+
+  .verify-title {
+    font-size: 1.8rem; /* Further adjust title font size */
+  }
+
+  .verify-text {
+    font-size: 0.9rem; /* Further adjust text font size */
+  }
+
+  .verify-signature {
+    font-size: 0.8rem; /* Further adjust signature font size */
+  }
 }
