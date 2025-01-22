@@ -41,7 +41,7 @@ function ProtectedContent() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/LandingPage", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
+            navigate("/", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
         });
     };
 
