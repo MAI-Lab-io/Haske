@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Roboto:wght@400;500&display=swap");
 
+/* General Styles */
 .verify-waiting-container {
   display: flex;
   justify-content: center;
@@ -8,6 +9,8 @@
   background: linear-gradient(135deg, #ff8a00, #e52e71);
   font-family: "Roboto", sans-serif;
   padding: 20px; /* Ensure content is not cut off on smaller screens */
+  margin: 0; /* Ensure no default browser margin affects layout */
+  box-sizing: border-box; /* Consistent sizing across all elements */
 }
 
 .verify-waiting-card {
@@ -18,6 +21,7 @@
   text-align: center;
   max-width: 500px;
   width: 90%;
+  box-sizing: border-box; /* Ensure padding is considered in element width */
 }
 
 .verify-title {
