@@ -34,7 +34,7 @@ function ProtectedContent() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
+            navigate("/register", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
             localStorage.removeItem("lastActivity"); // Clear the last activity on sign out
         });
     };
@@ -43,7 +43,7 @@ function ProtectedContent() {
         const lastActivityTime = localStorage.getItem("lastActivity");
         if (lastActivityTime && Date.now() - lastActivityTime > inactivityLimit) {
             localStorage.removeItem("lastActivity"); // Clear session if expired
-            navigate("/"); // Redirect to landing page after 15 minutes of inactivity
+            navigate("/register"); // Redirect to landing page after 15 minutes of inactivity
         }
     };
 
@@ -69,10 +69,10 @@ function ProtectedContent() {
     useEffect(() => {
         const sessionExpiration = localStorage.getItem("lastActivity");
         if (!sessionExpiration) {
-            navigate("/"); // Redirect to the landing page if no session exists
+            navigate("/register"); // Redirect to the landing page if no session exists
         } else if (Date.now() - sessionExpiration > inactivityLimit) {
             localStorage.removeItem("lastActivity"); // Clear session
-            navigate("/"); // Redirect to landing page after inactivity
+            navigate("/register"); // Redirect to landing page after inactivity
         }
 
         // Set an interval to check inactivity continuously
