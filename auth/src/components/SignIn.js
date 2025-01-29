@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password visibility toggle
@@ -13,6 +13,17 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Track authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/patient-details"); // Redirect to patient details if the user is logged in
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   // Function to check user verification and deactivation status from the backend
   const checkUserStatus = async (email) => {
