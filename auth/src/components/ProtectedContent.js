@@ -72,6 +72,14 @@ function ProtectedContent() {
         }
     }, [isVerified, navigate]);
 
+    // Handle user sign out
+    const handleSignOut = () => {
+        auth.signOut().then(() => {
+            navigate("/register", { state: { message: "Signed out successfully!" } }); // Redirect to register page
+            localStorage.removeItem("lastActivity"); // Clear session data
+        });
+    };
+
     if (isVerified === null) {
         return <div>Loading...</div>; // Wait for verification check response
     }
