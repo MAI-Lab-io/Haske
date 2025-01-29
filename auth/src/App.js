@@ -10,37 +10,41 @@ import { auth } from "./firebaseConfig"; // Firebase auth import
 import VerifyWaiting from "./components/VerifyWaiting";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+const [user, setUser] = useState(null);
+const [loading, setLoading] = useState(true); // Add a loading state
 
-  useEffect(() => {
-    // Listen to authentication state changes
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user); // Set user to state when authentication state changes
-    });
+useEffect(() => {
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    setUser(user);
+    setLoading(false); // Set loading to false after auth state is checked
+  });
 
-    // Cleanup listener on unmount
-    return () => unsubscribe();
-  }, []);
+  return () => unsubscribe();
+}, []);
 
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/signin"
-          element={<SignIn />}
-        />
-        <Route path="/verification" element={<VerifyPage />} />
-        <Route path="/verify-waiting" element={<VerifyWaiting />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/patient-details"
-          element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
-        />
-      </Routes>
-    </Router>
-  );
+if (loading) {
+  return <div>Loading...</div>; // Show a loading message or spinner
+}
+
+return (
+  <Router>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route
+        path="/signin"
+        element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
+      />
+      <Route path="/verification" element={<VerifyPage />} />
+      <Route path="/verify-waiting" element={<VerifyWaiting />} />
+      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/register" element={<Register />} />
+      <Route
+        path="/patient-details"
+        element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
+      />
+    </Routes>
+  </Router>
+);
 };
 
 export default App;
