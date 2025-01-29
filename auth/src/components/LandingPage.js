@@ -44,6 +44,7 @@ const Sponsors = () => (
       We are proud to collaborate with leading organizations and institutions supporting our mission.
     </p>
     <div className="sponsors-logos">
+  
          <div className="sponsor-logo-wrapper">
         <img src={sponsor1} alt="Upenn" className="sponsor-logo" />
       </div>
