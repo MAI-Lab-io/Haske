@@ -39,7 +39,7 @@ const checkUserStatus = async (email) => {
 
       // Sign out the user if they are deactivated
       await signOut(auth);
-      navigate("/"); // Redirect to home page or login screen
+      navigate("/register"); // Redirect to home page or login screen
       return false; // User is deactivated
     }
 
