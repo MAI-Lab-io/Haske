@@ -6,6 +6,8 @@ import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
+import AboutUs from "./pages/AboutUs";
+import Publications from "./pages/Publications";
 import { auth } from "./firebaseConfig"; // Firebase auth import
 import VerifyWaiting from "./components/VerifyWaiting";
 
@@ -39,6 +41,8 @@ return (
       <Route path="/verify-waiting" element={<VerifyWaiting />} />
       <Route path="/admin" element={<AdminPage />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/about-us" element={<AboutUs />} />
+      <Route path="/publications" element={<Publications />} />
       <Route
         path="/patient-details"
         element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
