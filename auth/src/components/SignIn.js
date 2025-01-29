@@ -14,31 +14,44 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check user verification status from the backend
-  const checkUserStatus = async (email) => {
-    try {
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-      const data = await response.json();
+  // Check user verification and deactivation status from the backend
+  // Check user verification and deactivation status from the backend
+const checkUserStatus = async (email) => {
+  try {
+    const response = await fetch(https://haske.online:8080/api/verification/check-verification?email=${email});
+    const data = await response.json();
 
-      if (!data.isVerified) {
-        setError("Your profile has not been completed/approved. Please kindly complete your profile.");
-        alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
-        navigate("/verification");
-        setLoading(false);
-
-        // Sign out the user if they are not verified
-        await signOut(auth);
-        return false; // User is not verified
-      }
-
-      return true; // User is verified
-    } catch (error) {
-      console.error("User status check error:", error);
-      setError("An error occurred while checking your account status. Please try again later.");
+    if (!data.isVerified) {
+      setError("Your profile has not been completed/approved. Please kindly complete your profile.");
+      alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
+      navigate("/verification");
       setLoading(false);
-      return false; // Treat as invalid in case of error
+
+      // Sign out the user if they are not verified
+      await signOut(auth);
+      return false; // User is not verified
     }
-  };
+
+    if (data.isDeactivated) {
+      setError("Your account has been deactivated. Please contact support for assistance.");
+      alert("Your account has been deactivated. You cannot access this page.");
+      setLoading(false);
+
+      // Sign out the user if they are deactivated
+      await signOut(auth);
+      navigate("/"); // Redirect to home page or login screen
+      return false; // User is deactivated
+    }
+
+    return true; // User is verified and not deactivated
+  } catch (error) {
+    console.error("User status check error:", error);
+    setError("An error occurred while checking your account status. Please try again later.");
+    setLoading(false);
+    return false; // Treat as invalid in case of error
+  }
+};
+
 
   // Handle user sign-in
   const handleSignIn = async (e) => {
@@ -48,7 +61,7 @@ function SignIn() {
     setMessage(null);
 
     try {
-      // Check if the user is verified before signing in
+      // Check if the user is verified and not deactivated before signing in
       const isValidUser = await checkUserStatus(email);
       if (!isValidUser) return;
 
