@@ -18,7 +18,7 @@ function SignIn() {
   // Check user verification and deactivation status from the backend
 const checkUserStatus = async (email) => {
   try {
-    const response = await fetch(https://haske.online:8080/api/verification/check-verification?email=${email});
+    const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
     const data = await response.json();
 
     if (!data.isVerified) {
