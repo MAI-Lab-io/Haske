@@ -43,24 +43,34 @@ const Sponsors = () => (
     <p className="sponsors-description">
       We are proud to collaborate with leading organizations and institutions supporting our mission.
     </p>
-    <div className="sponsors-logos">
-  
-         <div className="sponsor-logo-wrapper">
-        <img src={sponsor1} alt="Upenn" className="sponsor-logo" />
-      </div>
-      <div className="sponsor-logo-wrapper">
-        <img src={sponsor2} alt="AWS" className="sponsor-logo" />
-      </div>
-      <div className="sponsor-logo-wrapper">
-        <img src={sponsor3} alt="CrestView" className="sponsor-logo" />
-      </div>
-      <div className="sponsor-logo-wrapper">
-        <img src={sponsor4} alt="Lacuna" className="sponsor-logo" />
-      </div>
-   <div className="sponsor-logo-wrapper-black">
-        <img src={sponsor5} alt="NAIRS" className="sponsor-logo" />
-      </div>
-    </div>
+   <div className="sponsors-logos">
+  <div className="sponsor-logo-wrapper">
+    <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor1} alt="Upenn" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://aws.amazon.com/lightsail/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor2} alt="AWS" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://crestviewradiology.org/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor3} alt="CrestView" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://lacunafund.org/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor4} alt="Lacuna" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper-black">
+    <a href="https://airg.nitda.gov.ng/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor5} alt="NAIRS" className="sponsor-logo" />
+    </a>
+  </div>
+</div>
+
   </section>
 );
 
