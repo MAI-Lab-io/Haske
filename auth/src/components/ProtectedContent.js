@@ -65,20 +65,11 @@ function ProtectedContent() {
         };
     }, []);
 
-    // Check inactivity on every page load
+    // Set an interval to check inactivity continuously
     useEffect(() => {
-        const sessionExpiration = localStorage.getItem("lastActivity");
-        if (!sessionExpiration) {
-            navigate("/register"); // Redirect to the landing page if no session exists
-        } else if (Date.now() - sessionExpiration > inactivityLimit) {
-            localStorage.removeItem("lastActivity"); // Clear session
-            navigate("/register"); // Redirect to landing page after inactivity
-        }
-
-        // Set an interval to check inactivity continuously
         const inactivityInterval = setInterval(checkInactivity, 60000); // Check inactivity every minute
         return () => clearInterval(inactivityInterval); // Cleanup on component unmount
-    }, [navigate]);
+    }, []);
 
     // Auto-refresh the page every 10 seconds
     useEffect(() => {
