@@ -8,8 +8,8 @@ const publications = [
     link: "https://link-to-publication.com",
   },
   {
-    title: "Conference Presentation 1",
-    description: "Presentation on [Topic] at [Conference].",
+    title: "Conference Presentation",
+    description: "Haske: An Open PACS Platform Integrating AI for Affordable Medical Image Archiving and Diagnosis in Resource-Constrained Settings",
     link: "https://link-to-conference.com",
   },
   // Add more publications or conference details here
