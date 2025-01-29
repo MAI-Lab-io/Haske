@@ -5,7 +5,6 @@ import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null); // State to track verification status
-    const [InstitutionName, setInstitutionName] = useState(""); // State to track the institution name
     const [lastActivity, setLastActivity] = useState(null); // Track the last activity timestamp
     const navigate = useNavigate();
     const inactivityLimit = 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -33,7 +32,6 @@ function ProtectedContent() {
             setIsVerified(false);
         }
     }, []);
-
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
@@ -70,16 +68,17 @@ function ProtectedContent() {
 
     // Check inactivity on every page load
     useEffect(() => {
-        // Check if session is still valid when page is reloaded
         const sessionExpiration = localStorage.getItem("lastActivity");
         if (!sessionExpiration) {
-            // If there's no stored last activity, redirect immediately
             navigate("/"); // Redirect to the landing page if no session exists
         } else if (Date.now() - sessionExpiration > inactivityLimit) {
-            // If session has expired, clear session and redirect
             localStorage.removeItem("lastActivity"); // Clear session
             navigate("/"); // Redirect to landing page after inactivity
         }
+
+        // Set an interval to check inactivity continuously
+        const inactivityInterval = setInterval(checkInactivity, 60000); // Check inactivity every minute
+        return () => clearInterval(inactivityInterval); // Cleanup on component unmount
     }, [navigate]);
 
     // Auto-refresh the page every 10 seconds
