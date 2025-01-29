@@ -5,23 +5,18 @@ import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null); // State to track verification status
-    const [lastActivity, setLastActivity] = useState(null); // Track the last activity timestamp
     const navigate = useNavigate();
     const inactivityLimit = 15 * 60 * 1000; // 15 minutes in milliseconds
 
+    // Check if the user is logged in and verified on component mount
     useEffect(() => {
-        // Get the current user and check verification status
         const user = auth.currentUser;
         if (user) {
-            // Call backend to check if the user is verified
+            // Fetch verification status from backend
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
-                .then((response) => response.json()) // Parse the JSON response
+                .then((response) => response.json())
                 .then((data) => {
-                    if (data.isVerified) {
-                        setIsVerified(true);
-                    } else {
-                        setIsVerified(false);
-                    }
+                    setIsVerified(data.isVerified);
                 })
                 .catch((error) => {
                     console.error("Error checking verification:", error);
@@ -30,63 +25,55 @@ function ProtectedContent() {
         } else {
             setIsVerified(false);
         }
-    }, []);
 
-    const handleSignOut = () => {
-        auth.signOut().then(() => {
-            navigate("/register", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
-            localStorage.removeItem("lastActivity"); // Clear the last activity on sign out
-        });
-    };
-
-    const checkInactivity = () => {
-        const lastActivityTime = localStorage.getItem("lastActivity");
-        if (lastActivityTime && Date.now() - lastActivityTime > inactivityLimit) {
-            localStorage.removeItem("lastActivity"); // Clear session if expired
-            navigate("/register"); // Redirect to landing page after 15 minutes of inactivity
-        }
-    };
-
-    // Update last activity timestamp whenever there is user activity
-    useEffect(() => {
+        // Listen for user activity to reset inactivity timer
         const handleActivity = () => {
-            localStorage.setItem("lastActivity", Date.now()); // Update the last activity time
-            setLastActivity(Date.now()); // Update the local state as well
+            localStorage.setItem("lastActivity", Date.now()); // Update last activity time
         };
 
-        // Listen for any activity like mouse movement, keypress, etc.
         window.addEventListener("mousemove", handleActivity);
         window.addEventListener("keypress", handleActivity);
 
-        // Cleanup event listeners on component unmount
+        // Clean up event listeners on component unmount
         return () => {
             window.removeEventListener("mousemove", handleActivity);
             window.removeEventListener("keypress", handleActivity);
         };
     }, []);
 
-    // Set an interval to check inactivity continuously
+    // Function to check if the user has been inactive for too long
+    const checkInactivity = () => {
+        const lastActivityTime = localStorage.getItem("lastActivity");
+        if (lastActivityTime && Date.now() - lastActivityTime > inactivityLimit) {
+            localStorage.removeItem("lastActivity"); // Clear session if expired
+            navigate("/register"); // Redirect to register page after inactivity
+        }
+    };
+
+    // Set an interval to check inactivity every minute
     useEffect(() => {
         const inactivityInterval = setInterval(checkInactivity, 60000); // Check inactivity every minute
-        return () => clearInterval(inactivityInterval); // Cleanup on component unmount
+        return () => clearInterval(inactivityInterval); // Clean up on component unmount
     }, []);
 
     // Auto-refresh the page every 10 seconds
     useEffect(() => {
         const interval = setInterval(() => {
             window.location.reload(); // Reload the page
-        }, 10000); // 10000ms = 10 seconds
+        }, 10000); // Refresh every 10 seconds
 
-        return () => clearInterval(interval); // Cleanup interval on component unmount
+        return () => clearInterval(interval); // Clean up interval on component unmount
     }, []);
+
+    // Redirect user if not verified
+    useEffect(() => {
+        if (isVerified === false) {
+            navigate("/register"); // Redirect to register page if not verified
+        }
+    }, [isVerified, navigate]);
 
     if (isVerified === null) {
         return <div>Loading...</div>; // Wait for verification check response
-    }
-
-    if (isVerified === false) {
-        navigate("/register"); // Redirect to register page if not verified
-        return null; // Prevent further rendering
     }
 
     return (
