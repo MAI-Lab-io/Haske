@@ -94,6 +94,12 @@ function LandingPage() {
           <Link to="/signin" className="nav-button">
             Sign In
           </Link>
+        <Link to="/about-us" className="nav-button">
+            About Us
+          </Link>
+        <Link to="/publications" className="nav-button">
+            Publications
+          </Link>
         </nav>
       </header>
 
