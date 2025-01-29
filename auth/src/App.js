@@ -15,6 +15,7 @@ const [loading, setLoading] = useState(true); // Add a loading state
 
 useEffect(() => {
   const unsubscribe = auth.onAuthStateChanged((user) => {
+    console.log("User state changed:", user);
     setUser(user);
     setLoading(false); // Set loading to false after auth state is checked
   });
