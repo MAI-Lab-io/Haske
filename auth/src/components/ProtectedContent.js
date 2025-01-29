@@ -19,7 +19,6 @@ function ProtectedContent() {
                 .then((data) => {
                     if (data.isVerified) {
                         setIsVerified(true);
-                        setInstitutionName(data.institution_name); // Set institution name from the response
                     } else {
                         setIsVerified(false);
                     }
