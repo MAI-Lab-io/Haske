@@ -6,8 +6,8 @@ import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
-import AboutUs from "./pages/AboutUs";
-import Publications from "./pages/Publications";
+import AboutUs from "./components/AboutUs";
+import Publications from "./components/Publications";
 import { auth } from "./firebaseConfig"; // Firebase auth import
 import VerifyWaiting from "./components/VerifyWaiting";
 
