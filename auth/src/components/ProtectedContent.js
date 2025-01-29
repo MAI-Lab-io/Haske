@@ -10,11 +10,19 @@ function ProtectedContent() {
 
     useEffect(() => {
         const user = auth.currentUser;
+        console.log("User:", user);
+
         if (user) {
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json())
-                .then((data) => setIsVerified(data.isVerified))
-                .catch(() => setIsVerified(false));
+                .then((data) => {
+                    console.log("Verification Status:", data.isVerified);
+                    setIsVerified(data.isVerified);
+                })
+                .catch((error) => {
+                    console.error("Error checking verification:", error);
+                    setIsVerified(false);
+                });
         } else {
             setIsVerified(false);
         }
@@ -42,8 +50,12 @@ function ProtectedContent() {
         };
     }, [navigate]);
 
+    // Ensure redirection if not verified
     useEffect(() => {
-        if (isVerified === false) navigate("/register");
+        if (isVerified === false) {
+            console.log("User is not verified, redirecting...");
+            navigate("/register");
+        }
     }, [isVerified, navigate]);
 
     const handleSignOut = () => {
@@ -53,7 +65,9 @@ function ProtectedContent() {
         });
     };
 
-    if (isVerified === null) return <div>Loading...</div>;
+    if (isVerified === null) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="protected-container">
