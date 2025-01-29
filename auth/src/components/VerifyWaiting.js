@@ -15,7 +15,7 @@ const VerifyWaiting = () => {
           We'll get back to you shortly via email.
         </p>
         <p className="verify-signature">— Haske Team</p>
-        <button className="home-button" onClick={() => navigate("/")}>Go to Home</button>
+        <button className="home-button" onClick={() => navigate("/")}>Return to Main Page</button>
       </div>
     </div>
   );
