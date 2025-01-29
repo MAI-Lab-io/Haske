@@ -34,12 +34,6 @@ function ProtectedContent() {
         }
     }, []);
 
-    useEffect(() => {
-        const iframe = document.querySelector(".protected-iframe");
-        if (iframe && InstitutionName) {
-            iframe.contentWindow.postMessage({ InstitutionName }, "*");
-        }
-    }, [InstitutionName]);
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
