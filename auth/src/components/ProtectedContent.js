@@ -1,69 +1,68 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import "./ProtectedContent.css"; // Import CSS for styling
+import "./ProtectedContent.css";
 
 function ProtectedContent() {
-    const [isVerified, setIsVerified] = useState(null); // State to track verification status
-    const [institutionName, setInstitutionName] = useState(""); // State to track the institution name
+    const [isVerified, setIsVerified] = useState(null);
     const navigate = useNavigate();
+    const inactivityLimit = 15 * 60 * 1000; // 15 minutes in milliseconds
 
     useEffect(() => {
-        // Get the current user and check verification status
         const user = auth.currentUser;
         if (user) {
-            // Call backend to check if the user is verified
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
-                .then((response) => response.json()) // Parse the JSON response
-                .then((data) => {
-                    if (data.isVerified) {
-                        setIsVerified(true);
-                        setInstitutionName(data.institution); // Set institution name from the response
-                    } else {
-                        setIsVerified(false);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error checking verification:", error);
-                    setIsVerified(false);
-                });
+                .then((response) => response.json())
+                .then((data) => setIsVerified(data.isVerified))
+                .catch(() => setIsVerified(false));
         } else {
             setIsVerified(false);
         }
-    }, []);
+
+        // Handle activity and inactivity
+        const handleActivity = () => localStorage.setItem("lastActivity", Date.now());
+        const checkInactivity = () => {
+            const lastActivity = localStorage.getItem("lastActivity");
+            if (lastActivity && Date.now() - lastActivity > inactivityLimit) {
+                localStorage.removeItem("lastActivity");
+                navigate("/register");
+            }
+        };
+
+        window.addEventListener("mousemove", handleActivity);
+        window.addEventListener("keypress", handleActivity);
+        const inactivityInterval = setInterval(checkInactivity, 60000);
+        const refreshInterval = setInterval(() => window.location.reload(), 10000);
+
+        return () => {
+            window.removeEventListener("mousemove", handleActivity);
+            window.removeEventListener("keypress", handleActivity);
+            clearInterval(inactivityInterval);
+            clearInterval(refreshInterval);
+        };
+    }, [navigate]);
 
     useEffect(() => {
-        const iframe = document.querySelector(".protected-iframe");
-        if (iframe && institutionName) {
-            iframe.contentWindow.postMessage({ institutionName }, "*");
-        }
-    }, [institutionName]);
+        if (isVerified === false) navigate("/register");
+    }, [isVerified, navigate]);
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/landing", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
+            navigate("/register", { state: { message: "Signed out successfully!" } });
+            localStorage.removeItem("lastActivity");
         });
     };
 
-    if (isVerified === null) {
-        return <div>Loading...</div>; // Wait for verification check response
-    }
-
-    if (isVerified === false) {
-        navigate("/register"); // Redirect to register page if not verified
-        return null; // Prevent further rendering
-    }
+    if (isVerified === null) return <div>Loading...</div>;
 
     return (
         <div className="protected-container">
             <iframe
-                src="https://haske.online:5000/ui/app/" // Replace with your actual URL
+                src="https://haske.online:5000/ui/app/"
                 title="Haske"
                 className="protected-iframe"
             ></iframe>
-            <div className="signout-container">
-                <button onClick={handleSignOut} className="signout-button">Sign Out</button>
-            </div>
+            <button onClick={handleSignOut} className="signout-button">Sign Out</button>
         </div>
     );
 }
