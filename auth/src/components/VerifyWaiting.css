@@ -20,7 +20,6 @@
 }
 
 .verify-title {
-  
   font-size: 2.5rem;
   font-weight: 700;
   color: #ff5722;
@@ -39,4 +38,30 @@
   font-size: 1rem;
   font-style: italic;
   color: #777777;
+}
+
+/* Styling the Go to Home button */
+.home-button {
+  background-color: #ff5722;
+  color: #ffffff;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.home-button:hover {
+  background-color: #e64a19;
+  transform: translateY(-3px);
+}
+
+.home-button:active {
+  background-color: #d84315;
+  transform: translateY(1px);
 }
