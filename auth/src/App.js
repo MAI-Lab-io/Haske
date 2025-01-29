@@ -1,4 +1,4 @@
-import "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import SignIn from "./components/SignIn";
 import Register from "./components/Register";
@@ -28,7 +28,7 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route
           path="/signin"
-          element={<SignIn />}
+          element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
         />
         <Route path="/verification" element={<VerifyPage />} />
         <Route path="/verify-waiting" element={<VerifyWaiting />} />
