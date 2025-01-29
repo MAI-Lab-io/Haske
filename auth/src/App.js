@@ -6,21 +6,25 @@ import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
 import AdminPage from "./components/AdminPage";
-import { auth } from "./firebaseConfig"; // Firebase auth import
+import { auth } from "./firebaseConfig";
 import VerifyWaiting from "./components/VerifyWaiting";
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    // Listen to authentication state changes
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user); // Set user to state when authentication state changes
+      setUser(user);
+      setLoading(false); // Set loading to false when Firebase checks auth state
     });
 
-    // Cleanup listener on unmount
     return () => unsubscribe();
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; // Show a loading indicator while waiting
+  }
 
   return (
     <Router>
@@ -36,7 +40,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route
           path="/patient-details"
-          element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
+          element={user ? <ProtectedContent /> : <Navigate to="/signin" replace />}
         />
       </Routes>
     </Router>
