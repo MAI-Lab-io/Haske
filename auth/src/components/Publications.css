@@ -1,0 +1,55 @@
+.publications-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f9f9f9;
+  font-family: "Roboto", sans-serif;
+}
+
+.publications-card {
+  background-color: #ffffff;
+  padding: 40px 60px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 700px;
+  width: 90%;
+}
+
+.publications-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 30px;
+}
+
+.publications-list {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.publication-item {
+  margin-bottom: 20px;
+}
+
+.publication-title {
+  font-size: 1.5rem;
+  color: #333333;
+}
+
+.publication-description {
+  font-size: 1.1rem;
+  color: #555555;
+  margin-bottom: 10px;
+}
+
+.publication-link {
+  font-size: 1rem;
+  color: #ff5722;
+  text-decoration: none;
+}
+
+.publication-link:hover {
+  text-decoration: underline;
+}
