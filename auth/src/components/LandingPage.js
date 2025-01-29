@@ -57,7 +57,7 @@ const Sponsors = () => (
       <div className="sponsor-logo-wrapper">
         <img src={sponsor4} alt="Lacuna" className="sponsor-logo" />
       </div>
-   <div className="sponsor-logo-wrapper">
+   <div className="sponsor-logo-wrapper-black">
         <img src={sponsor5} alt="NAIRS" className="sponsor-logo" />
       </div>
     </div>
