@@ -76,11 +76,25 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.sponsor-logo-wrapper-black {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0000; /* White background for logo emphasis */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 .sponsor-logo-wrapper:hover {
     transform: scale(1.1); /* Scale effect */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
 }
 
+.sponsor-logo-wrapper-black:hover {
+    transform: scale(1.1); /* Scale effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+}
 .sponsor-logo {
     max-height: 60px; /* Ensure all logos are uniform in size */
     max-width: 100%; /* Keep aspect ratio intact */
