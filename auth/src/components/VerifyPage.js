@@ -19,8 +19,8 @@ const VerifyPage = () => {
 
   const roles = ["Radiologist", "Radiographer", "Front Desk", "IT Specialist"];
   const institutions = [
-    "Crestview Igbobi",
-    "Crestview Ikeja",
+    "CRESTVIEW RADIOLOGY LTD",
+    "National Library of Medicine",
     "Crestview Ilorin",
     "Crestview VI",
     "OOUTH",
