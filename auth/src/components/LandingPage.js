@@ -50,7 +50,7 @@ const Sponsors = () => (
     </a>
   </div>
   <div className="sponsor-logo-wrapper">
-    <a href="https://aws.amazon.com/lightsail/" target="_blank" rel="noopener noreferrer">
+    <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">
       <img src={sponsor2} alt="AWS" className="sponsor-logo" />
     </a>
   </div>
