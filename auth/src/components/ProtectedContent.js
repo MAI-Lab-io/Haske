@@ -5,18 +5,20 @@ import "./ProtectedContent.css"; // Import CSS for styling
 
 function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null); // State to track verification status
+    const [institutionName, setInstitutionName] = useState(""); // State to hold institution name
     const navigate = useNavigate();
 
     useEffect(() => {
         // Get the current user and check verification status
         const user = auth.currentUser;
         if (user) {
-            // Call backend to check if the user is verified
+            // Call backend to check if the user is verified and fetch institution name
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json()) // Parse the JSON response
                 .then((data) => {
                     if (data.isVerified) {
                         setIsVerified(true);
+                        setInstitutionName(data.institutionName); // Store institution name
                     } else {
                         setIsVerified(false);
                     }
@@ -48,7 +50,7 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe
-                src="https://haske.online:5000/ui/app/" // Replace with your actual URL
+                src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${encodeURIComponent(institutionName)}&order-by=Metadata,LastUpdate,DESC`}
                 title="Haske"
                 className="protected-iframe"
             ></iframe>
