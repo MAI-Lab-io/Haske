@@ -8,7 +8,6 @@
     height: 100vh; /* Full viewport height */
     background-color: #f0f4f8; /* Light background color */
     padding: 20px; /* Padding around the content */
-    position: relative; /* Enable positioning of the admin button */
 }
 
 .protected-iframe {
@@ -20,11 +19,15 @@
 }
 
 .signout-container {
-    margin-top: 20px; /* Space above the button */
-    text-align: center; /* Center the button */
+    margin-top: 20px; /* Space above the buttons */
+    text-align: center; /* Center the buttons */
+    display: flex; /* Flexbox for horizontal alignment */
+    justify-content: center; /* Align buttons horizontally */
+    gap: 10px; /* Space between the buttons */
 }
 
-.signout-button {
+.signout-button,
+.admin-button {
     padding: 12px 20px; /* Padding for button */
     background-color: #5d455f; /* Primary button color */
     color: white; /* Button text color */
@@ -35,31 +38,7 @@
     transition: background-color 0.3s; /* Smooth transition */
 }
 
-.signout-button:hover {
-    background-color: #5d455f; /* Darker color on hover */
-}
-
-/* Admin Button Styling */
-.admin-button {
-    position: absolute; /* Absolute positioning */
-    top: 20px; /* 20px from the top */
-    right: 20px; /* 20px from the right */
-    background-color: #ff6347; /* Stylish button color */
-    color: white; /* White text */
-    padding: 12px 20px; /* Padding for button */
-    font-size: 1.1rem; /* Slightly larger font size */
-    border: none; /* Remove border */
-    border-radius: 8px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Soft shadow for the button */
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
-}
-
+.signout-button:hover,
 .admin-button:hover {
-    background-color: #e53e2f; /* Darker red when hovered */
-    transform: scale(1.05); /* Slightly enlarge on hover */
-}
-
-.admin-button:focus {
-    outline: none; /* Remove focus outline */
+    background-color: #5d455f; /* Darker color on hover */
 }
