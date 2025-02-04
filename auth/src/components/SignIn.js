@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
-import { 
-  signInWithEmailAndPassword, 
-  sendPasswordResetEmail, 
-  signOut, 
-  onAuthStateChanged 
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./SignIn.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password toggle
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Track authentication state and redirect if already signed in
+  // Redirect user if already authenticated
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) navigate("/patient-details");
@@ -28,94 +28,102 @@ const SignIn = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  // Function to check user verification and deactivation status from backend
+  // Function to check user verification and status from backend
   const checkUserStatus = async (email) => {
     try {
       const response = await fetch(
         `https://haske.online:8080/api/verification/check-verification?email=${email}`
       );
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("No account found. Redirecting to registration.");
+          alert("No account found. Click OK to register.");
+          navigate("/register");
+        } else {
+          setError("Server error. Please try again later.");
+        }
+        setLoading(false);
+        return false;
+      }
+
       const data = await response.json();
 
-      if (data.notRegistered) {
-        alert("No account found. Redirecting to registration.");
-        navigate("/register");
-        await signOut(auth);
-        return { valid: false, message: "No account found." };
-      }
-
       if (!data.isVerified) {
-        alert("Your profile is not yet verified. Redirecting to verification.");
+        setError("Your profile has not been approved. Please complete your profile.");
+        alert("Your profile is incomplete or pending approval. Click OK to complete.");
         navigate("/verification");
-        await signOut(auth);
-        return { valid: false, message: "Profile not verified." };
-      }
-
-      if (data.isDeactivated) {
-        alert("Your account has been deactivated. Redirecting.");
+      } else if (data.isDeactivated) {
+        setError("Your account has been deactivated. Please contact support.");
+        alert("Your account is deactivated. Contact support for assistance.");
         navigate("/register");
-        await signOut(auth);
-        return { valid: false, message: "Account deactivated." };
+      } else {
+        return true;
       }
 
-      return { valid: true };
+      setLoading(false);
+      await signOut(auth);
+      return false;
     } catch (error) {
       console.error("User status check error:", error);
-      return { valid: false, message: "Error checking account status." };
+      setError("Network error. Please try again.");
+      setLoading(false);
+      return false;
     }
   };
 
   // Handle user sign-in
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
+ const handleSignIn = async (e) => {
+  e.preventDefault();
+  if (!email || !password) {
+    setError("Email and password are required.");
+    return;
+  }
 
-    const status = await checkUserStatus(email);
-    if (!status.valid) {
-      setError(status.message);
-      setLoading(false);
-      return;
+  setLoading(true);
+  setError(null);
+  setMessage(null);
+
+  try {
+    const isValidUser = await checkUserStatus(email);
+    
+    if (!isValidUser) return; // Prevent further login attempts if not verified
+
+    await signInWithEmailAndPassword(auth, email, password);
+    navigate("/patient-details");
+  } catch (error) {
+    console.error("Sign-in error:", error);
+
+    if (error.code === "auth/user-not-found") {
+      setError("No account found. Redirecting to registration.");
+      alert("No account found. Click OK to register.");
+      navigate("/register");
+    } else if (error.code === "auth/wrong-password") {
+      setError("Incorrect password. Please try again.");
+    } else {
+      setError("An error occurred. Please try again.");
     }
+  } finally {
+    setLoading(false);
+  }
+};
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/patient-details"); // Redirect after successful login
-    } catch (error) {
-      console.error("Sign-in error:", error);
-
-      switch (error.code) {
-        case "auth/wrong-password":
-          setError("Incorrect password. Please try again.");
-          break;
-        case "auth/user-not-found":
-          setError("No account found with this email.");
-          break;
-        default:
-          setError("An error occurred. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Handle password reset
   const handleForgotPassword = async () => {
     if (!email) {
-      setError("Please enter your email address to reset your password.");
+      setError("Enter your email to reset your password.");
       return;
     }
 
     try {
       await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset email sent! Please check your inbox.");
+      setMessage("Password reset email sent! Check your inbox.");
     } catch (error) {
       console.error("Forgot password error:", error);
-      setError(
-        error.code === "auth/user-not-found"
-          ? "No account found with this email."
-          : "Unable to send reset email. Try again later."
-      );
+      setError(error.code === "auth/user-not-found"
+        ? "No account found with this email."
+        : "Unable to send reset email. Try again later.");
     }
   };
 
@@ -147,7 +155,6 @@ const SignIn = () => {
               type="button"
               className="password-toggle-button"
               onClick={() => setShowPassword((prev) => !prev)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
