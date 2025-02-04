@@ -28,35 +28,44 @@ const SignIn = () => {
   // Function to check user verification and deactivation status from the backend
   const checkUserStatus = async (email) => {
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-      const data = await response.json();
+        const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
+        const data = await response.json();
 
-      if (!data.isVerified) {
-        setError("Your profile has not been completed/approved. Please kindly complete your profile.");
-        alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
-        navigate("/verification");
-        setLoading(false);
-        await signOut(auth);
-        return false; // User is not verified
-      }
+        if (data.notRegistered) {
+            setError("No account found. Redirecting to registration.");
+            alert("No account found with this email. Please click OK to register.");
+            navigate("/register");
+            setLoading(false);
+            await signOut(auth);
+            return false;
+        }
 
-      if (data.isDeactivated) {
-        setError("Your account has been deactivated. Please contact support for assistance.");
-        alert("Your account has been deactivated. You cannot access this page.");
-        setLoading(false);
-        await signOut(auth);
-        navigate("/register"); // Redirect to register or home page
-        return false; // User is deactivated
-      }
+        if (!data.isVerified) {
+            setError("Your profile has not been completed/approved. Please complete your profile.");
+            alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
+            navigate("/verification");
+            setLoading(false);
+            await signOut(auth);
+            return false;
+        }
 
-      return true; // User is verified and not deactivated
+        if (data.isDeactivated) {
+            setError("Your account has been deactivated. Please contact support.");
+            alert("Your account has been deactivated. You cannot access this page.");
+            navigate("/register");
+            setLoading(false);
+            await signOut(auth);
+            return false;
+        }
+
+        return true;
     } catch (error) {
-      console.error("User status check error:", error);
-      setError("An error occurred while checking your account status. Please try again later.");
-      setLoading(false);
-      return false; // Treat as invalid in case of error
+        console.error("User status check error:", error);
+        setError("An error occurred while checking your account status. Please try again later.");
+        setLoading(false);
+        return false;
     }
-  };
+};
 
   // Handle user sign-in
   const handleSignIn = async (e) => {
