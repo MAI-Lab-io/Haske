@@ -1,71 +1,68 @@
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebaseConfig";
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "firebase/auth";
+import { 
+  signInWithEmailAndPassword, 
+  sendPasswordResetEmail, 
+  signOut, 
+  onAuthStateChanged 
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password visibility toggle
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons for password toggle
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [message, setMessage] = useState(null); // For success messages like password reset email sent
+  const [message, setMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Track authentication state
+  // Track authentication state and redirect if already signed in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/patient-details"); // Redirect to patient details if the user is logged in
-      }
+      if (user) navigate("/patient-details");
     });
 
     return () => unsubscribe();
   }, [navigate]);
 
-  // Function to check user verification and deactivation status from the backend
+  // Function to check user verification and deactivation status from backend
   const checkUserStatus = async (email) => {
     try {
-        const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${email}`);
-        const data = await response.json();
+      const response = await fetch(
+        `https://haske.online:8080/api/verification/check-verification?email=${email}`
+      );
+      const data = await response.json();
 
-        if (data.notRegistered) {
-            setError("No account found. Redirecting to registration.");
-            alert("No account found with this email. Please click OK to register.");
-            navigate("/register");
-            setLoading(false);
-            await signOut(auth);
-            return false;
-        }
+      if (data.notRegistered) {
+        alert("No account found. Redirecting to registration.");
+        navigate("/register");
+        await signOut(auth);
+        return { valid: false, message: "No account found." };
+      }
 
-        if (!data.isVerified) {
-            setError("Your profile has not been completed/approved. Please complete your profile.");
-            alert("Your profile has not been completed/approved. Please click OK to complete your profile.");
-            navigate("/verification");
-            setLoading(false);
-            await signOut(auth);
-            return false;
-        }
+      if (!data.isVerified) {
+        alert("Your profile is not yet verified. Redirecting to verification.");
+        navigate("/verification");
+        await signOut(auth);
+        return { valid: false, message: "Profile not verified." };
+      }
 
-        if (data.isDeactivated) {
-            setError("Your account has been deactivated. Please contact support.");
-            alert("Your account has been deactivated. You cannot access this page.");
-            navigate("/register");
-            setLoading(false);
-            await signOut(auth);
-            return false;
-        }
+      if (data.isDeactivated) {
+        alert("Your account has been deactivated. Redirecting.");
+        navigate("/register");
+        await signOut(auth);
+        return { valid: false, message: "Account deactivated." };
+      }
 
-        return true;
+      return { valid: true };
     } catch (error) {
-        console.error("User status check error:", error);
-        setError("An error occurred while checking your account status. Please try again later.");
-        setLoading(false);
-        return false;
+      console.error("User status check error:", error);
+      return { valid: false, message: "Error checking account status." };
     }
-};
+  };
 
   // Handle user sign-in
   const handleSignIn = async (e) => {
@@ -74,25 +71,31 @@ const SignIn = () => {
     setError(null);
     setMessage(null);
 
-    try {
-      const isValidUser = await checkUserStatus(email);
-      if (!isValidUser) return;
-
-      await signInWithEmailAndPassword(auth, email, password);
+    const status = await checkUserStatus(email);
+    if (!status.valid) {
+      setError(status.message);
       setLoading(false);
-      navigate("/patient-details"); // Redirect to protected content
+      return;
+    }
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/patient-details"); // Redirect after successful login
     } catch (error) {
       console.error("Sign-in error:", error);
-      setLoading(false);
 
-      // Handling error messages based on error codes
-      if (error.code === "auth/wrong-password") {
-        setError("Oops! The password you entered is incorrect. Please try again.");
-      } else if (error.code === "auth/user-not-found") {
-        setError("No account found with this email. Please check the email or register.");
-      } else {
-        setError("An error occurred. Please try again later.");
+      switch (error.code) {
+        case "auth/wrong-password":
+          setError("Incorrect password. Please try again.");
+          break;
+        case "auth/user-not-found":
+          setError("No account found with this email.");
+          break;
+        default:
+          setError("An error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,15 +109,13 @@ const SignIn = () => {
     try {
       await sendPasswordResetEmail(auth, email);
       setMessage("Password reset email sent! Please check your inbox.");
-      setError(null);
     } catch (error) {
       console.error("Forgot password error:", error);
-
-      if (error.code === "auth/user-not-found") {
-        setError("No account found with this email.");
-      } else {
-        setError("Unable to send password reset email. Please try again later.");
-      }
+      setError(
+        error.code === "auth/user-not-found"
+          ? "No account found with this email."
+          : "Unable to send reset email. Try again later."
+      );
     }
   };
 
@@ -146,6 +147,7 @@ const SignIn = () => {
               type="button"
               className="password-toggle-button"
               onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
