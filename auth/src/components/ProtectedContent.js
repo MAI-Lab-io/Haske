@@ -50,7 +50,7 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe
-                src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${institutionName.replace(/ /g, "+")}&order-by=Metadata,LastUpdate,DESC`}
+    src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${institutionName ? institutionName.replace(/ /g, "+") : ""}&order-by=Metadata,LastUpdate,DESC`}
                 title="Haske"
                 className="protected-iframe"
             ></iframe>
