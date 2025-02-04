@@ -188,7 +188,8 @@ const handleMakeAdmin = async (userId) => {
                 <th>Phone Number</th>
                 <th>Status</th>
                 <th>Actions</th>
-                <th>Approve</th>
+                <th>Account Approval</th>
+                <th>Admin Privileges</th>
               </tr>
             </thead>
             <tbody>
