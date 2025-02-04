@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import "./ProtectedContent.css"; // Import CSS for styling
+import "./ProtectedContent.css";
 
 function ProtectedContent() {
-    const [isVerified, setIsVerified] = useState(null); // State to track verification status
-    const [institutionName, setInstitutionName] = useState(""); // State to hold institution name
+    const [isVerified, setIsVerified] = useState(null);
+    const [institutionName, setInstitutionName] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);  // Track if user is an admin
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Get the current user and check verification status
         const user = auth.currentUser;
         if (user) {
-            // Call backend to check if the user is verified and fetch institution name
             fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
-                .then((response) => response.json()) // Parse the JSON response
+                .then((response) => response.json())
                 .then((data) => {
                     if (data.isVerified) {
                         setIsVerified(true);
-                        setInstitutionName(data.institutionName); // Store institution name
+                        setInstitutionName(data.institutionName);
+                        setIsAdmin(data.isAdmin); // Store admin status
                     } else {
                         setIsVerified(false);
                     }
@@ -34,20 +34,19 @@ function ProtectedContent() {
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
-            navigate("/", { state: { message: "Signed out successfully!" } }); // Redirect to LandingPage with a message
+            navigate("/", { state: { message: "Signed out successfully!" } });
         });
     };
 
     if (isVerified === null) {
-        return <div>Loading...</div>; // Wait for verification check response
+        return <div>Loading...</div>;
     }
 
     if (isVerified === false) {
-        navigate("/register"); // Redirect to register page if not verified
-        return null; // Prevent further rendering
+        navigate("/register");
+        return null;
     }
 
-    // Ensure institutionName is defined before calling replace
     const formattedInstitutionName = institutionName ? institutionName.replace(/ /g, "+") : "";
 
     return (
@@ -58,7 +57,14 @@ function ProtectedContent() {
                 className="protected-iframe"
             ></iframe>
             <div className="signout-container">
-                <button onClick={handleSignOut} className="signout-button">Sign Out</button>
+                {isAdmin && (  // Show Admin button only if user is an admin
+                    <button onClick={() => navigate("/admin")} className="admin-button">
+                        Admin Panel
+                    </button>
+                )}
+                <button onClick={handleSignOut} className="signout-button">
+                    Sign Out
+                </button>
             </div>
         </div>
     );
