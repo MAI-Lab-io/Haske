@@ -48,9 +48,9 @@ const AdminPage = () => {
     }
   };
 
-    const handleApprove = async (userId, approved) => {
+  const handleApprove = async (userId, approved) => {
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/approve-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,9 +71,10 @@ const AdminPage = () => {
       setNotification("An error occurred while updating the user.");
     }
   };
- const handleDeactivate = async (userId, deactivated) => {
+
+  const handleDeactivate = async (userId, deactivated) => {
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/deactivate-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/deactivate-user/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +102,7 @@ const AdminPage = () => {
     }
 
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/delete-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
         method: "DELETE",
       });
 
@@ -141,7 +142,8 @@ const AdminPage = () => {
   if (!isAdmin) {
     return <div>Loading...</div>;
   }
-return (
+
+  return (
     <div className="admin-container">
       <aside className="admin-sidebar">
         <div className="sidebar-logo">Admin Panel</div>
