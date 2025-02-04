@@ -47,7 +47,7 @@ function ProtectedContent() {
         return null;
     }
 
-    const formattedInstitutionName = institutionName ? institutionName.replace(/ /g, "+") : "";
+const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
     return (
         <div className="protected-container">
