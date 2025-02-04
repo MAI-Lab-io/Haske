@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaTrash, FaLock, FaUnlock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; // Ensure you have this import
-import { auth } from "path/to/your/firebase"; // Assuming Firebase is used
+import { auth } from "../firebaseConfig";
 import "./AdminPage.css"; // For styling
 
 const AdminPage = () => {
