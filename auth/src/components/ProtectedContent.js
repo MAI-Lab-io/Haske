@@ -1,5 +1,4 @@
-the institutions are not showing in the dropdown filter box, and the content is saying Page not found!
-/all, the code - "import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import "./ProtectedContent.css";
@@ -75,8 +74,8 @@ useEffect(() => {
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
 const iframeSrc = isAdmin
-    ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `/filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : "/all"}`
-    : `https://haske.online:5000/ui/app/#${institutionName ? `/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : "/all"}`;
+    ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `/filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC`}`
+    : `https://haske.online:5000/ui/app/#${institutionName ? `/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`"}`;
 
     return (
         <div className="protected-container">
@@ -113,4 +112,4 @@ const iframeSrc = isAdmin
     );
 }
 
-export default ProtectedContent;"
+export default ProtectedContent;
