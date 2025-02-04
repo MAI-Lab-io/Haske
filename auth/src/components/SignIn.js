@@ -56,7 +56,7 @@ const SignIn = () => {
       } else if (data.isDeactivated) {
         setError("Your account has been deactivated. Please contact support.");
         alert("Your account is deactivated. Contact support for assistance.");
-        navigate("/register");
+        navigate("/");
       } else {
         return true;
       }
