@@ -68,6 +68,32 @@ const AdminPage = () => {
     }
   };
 
+const handleMakeAdmin = async (userId) => {
+  if (!window.confirm("Are you sure you want to make this user an Admin?")) return;
+
+  try {
+    const response = await fetch(`https://haske.online:8080/api/verification/update-role/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ role: "admin" }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      setNotification("User promoted to Admin successfully!");
+      fetchUsers(); // Refresh the list
+    } else {
+      setNotification("Error: " + result.message || "Failed to update role.");
+    }
+  } catch (error) {
+    console.error("Error updating user role:", error);
+    setNotification("An error occurred while updating the role.");
+  }
+};
+
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) {
       return;
@@ -198,6 +224,17 @@ const AdminPage = () => {
                       title="Approve User"
                       disabled={user.deactivated}
                     />
+                  </td>
+                        <td>
+                          {user.role !== "admin" && (
+                            <button
+                              className="make-admin-btn"
+                              onClick={() => handleMakeAdmin(user.id)}
+                              title="Make Admin"
+                            >
+                              Make Admin
+                            </button>
+                        )}
                   </td>
                 </tr>
               ))}
