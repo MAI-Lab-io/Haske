@@ -8,6 +8,7 @@
     height: 100vh; /* Full viewport height */
     background-color: #f0f4f8; /* Light background color */
     padding: 20px; /* Padding around the content */
+    position: relative; /* Enable positioning of the admin button */
 }
 
 .protected-iframe {
@@ -35,5 +36,30 @@
 }
 
 .signout-button:hover {
-    background-color: #5d455f; /* Darker blue on hover */
+    background-color: #5d455f; /* Darker color on hover */
+}
+
+/* Admin Button Styling */
+.admin-button {
+    position: absolute; /* Absolute positioning */
+    top: 20px; /* 20px from the top */
+    right: 20px; /* 20px from the right */
+    background-color: #ff6347; /* Stylish button color */
+    color: white; /* White text */
+    padding: 12px 20px; /* Padding for button */
+    font-size: 1.1rem; /* Slightly larger font size */
+    border: none; /* Remove border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Soft shadow for the button */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+.admin-button:hover {
+    background-color: #e53e2f; /* Darker red when hovered */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.admin-button:focus {
+    outline: none; /* Remove focus outline */
 }
