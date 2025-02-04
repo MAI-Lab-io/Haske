@@ -48,6 +48,91 @@ const AdminPage = () => {
     }
   };
 
+    const handleApprove = async (userId, approved) => {
+    try {
+      const response = await fetch(https://haske.online:8080/api/verification/approve-user/${userId}, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ approved }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setNotification("User updated successfully!");
+        fetchUsers(); // Refresh user data after update
+      } else {
+        setNotification("Error: " + result.message || "Approval failed.");
+      }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      setNotification("An error occurred while updating the user.");
+    }
+  };
+ const handleDeactivate = async (userId, deactivated) => {
+    try {
+      const response = await fetch(https://haske.online:8080/api/verification/deactivate-user/${userId}, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ deactivated }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setNotification(deactivated ? "User deactivated successfully!" : "User activated successfully!");
+        fetchUsers(); // Refresh user data after update
+      } else {
+        setNotification("Error: " + result.message || "Failed to update user status.");
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      setNotification("An error occurred while updating the user status.");
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(https://haske.online:8080/api/verification/delete-user/${userId}, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setNotification("User deleted successfully!");
+        fetchUsers(); // Refresh user list after deletion
+      } else {
+        const result = await response.json();
+        setNotification("Error: " + result.message || "Failed to delete user.");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      setNotification("An error occurred while deleting the user.");
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    const filterValue = e.target.value;
+    setFilter(filterValue);
+
+    if (filterValue === "verified") {
+      setFilteredUsers(users.filter((user) => user.approved && !user.deactivated));
+    } else if (filterValue === "unverified") {
+      setFilteredUsers(users.filter((user) => !user.approved));
+    } else if (filterValue === "deactivated") {
+      setFilteredUsers(users.filter((user) => user.deactivated));
+    } else {
+      setFilteredUsers(users);
+    }
+  };
+
   useEffect(() => {
     const interval = setInterval(fetchUsers, 30000);
     return () => clearInterval(interval);
@@ -56,17 +141,94 @@ const AdminPage = () => {
   if (!isAdmin) {
     return <div>Loading...</div>;
   }
-
-  return (
+return (
     <div className="admin-container">
       <aside className="admin-sidebar">
         <div className="sidebar-logo">Admin Panel</div>
+        <nav>
+          <ul className="sidebar-menu">
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#users">Manage Users</a></li>
+            <li><a href="#analytics">Analytics</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </nav>
       </aside>
+
       <main className="admin-content">
         <header className="admin-header">
           <h1>User Management</h1>
         </header>
+
         {notification && <div className="notification">{notification}</div>}
+
+        <div className="filter-section">
+          <label htmlFor="filter">Filter Users:</label>
+          <select id="filter" value={filter} onChange={handleFilterChange}>
+            <option value="all">All Users</option>
+            <option value="verified">Verified</option>
+            <option value="unverified">Unverified</option>
+            <option value="deactivated">Deactivated</option>
+          </select>
+        </div>
+
+        {filteredUsers.length === 0 ? (
+          <p>No users to display.</p>
+        ) : (
+          <table className="user-table">
+            <thead>
+              <tr>
+                <th>Last Name / Surname</th>
+                <th>First Name</th>
+                <th>Institution Name</th>
+                <th>Institution Address</th>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Status</th>
+                <th>Actions</th>
+                <th>Approve</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map((user) => (
+                <tr key={user.id} className={user.deactivated ? "deactivated-row" : user.approved ? "verified-row" : "unverified-row"}>
+                  <td>{user.last_name}</td>
+                  <td>{user.first_name}</td>
+                  <td>{user.institution_name}</td>
+                  <td>{user.institution_address}</td>
+                  <td>{user.role}</td>
+                  <td>{user.email}</td>
+                  <td>{user.phone_number}</td>
+                  <td>{user.deactivated ? "Deactivated" : user.approved ? "Verified" : "Unverified"}</td>
+                  <td>
+                    <FaTrash
+                      className="delete-icon"
+                      title="Delete User"
+                      onClick={() => handleDelete(user.id)}
+                    />
+                    <span
+                      onClick={() => handleDeactivate(user.id, !user.deactivated)}
+                      title={user.deactivated ? "Activate User" : "Deactivate User"}
+                      className="deactivate-icon"
+                    >
+                      {user.deactivated ? <FaUnlock /> : <FaLock />}
+                    </span>
+                  </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={user.approved}
+                      onChange={() => handleApprove(user.id, !user.approved)}
+                      title="Approve User"
+                      disabled={user.deactivated}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </main>
     </div>
   );
