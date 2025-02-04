@@ -166,6 +166,20 @@
   width: 100px;
 }
 
+.make-admin-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.make-admin-btn:hover {
+  background-color: #0056b3;
+}
+
+
 @media (max-width: 768px) {
   .admin-container {
     flex-direction: column;
