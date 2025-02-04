@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { FaTrash, FaLock, FaUnlock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Ensure you have this import
+import { auth } from "path/to/your/firebase"; // Assuming Firebase is used
 import "./AdminPage.css"; // For styling
-import { FaTrash, FaLock, FaUnlock } from "react-icons/fa"; // Importing icons
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [notification, setNotification] = useState("");
   const [filter, setFilter] = useState("all");
+  const [isAdmin, setIsAdmin] = useState(false); // Added isAdmin state
+  const navigate = useNavigate();
 
   const fetchUsers = async () => {
     try {
@@ -20,45 +24,34 @@ const AdminPage = () => {
     }
   };
 
-   const checkAdminStatus = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`);
-          const data = await response.json();
-          if (data.isAdmin) {
-            setIsAdmin(true);
-            fetchUsers();
-          } else {
-            navigate("/");
-          }
-        } catch (error) {
-          console.error("Error checking admin status:", error);
+  const checkAdminStatus = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const response = await fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`);
+        const data = await response.json();
+        if (data.isAdmin) {
+          setIsAdmin(true);
+          fetchUsers();
+        } else {
           navigate("/");
         }
-      } else {
+      } catch (error) {
+        console.error("Error checking admin status:", error);
         navigate("/");
       }
-    };
+    } else {
+      navigate("/");
+    }
+  };
+
+  useEffect(() => {
     checkAdminStatus();
   }, [navigate]);
 
-
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("https://haske.online:8080/api/verification/get-users");
-      const data = await response.json();
-      setUsers(data);
-      setFilteredUsers(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setNotification("Failed to load users. Please try again.");
-    }
-  };
-  
   const handleApprove = async (userId, approved) => {
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/approve-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -82,7 +75,7 @@ const AdminPage = () => {
 
   const handleDeactivate = async (userId, deactivated) => {
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/deactivate-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/deactivate-user/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,31 +97,31 @@ const AdminPage = () => {
     }
   };
 
-const handleMakeAdmin = async (userId) => {
-  if (!window.confirm("Are you sure you want to make this user an Admin?")) return;
+  const handleMakeAdmin = async (userId) => {
+    if (!window.confirm("Are you sure you want to make this user an Admin?")) return;
 
-  try {
-    const response = await fetch(https://haske.online:8080/api/verification/update-role/${userId}, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ role: "admin" }),
-    });
+    try {
+      const response = await fetch(`https://haske.online:8080/api/verification/update-role/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ role: "admin" }),
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (response.ok) {
-      setNotification("User promoted to Admin successfully!");
-      fetchUsers(); // Refresh the list
-    } else {
-      setNotification("Error: " + result.message || "Failed to update role.");
+      if (response.ok) {
+        setNotification("User promoted to Admin successfully!");
+        fetchUsers(); // Refresh the list
+      } else {
+        setNotification("Error: " + result.message || "Failed to update role.");
+      }
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      setNotification("An error occurred while updating the role.");
     }
-  } catch (error) {
-    console.error("Error updating user role:", error);
-    setNotification("An error occurred while updating the role.");
-  }
-};
+  };
 
   const handleDelete = async (userId) => {
     if (!window.confirm("Are you sure you want to delete this user?")) {
@@ -136,7 +129,7 @@ const handleMakeAdmin = async (userId) => {
     }
 
     try {
-      const response = await fetch(https://haske.online:8080/api/verification/delete-user/${userId}, {
+      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, {
         method: "DELETE",
       });
 
@@ -168,7 +161,7 @@ const handleMakeAdmin = async (userId) => {
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(fetchUsers, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -241,36 +234,18 @@ const handleMakeAdmin = async (userId) => {
                   <td>
                     <FaTrash
                       className="delete-icon"
-                      title="Delete User"
                       onClick={() => handleDelete(user.id)}
                     />
-                    <span
-                      onClick={() => handleDeactivate(user.id, !user.deactivated)}
-                      title={user.deactivated ? "Activate User" : "Deactivate User"}
-                      className="deactivate-icon"
-                    >
-                      {user.deactivated ? <FaUnlock /> : <FaLock />}
-                    </span>
                   </td>
                   <td>
-                    <input
-                      type="checkbox"
-                      checked={user.approved}
-                      onChange={() => handleApprove(user.id, !user.approved)}
-                      title="Approve User"
-                      disabled={user.deactivated}
-                    />
+                    <button onClick={() => handleApprove(user.id, !user.approved)}>
+                      {user.approved ? "Unapprove" : "Approve"}
+                    </button>
                   </td>
-                        <td>
-                          {user.role !== "admin" && (
-                            <button
-                              className="make-admin-btn"
-                              onClick={() => handleMakeAdmin(user.id)}
-                              title="Make Admin"
-                            >
-                              Make Admin
-                            </button>
-                        )}
+                  <td>
+                    <button onClick={() => handleMakeAdmin(user.id)}>
+                      Make Admin
+                    </button>
                   </td>
                 </tr>
               ))}
