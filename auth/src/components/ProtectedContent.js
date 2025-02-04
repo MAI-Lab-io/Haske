@@ -47,7 +47,8 @@ function ProtectedContent() {
         return null; // Prevent further rendering
     }
 
-    const formattedInstitutionName = institutionName.replace(/ /g, "+");
+    // Ensure institutionName is defined before calling replace
+    const formattedInstitutionName = institutionName ? institutionName.replace(/ /g, "+") : "";
 
     return (
         <div className="protected-container">
