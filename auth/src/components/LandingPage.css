@@ -225,7 +225,7 @@
 }
 
 .contact-us-link {
-  color: #fff;
+  color: black; /* Set the text color to black */
   text-decoration: none;
   font-size: 16px;
 }
@@ -233,4 +233,5 @@
 .contact-us-link:hover {
   text-decoration: underline;
 }
+
 
