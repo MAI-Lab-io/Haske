@@ -21,8 +21,8 @@ const VerifyPage = () => {
   const institutions = [
     "CRESTVIEW RADIOLOGY LTD",
     "National Library of Medicine",
-    "Crestview Ilorin",
-    "Crestview VI",
+    "BTHDC LASUTH",
+    "GEM DIAGNOSTIC CENTER",
     "OOUTH",
   ];
 
