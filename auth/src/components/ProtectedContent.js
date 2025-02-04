@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+the institutions are not showing in the dropdown filter box, and the content is saying Page not found!
+/all, the code - "import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import "./ProtectedContent.css";
@@ -34,16 +35,21 @@ function ProtectedContent() {
         }
     }, []);
 
-    useEffect(() => {
-        if (isAdmin) {
-            fetch("https://haske.online:8080/api/institutions")
-                .then((response) => response.json())
-                .then((data) => {
+useEffect(() => {
+    if (isVerified !== null && isAdmin) {
+        fetch("https://haske.online:8080/api/institutions")
+            .then((response) => response.json())
+            .then((data) => {
+                if (Array.isArray(data)) {
                     setInstitutionsList(data);
-                })
-                .catch((error) => console.error("Error fetching institutions:", error));
-        }
-    }, [isAdmin]); // Fetch institutions only after isAdmin is set
+                } else {
+                    console.error("Unexpected institutions response format:", data);
+                }
+            })
+            .catch((error) => console.error("Error fetching institutions:", error));
+    }
+}, [isVerified, isAdmin]); 
+
 
     const handleSignOut = () => {
         auth.signOut().then(() => {
@@ -68,9 +74,9 @@ function ProtectedContent() {
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
-    const iframeSrc = isAdmin
-        ? `https://haske.online:5000/ui/app/#/${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : "all"}`
-        : `https://haske.online:5000/ui/app/#/${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : "all"}`;
+const iframeSrc = isAdmin
+    ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `/filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : "/all"}`
+    : `https://haske.online:5000/ui/app/#${institutionName ? `/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : "/all"}`;
 
     return (
         <div className="protected-container">
@@ -107,4 +113,4 @@ function ProtectedContent() {
     );
 }
 
-export default ProtectedContent;
+export default ProtectedContent;"
