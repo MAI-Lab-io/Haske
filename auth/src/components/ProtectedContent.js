@@ -47,10 +47,12 @@ function ProtectedContent() {
         return null; // Prevent further rendering
     }
 
+    const formattedInstitutionName = institutionName.replace(/ /g, "+");
+
     return (
         <div className="protected-container">
             <iframe
-                src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${institutionName.replace(/ /g, "+")}&order-by=Metadata,LastUpdate,DESC`}
+                src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`}
                 title="Haske"
                 className="protected-iframe"
             ></iframe>
