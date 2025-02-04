@@ -47,12 +47,18 @@ function ProtectedContent() {
         return null;
     }
 
-const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
+    // URL encoding for the institution name to be passed in the iframe URL
+    const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
+
+    // Dynamically set the iframe URL based on admin status
+    const iframeSrc = isAdmin
+        ? "https://haske.online:5000/ui/app/#/" // Full content for admins
+        : `https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`;
 
     return (
         <div className="protected-container">
             <iframe
-                src={`https://haske.online:5000/ui/app/#/filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`}
+                src={iframeSrc}  // Use dynamic iframe URL
                 title="Haske"
                 className="protected-iframe"
             ></iframe>
