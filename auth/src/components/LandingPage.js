@@ -12,6 +12,7 @@ import sponsor5 from "../assets/sponsor5.png";
 
 
 // Footer Component
+// Footer Component
 const Footer = () => {
   const currentYear = new Date().getFullYear(); // Automatically fetch the current year
   return (
@@ -19,6 +20,14 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-left">
           <p>&copy; {currentYear} Haske</p>
+        </div>
+        <div className="footer-middle">
+          <a
+            href="mailto:haske@mailab.io"  // Replace with your company's Gmail address
+            className="contact-us-link"
+          >
+            Contact Us
+          </a>
         </div>
         <div className="footer-right">
           <span>Powered by</span>
@@ -35,6 +44,7 @@ const Footer = () => {
     </footer>
   );
 };
+
 
 // Sponsors Section with improved structure
 const Sponsors = () => (
