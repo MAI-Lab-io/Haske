@@ -112,6 +112,28 @@ const ManageUsers = () => {
     }
   };
 
+  
+// Function to log user actions
+const logUserAction = async (userId, action) => {
+  try {
+    const user = auth.currentUser;
+    const response = await fetch("https://haske.online:8080/api/verification/log-action", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: user.email,
+        action: `User ${action}d with ID ${userId}`
+      })
+    });
+
+    if (!response.ok) {
+      console.error("Failed to log the action.");
+    }
+  } catch (error) {
+    console.error("Error logging user action:", error);
+  }
+};
+  
   return (
     <div className="manage-users-container">
       <h1>User Management</h1>
