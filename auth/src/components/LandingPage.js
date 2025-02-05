@@ -91,10 +91,14 @@ function LandingPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (location.state?.message) {
-      setMessage(location.state.message); // Set the message if it exists in the state
+   if (location.state?.message) {
+      setMessage(location.state.message);
+      // Hide the message after 3 seconds
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     }
-  }, [location]);
+  },  [location]);
 
   return (
     <div className="landing-container">
