@@ -49,11 +49,60 @@ function ProtectedContent() {
         }
     }, [isVerified, isAdmin]);
 
-    const handleSignOut = () => {
-        auth.signOut().then(() => {
-            navigate("/", { state: { message: "Signed out successfully!" } });
+ const handleSignOut = () => {
+    const user = auth.currentUser;
+    if (user) {
+        // Log the sign-out action before signing out
+        fetch('https://haske.online:8080/api/verification/log-action', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: user.email,
+                action: 'user signed out', // Log the sign-out action
+            }),
+        }).then((response) => {
+            if (response.ok) {
+                console.log('Sign out action logged');
+            } else {
+                console.error('Failed to log sign out');
+            }
+
+            // Proceed to sign out the user
+            auth.signOut().then(() => {
+                navigate("/", { state: { message: "Signed out successfully!" } });
+            });
+        }).catch((error) => {
+            console.error('Error logging sign out action:', error);
         });
-    };
+    }
+};
+
+    
+    // Inactivity timeout functionality
+    useEffect(() => {
+        let inactivityTimeout;
+        
+        const resetInactivityTimer = () => {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = setTimeout(handleSignOut, 5 * 60 * 1000); // 5 minutes of inactivity
+        };
+
+        // Listen for user activity
+        window.addEventListener('mousemove', resetInactivityTimer);
+        window.addEventListener('keydown', resetInactivityTimer);
+
+        // Set the initial timeout when the component mounts
+        resetInactivityTimer();
+
+        // Cleanup listeners on component unmount
+        return () => {
+            clearTimeout(inactivityTimeout);
+            window.removeEventListener('mousemove', resetInactivityTimer);
+            window.removeEventListener('keydown', resetInactivityTimer);
+        };
+    }, []);
 
     const handleInstitutionChange = (event) => {
         setSelectedInstitution(event.target.value);
