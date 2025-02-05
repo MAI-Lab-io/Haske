@@ -27,9 +27,10 @@ const Dashboard = () => {
 
     // Mock data for images per institution
     setImageStats([
-      { institution: "Institution A", images: 150 },
-      { institution: "Institution B", images: 200 },
-      { institution: "Institution C", images: 120 },
+      { institution: "National Library of Medicine", images: 1 },
+      { institution: "CRESTVIEW RADIOLOGY LTD", images: 4 },
+      { institution: "BTHDC LASUTH", images: 3 },
+      { institution: "GEM DIAGNOSTIC CENTER", images: 3 },
     ]);
   }, []);
 
