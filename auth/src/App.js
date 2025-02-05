@@ -5,9 +5,13 @@ import Register from "./components/Register";
 import ProtectedContent from "./components/ProtectedContent";
 import LandingPage from "./components/LandingPage";
 import VerifyPage from "./components/VerifyPage";
-import AdminPage from "./components/AdminPage";
+import AdminLayout from "./components/AdminLayout";
 import AboutUs from "./components/AboutUs";
 import Publications from "./components/Publications";
+import Dashboard from "./components/Dashboard";
+import ManageUsers from "./components/ManageUsers";
+import Analytics from "./components/Analytics";
+import Settings from "./components/Settings";
 import { auth } from "./firebaseConfig"; // Firebase auth import
 import VerifyWaiting from "./components/VerifyWaiting";
 
@@ -39,7 +43,12 @@ return (
       />
       <Route path="/verification" element={<VerifyPage />} />
       <Route path="/verify-waiting" element={<VerifyWaiting />} />
-      <Route path="/admin" element={<AdminPage />} />
+      <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="users" element={<ManageUsers />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
+      </Route>
       <Route path="/register" element={<Register />} />
       <Route path="/about-us" element={<AboutUs />} />
       <Route path="/publications" element={<Publications />} />
