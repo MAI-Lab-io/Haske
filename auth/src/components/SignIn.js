@@ -24,7 +24,6 @@ const SignIn = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) navigate("/patient-details");
     });
-
     return () => unsubscribe();
   }, [navigate]);
 
@@ -34,7 +33,7 @@ const SignIn = () => {
       const response = await fetch(
         `https://haske.online:8080/api/verification/check-verification?email=${email}`
       );
-      
+
       if (!response.ok) {
         if (response.status === 404) {
           setError("No account found. Redirecting to registration.");
@@ -43,7 +42,6 @@ const SignIn = () => {
         } else {
           setError("Server error. Please try again later.");
         }
-        setLoading(false);
         return false;
       }
 
@@ -61,78 +59,76 @@ const SignIn = () => {
         return true;
       }
 
-      setLoading(false);
       await signOut(auth);
       return false;
     } catch (error) {
       console.error("User status check error:", error);
       setError("Network error. Please try again.");
-      setLoading(false);
       return false;
     }
   };
 
   // Handle user sign-in
-const handleSignIn = async (e) => {
-  e.preventDefault();
-  if (!email || !password) {
-    setError("Email and password are required.");
-    return;
-  }
-
-  setLoading(true);
-  setError(null);
-  setMessage(null);
-
-  try {
-    const isValidUser = await checkUserStatus(email);
-    
-    if (!isValidUser) return; // Prevent further login attempts if not verified
-
-    // Log the sign-in action to the backend
-    await logUserAction(email, "user signed in");
-
-    // Sign the user in
-    await signInWithEmailAndPassword(auth, email, password);
-    navigate("/patient-details");
-  } catch (error) {
-    console.error("Sign-in error:", error);
-
-    if (error.code === "auth/user-not-found") {
-      setError("No account found. Redirecting to registration.");
-      alert("No account found. Click OK to register.");
-      navigate("/register");
-    } else if (error.code === "auth/wrong-password") {
-      setError("Incorrect password. Please try again.");
-    } else {
-      setError("An error occurred. Please try again.");
-    }
-  } finally {
-    setLoading(false);
-  }
-};
-
-// Function to log user actions
-const logUserAction = async (email, action) => {
-  try {
-    const response = await fetch('https://haske.online:8080/api/verification/log-action', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, action }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to log the action');
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
     }
 
-    console.log('User action logged successfully');
-  } catch (error) {
-    console.error('Error logging user action:', error);
-  }
-};
+    setLoading(true);
+    setError(null);
+    setMessage(null);
 
+    try {
+      const isValidUser = await checkUserStatus(email);
+      if (!isValidUser) {
+        setLoading(false);
+        return;
+      }
+
+      // Log the sign-in action to the backend
+      await logUserAction(email, "user signed in");
+
+      // Sign the user in
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/patient-details");
+    } catch (error) {
+      console.error("Sign-in error:", error);
+
+      if (error.code === "auth/user-not-found") {
+        setError("No account found. Redirecting to registration.");
+        alert("No account found. Click OK to register.");
+        navigate("/register");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Incorrect password. Please try again.");
+      } else {
+        setError("An error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Function to log user actions
+  const logUserAction = async (email, action) => {
+    try {
+      const response = await fetch("https://haske.online:8080/api/verification/log-action", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, action }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log the action");
+      }
+      console.log("User action logged successfully");
+    } catch (error) {
+      console.error("Error logging user action:", error);
+    }
+  };
 
   // Handle password reset
   const handleForgotPassword = async () => {
@@ -146,9 +142,11 @@ const logUserAction = async (email, action) => {
       setMessage("Password reset email sent! Check your inbox.");
     } catch (error) {
       console.error("Forgot password error:", error);
-      setError(error.code === "auth/user-not-found"
-        ? "No account found with this email."
-        : "Unable to send reset email. Try again later.");
+      setError(
+        error.code === "auth/user-not-found"
+          ? "No account found with this email."
+          : "Unable to send reset email. Try again later."
+      );
     }
   };
 
