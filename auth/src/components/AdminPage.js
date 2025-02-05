@@ -237,16 +237,28 @@ const handleMakeAdmin = async (userId) => {
                   <td>{user.email}</td>
                   <td>{user.phone_number}</td>
                   <td>{user.deactivated ? "Deactivated" : user.approved ? "Verified" : "Unverified"}</td>
-                  <td>
+                   <td>
                     <FaTrash
                       className="delete-icon"
+                      title="Delete User"
                       onClick={() => handleDelete(user.id)}
                     />
+                    <span
+                      onClick={() => handleDeactivate(user.id, !user.deactivated)}
+                      title={user.deactivated ? "Activate User" : "Deactivate User"}
+                      className="deactivate-icon"
+                    >
+                      {user.deactivated ? <FaUnlock /> : <FaLock />}
+                    </span>
                   </td>
                   <td>
-                    <button onClick={() => handleApprove(user.id, !user.approved)}>
-                      {user.approved ? "Unapprove" : "Approve"}
-                    </button>
+                    <input
+                      type="checkbox"
+                      checked={user.approved}
+                      onChange={() => handleApprove(user.id, !user.approved)}
+                      title="Approve User"
+                      disabled={user.deactivated}
+                    />
                   </td>
                   <td>
                     <button onClick={() => handleMakeAdmin(user.id)}>
