@@ -12,6 +12,7 @@ import {
   CssBaseline,
   Box,
   CircularProgress,
+  Button,
 } from "@mui/material";
 
 // Define menu items for the admin sidebar
@@ -26,6 +27,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(menuItems[0].path);
   const [isAdmin, setIsAdmin] = useState(null); // Null means loading
+  const [timer, setTimer] = useState(null); // Timer to track inactivity
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -52,7 +54,38 @@ const AdminLayout = () => {
     };
 
     checkAdminStatus();
-  }, [navigate]);
+
+    // Set up automatic sign-out after 5 minutes of inactivity
+    const handleInactivity = () => {
+      setTimer(setTimeout(() => {
+        handleSignOut();
+      }, 5 * 60 * 1000)); // 5 minutes
+    };
+
+    // Reset the timer on any user interaction
+    const resetInactivityTimer = () => {
+      if (timer) clearTimeout(timer);
+      handleInactivity();
+    };
+
+    window.addEventListener("mousemove", resetInactivityTimer);
+    window.addEventListener("keydown", resetInactivityTimer);
+
+    // Clean up event listeners on unmount
+    return () => {
+      window.removeEventListener("mousemove", resetInactivityTimer);
+      window.removeEventListener("keydown", resetInactivityTimer);
+      if (timer) clearTimeout(timer);
+    };
+  }, [navigate, timer]);
+
+  const handleSignOut = () => {
+    auth.signOut().then(() => {
+      navigate("/", { state: { message: "Signed out successfully!" } });
+    }).catch((error) => {
+      console.error("Error signing out:", error);
+    });
+  };
 
   // Show loader while verifying admin status
   if (isAdmin === null) {
@@ -70,6 +103,9 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0 }}>
         <List>
+          <ListItem button onClick={() => navigate("/patient-details")}>
+            <ListItemText primary="Haske" />
+          </ListItem>
           {menuItems.map((item) => (
             <ListItem
               button
@@ -83,6 +119,9 @@ const AdminLayout = () => {
               <ListItemText primary={item.name} />
             </ListItem>
           ))}
+          <ListItem button onClick={handleSignOut}>
+            <ListItemText primary="Sign Out" />
+          </ListItem>
         </List>
       </Drawer>
 
