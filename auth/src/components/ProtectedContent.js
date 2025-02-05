@@ -92,6 +92,8 @@ function ProtectedContent() {
         // Listen for user activity
         window.addEventListener('mousemove', resetInactivityTimer);
         window.addEventListener('keydown', resetInactivityTimer);
+        window.addEventListener("click", resetInactivityTimer);
+        window.addEventListener("scroll", resetInactivityTimer);
 
         // Set the initial timeout when the component mounts
         resetInactivityTimer();
@@ -101,6 +103,9 @@ function ProtectedContent() {
             clearTimeout(inactivityTimeout);
             window.removeEventListener('mousemove', resetInactivityTimer);
             window.removeEventListener('keydown', resetInactivityTimer);
+            window.removeEventListener("click", resetInactivityTimer);
+            window.removeEventListener("scroll", resetInactivityTimer);
+            
         };
     }, []);
 
