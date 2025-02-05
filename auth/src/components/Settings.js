@@ -12,6 +12,11 @@ const Settings = () => {
     setDarkMode(savedTheme);
   }, []);
 
+  // Apply dark mode class to the body when darkMode changes
+  useEffect(() => {
+    document.body.className = darkMode ? "dark-mode" : "light-mode";
+  }, [darkMode]);
+
   // Fetch users for role management
   useEffect(() => {
     fetch("https://haske.online:8080/api/verification/get-users")
