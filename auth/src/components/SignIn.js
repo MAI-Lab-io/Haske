@@ -73,7 +73,7 @@ const SignIn = () => {
   };
 
   // Handle user sign-in
- const handleSignIn = async (e) => {
+const handleSignIn = async (e) => {
   e.preventDefault();
   if (!email || !password) {
     setError("Email and password are required.");
@@ -89,6 +89,10 @@ const SignIn = () => {
     
     if (!isValidUser) return; // Prevent further login attempts if not verified
 
+    // Log the sign-in action to the backend
+    await logUserAction(email, "user signed in");
+
+    // Sign the user in
     await signInWithEmailAndPassword(auth, email, password);
     navigate("/patient-details");
   } catch (error) {
@@ -105,6 +109,27 @@ const SignIn = () => {
     }
   } finally {
     setLoading(false);
+  }
+};
+
+// Function to log user actions
+const logUserAction = async (email, action) => {
+  try {
+    const response = await fetch('https://haske.online:8080/api/verification/log-action', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, action }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to log the action');
+    }
+
+    console.log('User action logged successfully');
+  } catch (error) {
+    console.error('Error logging user action:', error);
   }
 };
 
