@@ -96,7 +96,7 @@ function LandingPage() {
       // Hide the message after 3 seconds
       setTimeout(() => {
         setMessage(null);
-      }, 3000);
+      }, 1000);
     }
   },  [location]);
 
