@@ -54,31 +54,34 @@ const AdminLayout = () => {
     };
 
     checkAdminStatus();
-
-    // Set up automatic sign-out after 5 minutes of inactivity
     const handleInactivity = () => {
       setTimer(setTimeout(() => {
         handleSignOut();
       }, 5 * 60 * 1000)); // 5 minutes
     };
 
-    // Reset the timer on any user interaction
+    // Reset the timer on any user interaction (mousemove, keydown, click, scroll)
     const resetInactivityTimer = () => {
-      if (timer) clearTimeout(timer);
-      handleInactivity();
+      if (timer) clearTimeout(timer); // Clear the previous timeout
+      handleInactivity(); // Start a new timer
     };
 
+    // Add event listeners for inactivity detection
     window.addEventListener("mousemove", resetInactivityTimer);
     window.addEventListener("keydown", resetInactivityTimer);
+    window.addEventListener("click", resetInactivityTimer);
+    window.addEventListener("scroll", resetInactivityTimer);
 
     // Clean up event listeners on unmount
     return () => {
       window.removeEventListener("mousemove", resetInactivityTimer);
       window.removeEventListener("keydown", resetInactivityTimer);
-      if (timer) clearTimeout(timer);
+      window.removeEventListener("click", resetInactivityTimer);
+      window.removeEventListener("scroll", resetInactivityTimer);
+      if (timer) clearTimeout(timer); // Clear timeout on cleanup
     };
   }, [navigate, timer]);
-
+  
   const handleSignOut = () => {
     auth.signOut().then(() => {
       navigate("/", { state: { message: "Signed out successfully!" } });
