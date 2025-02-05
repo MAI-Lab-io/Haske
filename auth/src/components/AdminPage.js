@@ -97,8 +97,13 @@ const AdminPage = () => {
     }
   };
 
-const handleMakeAdmin = async (userId) => {
-  if (!window.confirm("Are you sure you want to make this user an Admin?")) return;
+const handleMakeAdmin = async (userId, currentRole) => {
+  const newRole = currentRole === "admin" ? "user" : "admin";
+  const confirmationMessage = newRole === "admin" 
+    ? "Are you sure you want to promote this user to Admin?" 
+    : "Are you sure you want to revoke Admin privileges?";
+
+  if (!window.confirm(confirmationMessage)) return;
 
   const user = auth.currentUser; // Get the current authenticated user
 
@@ -109,15 +114,15 @@ const handleMakeAdmin = async (userId) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        role: "admin",
-        requesterEmail: user.email,  // Include the current user's email as the requester
+        role: newRole,
+        requesterEmail: user.email, // Include the current user's email as the requester
       }),
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      setNotification("User promoted to Admin successfully!");
+      setNotification(`User role updated to ${newRole} successfully!`);
       fetchUsers(); // Refresh the list
     } else {
       setNotification("Error: " + result.message || "Failed to update role.");
@@ -127,6 +132,7 @@ const handleMakeAdmin = async (userId) => {
     setNotification("An error occurred while updating the role.");
   }
 };
+
 
 
   const handleDelete = async (userId) => {
@@ -249,10 +255,10 @@ const handleMakeAdmin = async (userId) => {
                     </button>
                   </td>
                   <td>
-                    <button onClick={() => handleMakeAdmin(user.id)}>
-                      Make Admin
-                    </button>
-                  </td>
+                  <button onClick={() => handleMakeAdmin(user.id, user.role)}>
+                    {user.role === "admin" ? "Revoke Admin" : "Make Admin"}
+                  </button>
+                </td>
                 </tr>
               ))}
             </tbody>
