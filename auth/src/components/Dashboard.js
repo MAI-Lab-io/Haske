@@ -13,7 +13,7 @@ const Dashboard = () => {
       .then((res) => res.json())
       .then((data) => setStats(data));
     
-    fetch("http://haske.online:8080/api/dicom-stats")
+    fetch("https://haske.online:8080/api/dicom-stats")
       .then((res) => res.json())
       .then((data) => setDicomStats(data));
   }, []);
