@@ -9,43 +9,43 @@ const Analytics = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-useEffect(() => {
-  fetch("https://haske.online:8080/api/verification/logs")
-    .then((res) => res.json())
-    .then((data) => {
-      if (Array.isArray(data.logs)) {
-        setLogs(data.logs);
+    fetch("https://haske.online:8080/api/verification/logs")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.logs)) {
+          setLogs(data.logs);
 
-        const actionCounts = data.logs.reduce((acc, log) => {
-          acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
-          
-          // Normalize action names
-          if (log.action.toLowerCase() === "user signed in") acc[log.timestamp].signIn++;
-          if (log.action.toLowerCase() === "user signed out") acc[log.timestamp].signOut++;
-          
-          return acc;
-        }, {});
+          const actionCounts = data.logs.reduce((acc, log) => {
+            acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
 
-        setChartData(Object.values(actionCounts));
-      } else {
-        console.error("Unexpected API response format:", data);
-        setLogs([]);
-        setChartData([]);
-      }
-    })
-    .catch((error) => console.error("Error fetching logs:", error));
-}, []);
+            // Normalize action names
+            if (log.action.toLowerCase() === "user signed in") acc[log.timestamp].signIn++;
+            if (log.action.toLowerCase() === "user signed out") acc[log.timestamp].signOut++;
 
+            return acc;
+          }, {});
 
-const filteredLogs = logs.filter(log =>
-  (filter ? log.action.toLowerCase() === (filter === "Sign In" ? "user signed in" : "user signed out") : true) &&
-  (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
-);
+          setChartData(Object.values(actionCounts));
+        } else {
+          console.error("Unexpected API response format:", data);
+          setLogs([]);
+          setChartData([]);
+        }
+      })
+      .catch((error) => console.error("Error fetching logs:", error));
+  }, []);
 
+  // Filter logs based on search and filter criteria
+  const filteredLogs = logs.filter((log) => 
+    (filter ? log.action.toLowerCase() === (filter === "Sign In" ? "user signed in" : "user signed out") : true) &&
+    (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
+  );
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#1E1E1E", color: "#fff" }}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>User Activity Logs</Typography>
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
+        User Activity Logs
+      </Typography>
       
       {/* Filters */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
@@ -86,11 +86,10 @@ const filteredLogs = logs.filter(log =>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis 
-  dataKey="timestamp" 
-  stroke="#ccc" 
-  tickFormatter={(tick) => new Date(tick).toLocaleDateString()} 
-/>
-
+            dataKey="timestamp" 
+            stroke="#ccc" 
+            tickFormatter={(tick) => new Date(tick).toLocaleDateString()} 
+          />
           <YAxis stroke="#ccc" />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
@@ -109,13 +108,17 @@ const filteredLogs = logs.filter(log =>
           </TableRow>
         </TableHead>
         <TableBody>
-          {filteredLogs.length > 0 ? filteredLogs.map((log, index) => (
-            <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
-              <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
-              <TableCell sx={{ color: log.action === "Sign In" ? "#4CAF50" : "#FF5252" }}>{log.action}</TableCell>
-              <TableCell sx={{ color: "#fff" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
-            </TableRow>
-          )) : (
+          {filteredLogs.length > 0 ? (
+            filteredLogs.map((log, index) => (
+              <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
+                <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
+                <TableCell sx={{ color: log.action.toLowerCase() === "user signed in" ? "#4CAF50" : "#FF5252" }}>
+                  {log.action}
+                </TableCell>
+                <TableCell sx={{ color: "#fff" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
+              </TableRow>
+            ))
+          ) : (
             <TableRow>
               <TableCell colSpan={3} sx={{ textAlign: "center", color: "#aaa" }}>No logs available</TableCell>
             </TableRow>
