@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField, MenuItem } from "@mui/material";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 
 const Analytics = () => {
   const [logs, setLogs] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetch("https://haske.online:8080/api/verification/logs")
@@ -13,21 +15,14 @@ const Analytics = () => {
         if (Array.isArray(data.logs)) {
           setLogs(data.logs);
 
-          // Aggregate actions count separately for Sign In and Sign Out
           const actionCounts = data.logs.reduce((acc, log) => {
-            if (log.action === "Sign In" || log.action === "Sign Out") {
-              acc[log.action] = (acc[log.action] || 0) + 1;
-            }
+            acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
+            if (log.action === "Sign In") acc[log.timestamp].signIn++;
+            if (log.action === "Sign Out") acc[log.timestamp].signOut++;
             return acc;
           }, {});
 
-          // Format data for the chart
-          const formattedData = [
-            { action: "Sign In", count: actionCounts["Sign In"] || 0 },
-            { action: "Sign Out", count: actionCounts["Sign Out"] || 0 },
-          ];
-          
-          setChartData(formattedData);
+          setChartData(Object.values(actionCounts));
         } else {
           console.error("Unexpected API response format:", data);
           setLogs([]);
@@ -37,9 +32,38 @@ const Analytics = () => {
       .catch((error) => console.error("Error fetching logs:", error));
   }, []);
 
+  const filteredLogs = logs.filter(log =>
+    (filter ? log.action === filter : true) &&
+    (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
+  );
+
   return (
     <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#1E1E1E", color: "#fff" }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>User Activity Logs</Typography>
+      
+      {/* Filters */}
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        <TextField 
+          label="Search by Email"
+          variant="outlined"
+          size="small"
+          sx={{ backgroundColor: "#fff", borderRadius: 1 }}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <TextField
+          select
+          label="Filter by Action"
+          variant="outlined"
+          size="small"
+          sx={{ backgroundColor: "#fff", borderRadius: 1 }}
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <MenuItem value="">All</MenuItem>
+          <MenuItem value="Sign In">Sign In</MenuItem>
+          <MenuItem value="Sign Out">Sign Out</MenuItem>
+        </TextField>
+      </div>
 
       {/* Activity Chart */}
       <ResponsiveContainer width="100%" height={300}>
@@ -55,12 +79,12 @@ const Analytics = () => {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="action" stroke="#ccc" />
+          <XAxis dataKey="timestamp" stroke="#ccc" tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} />
           <YAxis stroke="#ccc" />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
-          <Area type="monotone" dataKey="count" name="Sign In" stroke="#4CAF50" fillOpacity={1} fill="url(#colorSignIn)" />
-          <Area type="monotone" dataKey="count" name="Sign Out" stroke="#FF5252" fillOpacity={1} fill="url(#colorSignOut)" />
+          <Area type="monotone" dataKey="signIn" name="Sign In" stroke="#4CAF50" fillOpacity={1} fill="url(#colorSignIn)" />
+          <Area type="monotone" dataKey="signOut" name="Sign Out" stroke="#FF5252" fillOpacity={1} fill="url(#colorSignOut)" />
         </AreaChart>
       </ResponsiveContainer>
 
@@ -74,7 +98,7 @@ const Analytics = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Array.isArray(logs) ? logs.map((log, index) => (
+          {filteredLogs.length > 0 ? filteredLogs.map((log, index) => (
             <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
               <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
               <TableCell sx={{ color: log.action === "Sign In" ? "#4CAF50" : "#FF5252" }}>{log.action}</TableCell>
