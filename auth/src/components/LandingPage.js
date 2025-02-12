@@ -1,19 +1,20 @@
+"// src/components/LandingPage.js
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
 import "./LandingPage.css";
 import logo from "../assets/haske.png";
 import mailabLogo from "../assets/mailablogo.png";
 import sponsor1 from "../assets/sponsor1.png";
-import sponsor2 from "../assets/sponsor2.png";
-import sponsor3 from "../assets/sponsor3.png";
+import sponsor2 from "../assets/sponsor2.png"; 
+import sponsor3 from "../assets/sponsor3.png"; 
 import sponsor4 from "../assets/sponsor4.png";
 import sponsor5 from "../assets/sponsor5.png";
-import AnimatedSVG from "../assets/animated.svg";
-import BackgroundVideo from "../assets/background-video.mp4";
 
+
+// Footer Component
+// Footer Component
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const currentYear = new Date().getFullYear(); // Automatically fetch the current year
   return (
     <footer className="landing-footer">
       <div className="footer-content">
@@ -21,13 +22,21 @@ const Footer = () => {
           <p>&copy; {currentYear} Haske</p>
         </div>
         <div className="footer-middle">
-          <a href="mailto:haske@mailab.io" className="contact-us-link">
+          <a
+            href="mailto:haske@mailab.io"  // Replace with your company's Gmail address
+            className="contact-us-link"
+          >
             Contact Us
           </a>
         </div>
         <div className="footer-right">
           <span>Powered by</span>
-          <a href="https://mailab.io" target="_blank" rel="noopener noreferrer" className="mailab-link">
+          <a
+            href="https://mailab.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mailab-link"
+          >
             <img src={mailabLogo} alt="MAILAB Logo" className="mailab-logo" />
           </a>
         </div>
@@ -36,95 +45,346 @@ const Footer = () => {
   );
 };
 
+
+// Sponsors Section with improved structure
 const Sponsors = () => (
-  <motion.section 
-    className="sponsors-section"
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    transition={{ duration: 1 }}
-    viewport={{ once: true }}
-  >
+  <section className="sponsors-section">
     <h3 className="sponsors-title">Our Partners & Sponsors</h3>
     <p className="sponsors-description">
       We are proud to collaborate with leading organizations and institutions supporting our mission.
     </p>
-    <div className="sponsors-logos">
-      {[sponsor1, sponsor2, sponsor3, sponsor4, sponsor5].map((sponsor, index) => (
-        <motion.div 
-          key={index} 
-          className="sponsor-logo-wrapper"
-          whileHover={{ scale: 1.1 }}
-        >
-          <img src={sponsor} alt={`Sponsor ${index + 1}`} className="sponsor-logo" />
-        </motion.div>
-      ))}
-    </div>
-  </motion.section>
+   <div className="sponsors-logos">
+  <div className="sponsor-logo-wrapper">
+    <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor1} alt="Upenn" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor2} alt="AWS" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://crestviewradiology.org/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor3} alt="CrestView" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper">
+    <a href="https://lacunafund.org/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor4} alt="Lacuna" className="sponsor-logo" />
+    </a>
+  </div>
+  <div className="sponsor-logo-wrapper-black">
+    <a href="https://airg.nitda.gov.ng/" target="_blank" rel="noopener noreferrer">
+      <img src={sponsor5} alt="NAIRS" className="sponsor-logo" />
+    </a>
+  </div>
+</div>
+
+  </section>
 );
 
+
+// LandingPage Component
 function LandingPage() {
   const location = useLocation();
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (location.state?.message) {
+   if (location.state?.message) {
       setMessage(location.state.message);
+      // Hide the message after 3 seconds
       setTimeout(() => {
         setMessage(null);
       }, 1000);
     }
-  }, [location]);
+  },  [location]);
 
   return (
     <div className="landing-container">
-      {message && <div className="message-popup"><p>{message}</p></div>}
+      {/* Conditional message popup */}
+      {message && (
+        <div className="message-popup">
+          <p>{message}</p>
+        </div>
+      )}
 
-      <motion.header 
-        className="landing-header"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
+      <header className="landing-header">
         <img src={logo} alt="Haske" className="logo" />
         <nav className="nav-links">
-          {["register", "signin", "about-us", "publications"].map((path, index) => (
-            <Link key={index} to={`/${path}`} className="nav-button">
-              {path.replace("-", " ").toUpperCase()}
-            </Link>
-          ))}
+          <Link to="/register" className="nav-button">
+            Register
+          </Link>
+          <Link to="/signin" className="nav-button">
+            Sign In
+          </Link>
+        <Link to="/about-us" className="nav-button">
+            About Us
+          </Link>
+        <Link to="/publications" className="nav-button">
+            Publications
+          </Link>
         </nav>
-      </motion.header>
+      </header>
 
-      <div className="background-video">
-        <video autoPlay loop muted>
-          <source src={BackgroundVideo} type="video/mp4" />
-        </video>
-      </div>
-
-      <motion.main 
-        className="landing-content"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2 }}
-      >
+      <main className="landing-content">
         <h2>Welcome to Haske</h2>
         <p className="landing-subtitle">
           Open-source Picture Archiving Communication System
         </p>
-        <motion.div className="action-buttons" whileHover={{ scale: 1.1 }}>
-          <Link to="/register" className="action-button">Register</Link>
-          <Link to="/signin" className="action-button">Sign In</Link>
-        </motion.div>
-      </motion.main>
+        <div className="action-buttons">
+          <Link to="/register" className="action-button">
+            Register
+          </Link>
+          <Link to="/signin" className="action-button">
+            Sign In
+          </Link>
+        </div>
+      </main>
 
-      <motion.div className="animated-svg" whileHover={{ scale: 1.2 }}>
-        <img src={AnimatedSVG} alt="Animated Graphic" />
-      </motion.div>
-
+      {/* Sponsors Section */}
       <Sponsors />
+
+      {/* Footer Section */}
       <Footer />
     </div>
   );
 }
 
-export default LandingPage;
+export default LandingPage;"
+
+the css - "/* src/components/LandingPage.css */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.landing-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #f8f9fa;
+    color: #333;
+}
+
+.landing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+/* Sponsors Section Styling */
+.sponsors-section {
+    padding: 15px 5px;
+    background-color: #fff; /* Light gray background for better contrast */
+    text-align: center;
+    border-top: 1px solid #ddd; /* Add a subtle top border */
+}
+
+.sponsors-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #222; /* Slightly darker for better readability */
+}
+
+.sponsors-description {
+    font-size: 16px;
+    color: #666; /* Neutral gray for the description text */
+    margin-bottom: 30px;
+}
+
+.sponsors-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px; /* Larger gap for better spacing */
+}
+
+/* Default sponsor logo wrapper */
+.sponsor-logo-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff; /* White background for logo emphasis */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* NAIRS specific styling */
+.sponsor-logo-wrapper-black {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000; /* Black background for NAIRS */
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sponsor-logo-wrapper:hover,
+.sponsor-logo-wrapper-black:hover {
+    transform: scale(1.1); /* Scale effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+}
+
+.sponsor-logo-wrapper-black a img {
+    filter: brightness(0) invert(1); /* Adjust image contrast for visibility on black background */
+}
+
+.sponsor-logo {
+    max-height: 60px; /* Ensure all logos are uniform in size */
+    max-width: 100%; /* Keep aspect ratio intact */
+}
+
+/* Navigation button styling */
+.nav-button {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.logo {
+    height: 50px; /* Adjust the height as necessary */
+    width: auto;  /* Maintain aspect ratio */
+}
+
+.nav-button:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.landing-content {
+    text-align: center;
+    flex: 1;
+    padding: 100px 20px;
+    background: linear-gradient(135deg, #333, #777);
+    color: #fff;
+}
+
+.landing-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.landing-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+    color: #ddd;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-button {
+    padding: 15px 30px;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #555;
+}
+
+.landing-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff; /* Tesla's classic black footer */
+    color: #000;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.footer-left {
+    text-align: left;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.footer-right span {
+    margin-right: 10px;
+}
+
+.mailab-link {
+    display: inline-block;
+}
+
+.mailab-logo {
+    height: 44px;
+    vertical-align: middle;
+    transition: transform 0.3s ease;
+}
+
+.mailab-logo:hover {
+    transform: scale(1.1);
+}
+
+/* Add this to your LandingPage.css or global CSS file */
+.message-popup {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    z-index: 9999;
+}
+
+.contact-us-link {
+  color: black; /* Set the text color to black */
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.contact-us-link:hover {
+  text-decoration: underline;
+}
