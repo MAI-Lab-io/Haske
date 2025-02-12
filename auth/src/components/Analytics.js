@@ -9,33 +9,39 @@ const Analytics = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetch("https://haske.online:8080/api/verification/logs")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data.logs)) {
-          setLogs(data.logs);
+useEffect(() => {
+  fetch("https://haske.online:8080/api/verification/logs")
+    .then((res) => res.json())
+    .then((data) => {
+      if (Array.isArray(data.logs)) {
+        setLogs(data.logs);
 
-          const actionCounts = data.logs.reduce((acc, log) => {
-            acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
-            if (log.action === "Sign In") acc[log.timestamp].signIn++;
-            if (log.action === "Sign Out") acc[log.timestamp].signOut++;
-            return acc;
-          }, {});
+        const actionCounts = data.logs.reduce((acc, log) => {
+          acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
+          
+          // Normalize action names
+          if (log.action.toLowerCase() === "user signed in") acc[log.timestamp].signIn++;
+          if (log.action.toLowerCase() === "user signed out") acc[log.timestamp].signOut++;
+          
+          return acc;
+        }, {});
 
-          setChartData(Object.values(actionCounts));
-        } else {
-          console.error("Unexpected API response format:", data);
-          setLogs([]);
-          setChartData([]);
-        }
-      })
-      .catch((error) => console.error("Error fetching logs:", error));
-  }, []);
+        setChartData(Object.values(actionCounts));
+      } else {
+        console.error("Unexpected API response format:", data);
+        setLogs([]);
+        setChartData([]);
+      }
+    })
+    .catch((error) => console.error("Error fetching logs:", error));
+}, []);
 
-  const filteredLogs = logs.filter(log =>
-    (filter ? log.action === filter : true) &&
-    (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
-  );
+
+const filteredLogs = logs.filter(log =>
+  (filter ? log.action.toLowerCase() === (filter === "Sign In" ? "user signed in" : "user signed out") : true) &&
+  (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
+);
+
 
   return (
     <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#1E1E1E", color: "#fff" }}>
@@ -79,7 +85,12 @@ const Analytics = () => {
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="timestamp" stroke="#ccc" tickFormatter={(tick) => new Date(tick).toLocaleTimeString()} />
+          <XAxis 
+  dataKey="timestamp" 
+  stroke="#ccc" 
+  tickFormatter={(tick) => new Date(tick).toLocaleDateString()} 
+/>
+
           <YAxis stroke="#ccc" />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
