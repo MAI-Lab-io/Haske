@@ -15,19 +15,9 @@ const Analytics = () => {
       .then((data) => {
         if (Array.isArray(data.logs)) {
           setLogs(data.logs);
-
-          const actionCounts = data.logs.reduce((acc, log) => {
-            acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
-            if (log.action.toLowerCase() === "user signed in") acc[log.timestamp].signIn++;
-            if (log.action.toLowerCase() === "user signed out") acc[log.timestamp].signOut++;
-            return acc;
-          }, {});
-
-          setChartData(Object.values(actionCounts));
         } else {
           console.error("Unexpected API response format:", data);
           setLogs([]);
-          setChartData([]);
         }
       })
       .catch((error) => console.error("Error fetching logs:", error));
@@ -37,6 +27,15 @@ const Analytics = () => {
     (filter ? log.action.toLowerCase() === (filter === "Sign In" ? "user signed in" : "user signed out") : true) &&
     (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
   );
+
+  const filteredChartData = filteredLogs.reduce((acc, log) => {
+    acc[log.timestamp] = acc[log.timestamp] || { timestamp: log.timestamp, signIn: 0, signOut: 0 };
+    if (log.action.toLowerCase() === "user signed in") acc[log.timestamp].signIn++;
+    if (log.action.toLowerCase() === "user signed out") acc[log.timestamp].signOut++;
+    return acc;
+  }, {});
+
+  const chartDataArray = Object.values(filteredChartData);
 
   const exportData = (format) => {
     let content = "";
@@ -108,7 +107,7 @@ const Analytics = () => {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis dataKey="timestamp" stroke="#ccc" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
           <YAxis stroke="#ccc" />
