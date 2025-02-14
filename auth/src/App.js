@@ -1,43 +1,74 @@
-{
-  "name": "my-app",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^6.2.2",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-helmet": "^6.1.0",
-    "react-scripts": "^5.0.1",
-    "react-scroll": "^1.8.9",
-    "react-slick": "^0.30.0",
-    "slick-carousel": "^1.8.1",
-    "styled-components": "^6.1.6",
-    "web-vitals": "^3.5.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import SignIn from "./components/SignIn";
+import Register from "./components/Register";
+import ProtectedContent from "./components/ProtectedContent";
+import LandingPage from "./components/LandingPage";
+import VerifyPage from "./components/VerifyPage";
+import AdminLayout from "./components/AdminLayout";
+import AboutUs from "./components/AboutUs";
+import Publications from "./components/Publications";
+import Dashboard from "./components/Dashboard";
+import ManageUsers from "./components/ManageUsers";
+import Analytics from "./components/Analytics";
+import Settings from "./components/Settings";
+import { auth } from "./firebaseConfig"; // Firebase auth import
+import VerifyWaiting from "./components/VerifyWaiting";
+import { Helmet } from "react-helmet";
+import Landing from "./screens/Landing.jsx";
+
+const App = () => {
+const [user, setUser] = useState(null);
+const [loading, setLoading] = useState(true); // Add a loading state
+
+useEffect(() => {
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    console.log("User state changed:", user);
+    setUser(user);
+    setLoading(false); // Set loading to false after auth state is checked
+  });
+
+  return () => unsubscribe();
+}, []);
+
+if (loading) {
+  return <div>Loading...</div>; // Show a loading message or spinner
 }
+
+return (
+  <>
+    <Helmet>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap" rel="stylesheet" />
+    </Helmet>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route
+          path="/signin"
+          element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
+        />
+        <Route path="/verification" element={<VerifyPage />} />
+        <Route path="/verify-waiting" element={<VerifyWaiting />} />
+        <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<ManageUsers />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<Settings />} />
+        </Route>
+        <Route path="/register" element={<Register />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/publications" element={<Publications />} />
+        <Route
+          path="/patient-details"
+          element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
+        />
+      </Routes>
+    </Router>
+  </>
+);
+};
+
+export default App;
