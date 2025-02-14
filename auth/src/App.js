@@ -18,56 +18,57 @@ import { Helmet } from "react-helmet";
 import Landing from "./screens/Landing.jsx";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Add a loading state
+const [user, setUser] = useState(null);
+const [loading, setLoading] = useState(true); // Add a loading state
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("User state changed:", user);
-      setUser(user);
-      setLoading(false); // Set loading to false after auth state is checked
-    });
+useEffect(() => {
+  const unsubscribe = auth.onAuthStateChanged((user) => {
+    console.log("User state changed:", user);
+    setUser(user);
+    setLoading(false); // Set loading to false after auth state is checked
+  });
 
-    return () => unsubscribe();
-  }, []);
+  return () => unsubscribe();
+}, []);
 
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading message or spinner
-  }
+if (loading) {
+  return <div>Loading...</div>; // Show a loading message or spinner
+}
 
-  return (
-    <>
-      <Helmet>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap" rel="stylesheet" />
-      </Helmet>
-      <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route
-            path="/signin"
-            element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
-          />
-          <Route path="/verification" element={<VerifyPage />} />
-          <Route path="/verify-waiting" element={<VerifyWaiting />} />
-          <Route path="/admin" element={<AdminLayout />}>
+return (
+  <>
+    <Helmet>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link href="https://fonts.googleapis.com/css2?family=Khula:wght@400;600;800&display=swap" rel="stylesheet" />
+    </Helmet>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route
+          path="/signin"
+          element={user ? <Navigate to="/patient-details" replace /> : <SignIn />}
+        />
+        <Route path="/verification" element={<VerifyPage />} />
+        <Route path="/verify-waiting" element={<VerifyWaiting />} />
+        <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<ManageUsers />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="/register" element={<Register />} />
-          <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/publications" element={<Publications />} />
-          <Route
-            path="/patient-details"
-            element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
-          />
-        </Routes>
-      </Router>
-    </>
-  );
+        </Route>
+        <Route path="/register" element={<Register />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/publications" element={<Publications />} />
+        <Route
+          path="/patient-details"
+          element={user ? <ProtectedContent /> : <Navigate to="/" replace />}
+        />
+      </Routes>
+    </Router>
+  </>
+);
 };
 
 export default App;
