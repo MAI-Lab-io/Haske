@@ -115,11 +115,19 @@ const ImageWrapper = styled.div`
   }
 `;
 const Img = styled.img`
+  width: 60%;  /* Adjust the percentage as needed */
+  max-width: 400px;  /* Set a max width */
+  height: auto;
+  @media (max-width: 960px) {
+    width: 70%;
+    max-width: 350px;
+  }
   @media (max-width: 560px) {
     width: 80%;
-    height: auto;
+    max-width: 300px;
   }
 `;
+
 const QuoteWrapper = styled.div`
   position: absolute;
   left: 0;
