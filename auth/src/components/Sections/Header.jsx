@@ -25,17 +25,7 @@ export default function Header() {
       <RightSide>
         <ImageWrapper>
           <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
-          <QuoteWrapper className="flexCenter whiteColor radius8">
-            <QuotesWrapper>
-              <QuotesIcon />
-            </QuotesWrapper>
-            <div>
-              <p className="font15 brightOrange">
-                <em> The best way to predict the future is to create it.</em>
-              </p>
-              <p className="font13 orangeColor textRight" style={{ marginTop: '10px' }}>Abraham Lincoln</p>
-            </div>
-          </QuoteWrapper>
+          
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
