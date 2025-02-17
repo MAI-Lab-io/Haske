@@ -17,10 +17,13 @@ import sponsor5 from "../../assets/sponsor5.png";
 export default function ClientSlider() {
   const settings = {
     infinite: true,
-    speed: 500,
+    speed: 600,
     slidesToShow: 6,
-    slidesToScroll: 2,
+    slidesToScroll: 1,
     arrows: false,
+    centerMode: true, // Makes the current logo more prominent
+    centerPadding: "20px", // Adds padding around the centered item
+    focusOnSelect: true, // Clicking on the logo selects it
     responsive: [
       {
         breakpoint: 1024,
@@ -47,52 +50,73 @@ export default function ClientSlider() {
   };
 
   return (
-    <div>
+    <SliderWrapper>
       <Slider {...settings}>
         {/* Sponsors */}
-        <LogoWrapper className="flexCenter">
+        <LogoWrapper>
           <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer">
             <ImgStyle src={sponsor1} alt="Upenn" />
           </a>
         </LogoWrapper>
-        <LogoWrapper className="flexCenter">
+        <LogoWrapper>
           <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">
             <ImgStyle src={sponsor2} alt="AWS" />
           </a>
         </LogoWrapper>
-        <LogoWrapper className="flexCenter">
+        <LogoWrapper>
           <a href="https://crestviewradiology.org/" target="_blank" rel="noopener noreferrer">
             <ImgStyle src={sponsor3} alt="CrestView" />
           </a>
         </LogoWrapper>
-        <LogoWrapper className="flexCenter">
+        <LogoWrapper>
           <a href="https://lacunafund.org/" target="_blank" rel="noopener noreferrer">
             <ImgStyle src={sponsor4} alt="Lacuna" />
           </a>
         </LogoWrapper>
-        <LogoWrapper className="flexCenter">
+        <LogoWrapper>
           <a href="https://airg.nitda.gov.ng/" target="_blank" rel="noopener noreferrer">
             <ImgStyle src={sponsor5} alt="NAIRS" />
           </a>
         </LogoWrapper>
-
-       
       </Slider>
-    </div>
+    </SliderWrapper>
   );
 }
 
-const LogoWrapper = styled.div`
-  width: 100%;
-  height: 100px;
-  cursor: pointer;
-  :focus-visible {
-    outline: none;
-    border: 0px;
+const SliderWrapper = styled.div`
+  margin-top: 50px;
+  .slick-slide {
+    transition: transform 0.3s ease-in-out;
   }
 `;
+
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  cursor: pointer;
+  padding: 0 20px;
+  opacity: 0.8; /* Slight fade effect */
+  transition: opacity 0.3s ease-in-out;
+
+  &:hover {
+    opacity: 1; /* Highlight logo on hover */
+  }
+
+  :focus-visible {
+    outline: none;
+  }
+`;
+
 const ImgStyle = styled.img`
-  width: 100%;
-  height: 100%;
-  padding: 10%;
+  max-height: 80px;
+  max-width: 100%;
+  object-fit: contain; /* Ensures logos retain their aspect ratio */
+  transition: transform 0.3s ease, filter 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.1); /* Slight zoom effect */
+    filter: brightness(1.1); /* Adds brightness effect on hover */
+  }
 `;
