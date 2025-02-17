@@ -16,7 +16,7 @@ export default function ClientSlider() {
     slidesToScroll: 1,
     arrows: false,
     centerMode: true, // Makes the current logo more prominent
-    centerPadding: "20px", // Adds padding around the centered item
+    centerPadding: "40px", // Adds padding around the centered item for better spacing
     focusOnSelect: true, // Clicking on the logo selects it
     responsive: [
       {
@@ -86,6 +86,8 @@ export default function ClientSlider() {
 
 const SliderWrapper = styled.div`
   margin-top: 50px;
+  max-width: 100%; /* Ensures the slider takes full width */
+  padding: 0 10px; /* Adds padding to prevent logos from touching edges */
 `;
 
 const Header = styled.div`
@@ -96,13 +98,13 @@ const Header = styled.div`
 const Title = styled.h2`
   font-size: 36px;
   font-weight: bold;
-  color: #333;
+  color: #0b093b; /* Updated title color */
   margin: 0;
 `;
 
 const Description = styled.p`
   font-size: 16px;
-  color: #666;
+  color: white; /* Updated description color */
   margin-top: 10px;
 `;
 
@@ -112,13 +114,12 @@ const LogoWrapper = styled.div`
   align-items: center;
   height: 120px;
   cursor: pointer;
-  padding: 0 20px;
+  padding: 10px 20px; /* Increased padding for better spacing */
   opacity: 0.8;
-  transition: opacity 0.3s ease-in-out;
-  background-color: #fff; /* White background for logo emphasis */
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+  background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     opacity: 1;
