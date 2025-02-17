@@ -25,12 +25,11 @@ export default function Header() {
       <RightSide>
         <ImageWrapper>
           <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
-          
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv className="lightBg" ></GreyDiv>
+        <GreyDiv className="lightBg"></GreyDiv> {/* Ensure this div has the gradient */}
       </RightSide>
     </Wrapper>
   );
@@ -40,6 +39,7 @@ const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
+  display: flex; /* Ensure it's a flex container */
   @media (max-width: 960px) {
     flex-direction: column;
   }
@@ -87,16 +87,17 @@ const BtnWrapper = styled.div`
     margin: 0 auto;
   }
 `;
+
 const GreyDiv = styled.div`
-  width: 35%; /* Slightly increased width */
-  height: 100%; /* Adjusted to full height */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 5; /* Increased z-index to ensure visibility */
+  z-index: 5; /* Ensure it is above other elements */
   background: linear-gradient(180deg, #5b617a, #43495d);
   @media (max-width: 960px) {
-    display: none;
+    display: none; /* Hide on smaller screens if necessary */
   }
 `;
 
@@ -112,8 +113,8 @@ const ImageWrapper = styled.div`
 `;
 
 const Img = styled.img`
-  width: 100%;  /* Adjust the percentage as needed */
-  max-width: 1000px;  /* Set a max width */
+  width: 100%;
+  max-width: 1000px;
   height: 600px;
   @media (max-width: 960px) {
     width: 70%;
