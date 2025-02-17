@@ -2,12 +2,6 @@ import React from "react";
 import Slider from "react-slick";
 import styled from "styled-components";
 // Assets
-import ClientLogo01 from "../../assets/img/clients/logo01.svg";
-import ClientLogo02 from "../../assets/img/clients/logo02.svg";
-import ClientLogo03 from "../../assets/img/clients/logo03.svg";
-import ClientLogo04 from "../../assets/img/clients/logo04.svg";
-import ClientLogo05 from "../../assets/img/clients/logo05.svg";
-import ClientLogo06 from "../../assets/img/clients/logo06.svg";
 import sponsor1 from "../../assets/sponsor1.png";
 import sponsor2 from "../../assets/sponsor2.png";
 import sponsor3 from "../../assets/sponsor3.png";
@@ -51,6 +45,13 @@ export default function ClientSlider() {
 
   return (
     <SliderWrapper>
+      <Header>
+        <Title>Our Partners & Sponsors</Title>
+        <Description>
+          We are proud to collaborate with leading organizations and institutions supporting our mission.
+        </Description>
+      </Header>
+
       <Slider {...settings}>
         {/* Sponsors */}
         <LogoWrapper>
@@ -85,23 +86,44 @@ export default function ClientSlider() {
 
 const SliderWrapper = styled.div`
   margin-top: 50px;
-  .slick-slide {
-    transition: transform 0.3s ease-in-out;
-  }
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 30px;
+`;
+
+const Title = styled.h2`
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+`;
+
+const Description = styled.p`
+  font-size: 16px;
+  color: #666;
+  margin-top: 10px;
 `;
 
 const LogoWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 120px;
   cursor: pointer;
   padding: 0 20px;
-  opacity: 0.8; /* Slight fade effect */
+  opacity: 0.8;
   transition: opacity 0.3s ease-in-out;
+  background-color: #fff; /* White background for logo emphasis */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    opacity: 1; /* Highlight logo on hover */
+    opacity: 1;
+    transform: translateY(-5px); /* Adds a slight lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow effect on hover */
   }
 
   :focus-visible {
@@ -112,9 +134,9 @@ const LogoWrapper = styled.div`
 const ImgStyle = styled.img`
   max-height: 80px;
   max-width: 100%;
-  object-fit: contain; /* Ensures logos retain their aspect ratio */
+  object-fit: contain;
   transition: transform 0.3s ease, filter 0.3s ease;
-  
+
   &:hover {
     transform: scale(1.1); /* Slight zoom effect */
     filter: brightness(1.1); /* Adds brightness effect on hover */
