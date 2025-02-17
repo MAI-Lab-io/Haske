@@ -86,7 +86,6 @@ const BtnWrapper = styled.div`
     margin: 0 auto;
   }
 `;
-
 const GreyDiv = styled.div`
   width: 30%;
   height: 700px;
@@ -94,10 +93,12 @@ const GreyDiv = styled.div`
   top: 0;
   right: 0;
   z-index: 0;
+  background: linear-gradient(180deg, #5b617a, #43495d);
   @media (max-width: 960px) {
     display: none;
   }
 `;
+
 
 const ImageWrapper = styled.div`
   display: flex;
