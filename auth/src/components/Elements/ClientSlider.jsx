@@ -93,7 +93,7 @@ export default function ClientSlider() {
             <ImgStyle src={sponsor4} alt="Lacuna" />
           </a>
         </LogoWrapper>
-        <LogoWrapper>
+        <LogoWrapper blackBackground>
           <a
             href="https://airg.nitda.gov.ng/"
             target="_blank"
@@ -146,7 +146,7 @@ const LogoWrapper = styled.div`
   padding: 20px;
   opacity: 0.9;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: #fff;
+  background-color: ${(props) => (props.blackBackground ? "#000" : "#fff")};
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 0 10px;
