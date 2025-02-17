@@ -4,32 +4,33 @@ import styled from "styled-components";
 import FullButton from "../Buttons/FullButton";
 // Assets
 import HeaderImage from "../../assets/img/header-img.png";
-import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
-        <div>
-          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
-          <HeaderP className="font13 semiBold">
+        <Content>
+          <Title className="extraBold font60">
+            Open AI-enabled Teleradiology for the developing world.
+          </Title>
+          <Description className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
-          </HeaderP>
+            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
+          </Description>
           <BtnWrapper>
             <FullButton title="Get Started" />
           </BtnWrapper>
-        </div>
+        </Content>
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
+          <Img className="radius8" src={HeaderImage} alt="office" />
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv className="lightBg"></GreyDiv> {/* Ensure this div has the gradient */}
+        <GreyDiv />
       </RightSide>
     </Wrapper>
   );
@@ -39,83 +40,93 @@ const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
-  display: flex; /* Ensure it's a flex container */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
   @media (max-width: 960px) {
     flex-direction: column;
+    text-align: center;
   }
 `;
 
 const LeftSide = styled.div`
   width: 50%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   @media (max-width: 960px) {
     width: 100%;
-    order: 2;
-    margin: 50px 0;
-    text-align: center;
+    margin-top: 50px;
   }
-  @media (max-width: 560px) {
-    margin: 80px 0 50px 0;
+`;
+
+const Content = styled.div`
+  max-width: 470px;
+`;
+
+const Title = styled.h1`
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: #333;
+`;
+
+const Description = styled.p`
+  line-height: 1.7rem;
+  color: #666;
+  margin-bottom: 40px;
+`;
+
+const BtnWrapper = styled.div`
+  max-width: 190px;
+  margin: 0 auto;
+  @media (max-width: 960px) {
+    width: 80%;
   }
 `;
 
 const RightSide = styled.div`
   width: 50%;
   height: 100%;
-  position: relative; /* Ensure it's the reference for absolute positioning */
+  position: relative;
   @media (max-width: 960px) {
     width: 100%;
-    order: 1;
     margin-top: 30px;
   }
 `;
 
-const HeaderP = styled.div`
-  max-width: 470px;
-  padding: 15px 0 50px 0;
-  line-height: 1.5rem;
-  @media (max-width: 960px) {
-    padding: 15px 0 50px 0;
-    text-align: center;
-    max-width: 100%;
-  }
-`;
-
-const BtnWrapper = styled.div`
-  max-width: 190px;
-  @media (max-width: 960px) {
-    margin: 0 auto;
-  }
-`;
-
 const GreyDiv = styled.div`
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 5; /* Ensure it is above other elements */
   background: linear-gradient(180deg, #5b617a, #43495d);
+  z-index: 1;
   @media (max-width: 960px) {
-    display: none; /* Hide on smaller screens if necessary */
+    display: none;
   }
 `;
 
 const ImageWrapper = styled.div`
+  position: relative;
   display: flex;
   justify-content: flex-end;
-  position: relative;
   z-index: 9;
-  @media (max-width: 960px) {
-    width: 100%;
-    justify-content: center;
-  }
 `;
 
 const Img = styled.img`
   width: 100%;
   max-width: 1000px;
-  height: 600px;
+  height: auto;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: scale(1.05);
+  }
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -126,36 +137,14 @@ const Img = styled.img`
   }
 `;
 
-const QuoteWrapper = styled.div`
-  position: absolute;
-  left: 0;
-  bottom: 50px;
-  max-width: 330px;
-  padding: 30px;
-  z-index: 99;
-  background-color: white;
-  color: orange;
-  @media (max-width: 960px) {
-    left: 20px;
-  }
-  @media (max-width: 560px) {
-    bottom: -50px;
-  }
-`;
-
-const QuotesWrapper = styled.div`
-  position: absolute;
-  left: -20px;
-  top: -10px;
-`;
-
 const DotsWrapper = styled.div`
   position: absolute;
   right: -100px;
   bottom: 100px;
   z-index: 2;
   @media (max-width: 960px) {
-    right: 100px;
+    right: 50px;
+    bottom: 80px;
   }
   @media (max-width: 560px) {
     display: none;
