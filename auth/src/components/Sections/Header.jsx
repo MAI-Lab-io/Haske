@@ -50,10 +50,12 @@ const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
+  background: linear-gradient(135deg, #eff5ff, #d5e0f7, #5b617a, #a3afcf, #939fc0); /* Gray gradient */
   @media (max-width: 960px) {
     flex-direction: column;
   }
 `;
+
 const LeftSide = styled.div`
   width: 50%;
   height: 100%;
@@ -67,6 +69,7 @@ const LeftSide = styled.div`
     margin: 80px 0 50px 0;
   }
 `;
+
 const RightSide = styled.div`
   width: 50%;
   height: 100%;
@@ -76,6 +79,7 @@ const RightSide = styled.div`
     margin-top: 30px;
   }
 `;
+
 const HeaderP = styled.div`
   max-width: 470px;
   padding: 15px 0 50px 0;
@@ -86,12 +90,14 @@ const HeaderP = styled.div`
     max-width: 100%;
   }
 `;
+
 const BtnWrapper = styled.div`
   max-width: 190px;
   @media (max-width: 960px) {
     margin: 0 auto;
   }
 `;
+
 const GreyDiv = styled.div`
   width: 30%;
   height: 700px;
@@ -103,6 +109,7 @@ const GreyDiv = styled.div`
     display: none;
   }
 `;
+
 const ImageWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -113,9 +120,10 @@ const ImageWrapper = styled.div`
     justify-content: center;
   }
 `;
+
 const Img = styled.img`
-  width: 100%;  /* Adjust the percentage as needed */
-  max-width: 1000px;  /* Set a max width */
+  width: 100%;
+  max-width: 1000px;
   height: 600px;
   @media (max-width: 960px) {
     width: 70%;
@@ -134,7 +142,7 @@ const QuoteWrapper = styled.div`
   max-width: 330px;
   padding: 30px;
   z-index: 99;
-  background-color: #fff; /* White background for the quote wrapper */
+  background-color: #fff;
   @media (max-width: 960px) {
     left: 20px;
   }
@@ -142,11 +150,13 @@ const QuoteWrapper = styled.div`
     bottom: -50px;
   }
 `;
+
 const QuotesWrapper = styled.div`
   position: absolute;
   left: -20px;
   top: -10px;
 `;
+
 const DotsWrapper = styled.div`
   position: absolute;
   right: -100px;
