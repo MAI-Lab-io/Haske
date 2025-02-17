@@ -12,10 +12,10 @@ export default function Header() {
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
+          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the developing world.</h1>
           <HeaderP className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
+            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -35,7 +35,7 @@ export default function Header() {
   );
 }
 
-const Wrapper = styled.section
+const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
@@ -43,9 +43,9 @@ const Wrapper = styled.section
   @media (max-width: 960px) {
     flex-direction: column;
   }
-;
+`;
 
-const LeftSide = styled.div
+const LeftSide = styled.div`
   width: 50%;
   height: 100%;
   @media (max-width: 960px) {
@@ -57,9 +57,9 @@ const LeftSide = styled.div
   @media (max-width: 560px) {
     margin: 80px 0 50px 0;
   }
-;
+`;
 
-const RightSide = styled.div
+const RightSide = styled.div`
   width: 50%;
   height: 100%;
   position: relative; /* Ensure it's the reference for absolute positioning */
@@ -68,9 +68,9 @@ const RightSide = styled.div
     order: 1;
     margin-top: 30px;
   }
-;
+`;
 
-const HeaderP = styled.div
+const HeaderP = styled.p`
   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.5rem;
@@ -79,16 +79,16 @@ const HeaderP = styled.div
     text-align: center;
     max-width: 100%;
   }
-;
+`;
 
-const BtnWrapper = styled.div
+const BtnWrapper = styled.div`
   max-width: 190px;
   @media (max-width: 960px) {
     margin: 0 auto;
   }
-;
+`;
 
-const GreyDiv = styled.div
+const GreyDiv = styled.div`
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   position: absolute;
@@ -99,9 +99,9 @@ const GreyDiv = styled.div
   @media (max-width: 960px) {
     display: none; /* Hide on smaller screens if necessary */
   }
-;
+`;
 
-const ImageWrapper = styled.div
+const ImageWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -110,9 +110,9 @@ const ImageWrapper = styled.div
     width: 100%;
     justify-content: center;
   }
-;
+`;
 
-const Img = styled.img
+const Img = styled.img`
   width: 100%;
   max-width: 1000px;
   height: 600px;
@@ -124,9 +124,9 @@ const Img = styled.img
     width: 80%;
     max-width: 300px;
   }
-;
+`;
 
-const QuoteWrapper = styled.div
+const QuoteWrapper = styled.div`
   position: absolute;
   left: 0;
   bottom: 50px;
@@ -141,15 +141,15 @@ const QuoteWrapper = styled.div
   @media (max-width: 560px) {
     bottom: -50px;
   }
-;
+`;
 
-const QuotesWrapper = styled.div
+const QuotesWrapper = styled.div`
   position: absolute;
   left: -20px;
   top: -10px;
-;
+`;
 
-const DotsWrapper = styled.div
+const DotsWrapper = styled.div`
   position: absolute;
   right: -100px;
   bottom: 100px;
@@ -160,4 +160,4 @@ const DotsWrapper = styled.div
   @media (max-width: 560px) {
     display: none;
   }
-;
+`;
