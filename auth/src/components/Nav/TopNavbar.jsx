@@ -5,73 +5,60 @@ import { Link } from "react-scroll";
 import Sidebar from "../Nav/Sidebar";
 import Backdrop from "../Elements/Backdrop";
 // Assets
-import LogoIcon from "../../assets/svg/Logo";
+import LogoIcon from "../../assets/haske.png";
 import BurgerIcon from "../../assets/svg/BurgerIcon";
 
 export default function TopNavbar() {
   const [y, setY] = useState(window.scrollY);
-  const [sidebarOpen, toggleSidebar] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Scroll event handler
+  const handleScroll = () => setY(window.scrollY);
 
   useEffect(() => {
-    window.addEventListener("scroll", () => setY(window.scrollY));
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener("scroll", () => setY(window.scrollY));
+      window.removeEventListener("scroll", handleScroll);
     };
-  }, [y]);
-
+  }, []);
 
   return (
     <>
-      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      {sidebarOpen && <Backdrop toggleSidebar={toggleSidebar} />}
-      <Wrapper className="flexCenter animate whiteBg" style={y > 100 ? { height: "60px" } : { height: "80px" }}>
+      <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={setSidebarOpen} />
+      {sidebarOpen && <Backdrop toggleSidebar={setSidebarOpen} />}
+      <Wrapper
+        className="flexCenter animate greyBg"
+        style={y > 100 ? { height: "60px" } : { height: "80px" }}
+      >
         <NavInner className="container flexSpaceCenter">
           <Link className="pointer flexNullCenter" to="home" smooth={true}>
-            <LogoIcon />
+            <img src={LogoIcon} alt="Logo" style={{ height: "40px" }} />
             <h1 style={{ marginLeft: "15px" }} className="font20 extraBold">
               fanatic
             </h1>
           </Link>
-          <BurderWrapper className="pointer" onClick={() => toggleSidebar(!sidebarOpen)}>
+          <BurgerWrapper className="pointer" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <BurgerIcon />
-          </BurderWrapper>
+          </BurgerWrapper>
           <UlWrapper className="flexNullCenter">
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="home" spy={true} smooth={true} offset={-80}>
-                Home
-              </Link>
-            </li>
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="services" spy={true} smooth={true} offset={-80}>
-                Services
-              </Link>
-            </li>
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="projects" spy={true} smooth={true} offset={-80}>
-                Projects
-              </Link>
-            </li>
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="blog" spy={true} smooth={true} offset={-80}>
-                Blog
-              </Link>
-            </li>
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="pricing" spy={true} smooth={true} offset={-80}>
-                Pricing
-              </Link>
-            </li>
-            <li className="semiBold font15 pointer">
-              <Link activeClass="active" style={{ padding: "10px 15px" }} to="contact" spy={true} smooth={true} offset={-80}>
-                Contact
-              </Link>
-            </li>
+            {["home", "services", "projects", "blog", "pricing", "contact"].map((item) => (
+              <li key={item} className="semiBold font15 pointer">
+                <Link
+                  activeClass="active"
+                  style={{ padding: "10px 15px" }}
+                  to={item}
+                  spy={true}
+                  smooth={true}
+                  offset={-80}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </Link>
+              </li>
+            ))}
           </UlWrapper>
           <UlWrapperRight className="flexNullCenter">
             <li className="semiBold font15 pointer">
-              <a href="/" style={{ padding: "10px 30px 10px 0" }}>
-                Log in
-              </a>
+              <a href="/" style={{ padding: "10px 30px 10px 0" }}>Log in</a>
             </li>
             <li className="semiBold font15 pointer flexCenter">
               <a href="/" className="radius8 darkBg" style={{ padding: "10px 15px" }}>
@@ -92,13 +79,15 @@ const Wrapper = styled.nav`
   left: 0;
   z-index: 999;
 `;
+
 const NavInner = styled.div`
   position: relative;
   height: 100%;
-`
-const BurderWrapper = styled.button`
+`;
+
+const BurgerWrapper = styled.button`
   outline: none;
-  border: 0px;
+  border: 0;
   background-color: transparent;
   height: 100%;
   padding: 0 15px;
@@ -107,16 +96,16 @@ const BurderWrapper = styled.button`
     display: block;
   }
 `;
+
 const UlWrapper = styled.ul`
   display: flex;
   @media (max-width: 760px) {
     display: none;
   }
 `;
+
 const UlWrapperRight = styled.ul`
   @media (max-width: 760px) {
     display: none;
   }
 `;
-
-
