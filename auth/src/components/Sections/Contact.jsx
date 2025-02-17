@@ -3,9 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-scroll";
 // Assets
 import LogoImg from "../../assets/haske.png";
-import ContactImg1 from "../../assets/contact-image1.png";
-import ContactImg2 from "../../assets/contact-image2.png";
-import ContactImg3 from "../../assets/contact-image3.png";
+
 
 export default function Contact() {
   const getCurrentYear = () => {
