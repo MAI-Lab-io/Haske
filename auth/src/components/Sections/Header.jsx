@@ -6,11 +6,17 @@ import FullButton from "../Buttons/FullButton";
 import HeaderImage from "../../assets/img/header-img.png";
 import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
+import BackgroundVideo from "../../assets/background-video.mp4"; // Ensure this path is correct
 
 export default function Header() {
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
-      <VideoBackground className="video-background" />
+      <VideoBackground>
+        <video autoPlay loop muted>
+          <source src={BackgroundVideo} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </VideoBackground>
       <LeftSide className="flexCenter">
         <div>
           <h1 className="extraBold font60">Open AI-enabled Teleradiology for the developing world.</h1>
@@ -154,7 +160,6 @@ const VideoBackground = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("../../assets/background-video.mp4") no-repeat center center/cover;
   z-index: -1;
   filter: blur(8px);
   video {
@@ -167,4 +172,3 @@ const VideoBackground = styled.div`
     z-index: -1;
   }
 `;
-
