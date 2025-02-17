@@ -12,10 +12,10 @@ export default function Header() {
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the developing world.</h1>
+          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
           <HeaderP className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
+            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -29,30 +29,25 @@ export default function Header() {
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv className="lightBg"></GreyDiv>
+        <GreyDiv className="lightBg"></GreyDiv> {/* Ensure this div has the gradient */}
       </RightSide>
     </Wrapper>
   );
 }
 
-const Wrapper = styled.section`
-  position: relative;
+const Wrapper = styled.section
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  display: flex; /* Ensure it's a flex container */
   @media (max-width: 960px) {
     flex-direction: column;
   }
-`;
+;
 
-const LeftSide = styled.div`
+const LeftSide = styled.div
   width: 50%;
   height: 100%;
-  color: white;
   @media (max-width: 960px) {
     width: 100%;
     order: 2;
@@ -62,68 +57,65 @@ const LeftSide = styled.div`
   @media (max-width: 560px) {
     margin: 80px 0 50px 0;
   }
-`;
+;
 
-const RightSide = styled.div`
+const RightSide = styled.div
   width: 50%;
   height: 100%;
-  position: relative;
-  color: white;
+  position: relative; /* Ensure it's the reference for absolute positioning */
   @media (max-width: 960px) {
     width: 100%;
     order: 1;
     margin-top: 30px;
   }
-`;
+;
 
-const HeaderP = styled.div`
+const HeaderP = styled.div
   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.5rem;
   @media (max-width: 960px) {
+    padding: 15px 0 50px 0;
     text-align: center;
     max-width: 100%;
   }
-`;
+;
 
-const BtnWrapper = styled.div`
+const BtnWrapper = styled.div
   max-width: 190px;
-  margin-top: 20px;
   @media (max-width: 960px) {
-    margin: 20px auto;
+    margin: 0 auto;
   }
-`;
+;
 
-const GreyDiv = styled.div`
-  width: 100%;
-  height: 100%;
+const GreyDiv = styled.div
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 5;
-  background: linear-gradient(180deg, rgba(91, 97, 122, 0.7), rgba(67, 73, 93, 0.7));
-  backdrop-filter: blur(10px);
+  z-index: 5; /* Ensure it is above other elements */
+  background: linear-gradient(180deg, #5b617a, #43495d);
   @media (max-width: 960px) {
-    display: none;
+    display: none; /* Hide on smaller screens if necessary */
   }
-`;
+;
 
-const ImageWrapper = styled.div`
+const ImageWrapper = styled.div
   display: flex;
   justify-content: flex-end;
   position: relative;
   z-index: 9;
   @media (max-width: 960px) {
+    width: 100%;
     justify-content: center;
   }
-`;
+;
 
-const Img = styled.img`
+const Img = styled.img
   width: 100%;
   max-width: 1000px;
   height: 600px;
-  object-fit: cover;
-  border-radius: 8px;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -132,9 +124,32 @@ const Img = styled.img`
     width: 80%;
     max-width: 300px;
   }
-`;
+;
 
-const DotsWrapper = styled.div`
+const QuoteWrapper = styled.div
+  position: absolute;
+  left: 0;
+  bottom: 50px;
+  max-width: 330px;
+  padding: 30px;
+  z-index: 99;
+  background-color: white;
+  color: orange;
+  @media (max-width: 960px) {
+    left: 20px;
+  }
+  @media (max-width: 560px) {
+    bottom: -50px;
+  }
+;
+
+const QuotesWrapper = styled.div
+  position: absolute;
+  left: -20px;
+  top: -10px;
+;
+
+const DotsWrapper = styled.div
   position: absolute;
   right: -100px;
   bottom: 100px;
@@ -145,4 +160,4 @@ const DotsWrapper = styled.div`
   @media (max-width: 560px) {
     display: none;
   }
-`;
+;
