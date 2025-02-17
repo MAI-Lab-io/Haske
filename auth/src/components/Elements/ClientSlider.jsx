@@ -8,11 +8,11 @@ import ClientLogo03 from "../../assets/img/clients/logo03.svg";
 import ClientLogo04 from "../../assets/img/clients/logo04.svg";
 import ClientLogo05 from "../../assets/img/clients/logo05.svg";
 import ClientLogo06 from "../../assets/img/clients/logo06.svg";
-import sponsor1 from "../assets/sponsor1.png";
-import sponsor2 from "../assets/sponsor2.png";
-import sponsor3 from "../assets/sponsor3.png";
-import sponsor4 from "../assets/sponsor4.png";
-import sponsor5 from "../assets/sponsor5.png";
+import sponsor1 from "../../assets/sponsor1.png";
+import sponsor2 from "../../assets/sponsor2.png";
+import sponsor3 from "../../assets/sponsor3.png";
+import sponsor4 from "../../assets/sponsor4.png";
+import sponsor5 from "../../assets/sponsor5.png";
 
 export default function ClientSlider() {
   const settings = {
