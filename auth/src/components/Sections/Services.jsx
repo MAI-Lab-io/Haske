@@ -13,7 +13,7 @@ import AddImage4 from "../../assets/img/add/4.png";
 export default function Services() {
   return (
     <Wrapper id="services">
-      <div className="lightBg" style={{ padding: "50px 0" }}>
+      <div className="lightBg" style={{ padding: "70px 0" }}>
         <div className="container">
           <ClientSlider />
         </div>
@@ -102,13 +102,15 @@ export default function Services() {
 const Wrapper = styled.section`
   width: 100%;
 `;
+
 const ServiceBoxRow = styled.div`
   @media (max-width: 860px) {
     flex-direction: column;
   }
 `;
+
 const ServiceBoxWrapper = styled.div`
-  width: 20%;
+  width: 18%; /* Reduced width to create more space */
   margin-right: 5%;
   padding: 80px 0;
   @media (max-width: 860px) {
@@ -117,11 +119,13 @@ const ServiceBoxWrapper = styled.div`
     padding: 40px 0;
   }
 `;
+
 const HeaderInfo = styled.div`
   @media (max-width: 860px) {
     text-align: center;
   }
 `;
+
 const Advertising = styled.div`
   margin: 80px 0;
   padding: 100px 0;
@@ -135,11 +139,13 @@ const Advertising = styled.div`
     margin: 80px 0 0px 0;
   }
 `;
+
 const ButtonsRow = styled.div`
   @media (max-width: 860px) {
     justify-content: space-between;
   }
 `;
+
 const AddLeft = styled.div`
   width: 50%;
   p {
@@ -158,6 +164,7 @@ const AddLeft = styled.div`
     }
   }
 `;
+
 const AddRight = styled.div`
   width: 50%;
   position: absolute;
@@ -170,9 +177,11 @@ const AddRight = styled.div`
     top: -40px;
   }
 `;
+
 const AddRightInner = styled.div`
   width: 100%;
 `;
+
 const AddImgWrapp1 = styled.div`
   width: 48%;
   margin: 0 6% 10px 6%;
@@ -181,10 +190,9 @@ const AddImgWrapp1 = styled.div`
     height: auto;
     border-radius: 1rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
   }
 `;
+
 const AddImgWrapp2 = styled.div`
   width: 30%;
   margin: 0 5% 10px 5%;
@@ -193,10 +201,9 @@ const AddImgWrapp2 = styled.div`
     height: auto;
     border-radius: 1rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
   }
 `;
+
 const AddImgWrapp3 = styled.div`
   width: 20%;
   margin-left: 40%;
@@ -205,19 +212,16 @@ const AddImgWrapp3 = styled.div`
     height: auto;
     border-radius: 1rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
   }
 `;
+
 const AddImgWrapp4 = styled.div`
   width: 30%;
-  margin: 0 5%auto;
+  margin: 0 5% auto;
   img {
     width: 100%;
     height: auto;
     border-radius: 1rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
   }
 `;
