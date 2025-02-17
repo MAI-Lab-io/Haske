@@ -58,7 +58,7 @@ const Wrapper = styled.nav`
   position: fixed;
   top: 0;
   right: ${({ sidebarOpen }) => (sidebarOpen ? "0px" : "-400px")};
-  background-color: #5b617a;
+  background: linear-gradient(180deg, #5b617a 0%, #a3afcf 100%);
   padding: 30px;
   z-index: 9999;
   overflow-y: auto;
