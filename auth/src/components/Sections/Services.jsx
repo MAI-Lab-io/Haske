@@ -23,35 +23,33 @@ export default function Services() {
           <HeaderInfo>
             <h1 className="font40 extraBold">Our Awesome Services</h1>
             <p className="font13">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-              <br />
-              labore et dolore magna aliquyam erat, sed diam voluptua.
+              Haske is an open, AI-powered, web-based PACS platform developed to address the challenges of inaccessibility and high costs of commercial PACS platforms in Nigeria. It is designed to enhance diagnosis in Radiology departments and provide a more equitable and efficient healthcare system for underserved regions. By leveraging Orthanc functionalities and AI models, Haske aims to improve medical image management, diagnosis, and interoperability for resource-limited settings like Nigeria.
             </p>
           </HeaderInfo>
           <ServiceBoxRow className="flex">
             <ServiceBoxWrapper>
               <ServiceBox
                 icon="roller"
-                title="Graphic Design"
-                subtitle="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."
+                title="Efficient Medical Imaging"
+                subtitle="Haske provides seamless archival and retrieval of medical images, ensuring fast and efficient management of imaging data."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
               <ServiceBox
                 icon="monitor"
-                title="Web Design"
-                subtitle="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore."
+                title="AI-Aided Diagnosis"
+                subtitle="Haske integrates AI tools to assist in diagnosis, providing timely insights that enhance clinical decision-making."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
               <ServiceBox
                 icon="browser"
-                title="Development"
-                subtitle="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat."
+                title="Cloud-Based Platform"
+                subtitle="Hosted on AWS, Haske offers scalable, secure access to medical imaging data, enabling easy integration with diagnostic tools."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
-              <ServiceBox icon="printer" title="Print" subtitle="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor." />
+              <ServiceBox icon="printer" title="Affordable Solutions" subtitle="Haske is designed to be cost-effective, offering a solution that reduces the financial burden on healthcare centers in Nigeria." />
             </ServiceBoxWrapper>
           </ServiceBoxRow>
         </div>
@@ -59,13 +57,12 @@ export default function Services() {
           <div className="container">
             <Advertising className="flexSpaceCenter">
               <AddLeft>
-                <h4 className="font15 semiBold">A few words about company</h4>
-                <h2 className="font40 extraBold">A Study of Creativity</h2>
+                <h4 className="font15 semiBold">A few words about Haske</h4>
+                <h2 className="font40 extraBold">Transforming Healthcare Access in Nigeria</h2>
                 <p className="font12">
-                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed
-                  diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+                  Haske was developed to overcome the financial and accessibility challenges faced by Nigerian radiology centers. By implementing a cloud-based PACS system with AI-powered diagnostics, Haske offers a transformative solution for improving healthcare delivery in low-resource environments. With ongoing clinical validation, Haske is already showing promise in reducing costs and improving medical image management efficiency.
                 </p>
-                <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0"}}>
+                <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
                   <div style={{ width: "190px" }}>
                     <FullButton title="Get Started" action={() => alert("clicked")} />
                   </div>
