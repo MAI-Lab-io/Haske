@@ -58,7 +58,7 @@ export default function TopNavbar() {
               <a href="/" style={{ padding: "10px 30px 10px 0" }}>Log in</a>
             </li>
             <li className="semiBold font15 pointer flexCenter">
-              <a href="/" className="radius8 darkBg" style={{ padding: "10px 15px" }}>
+              <a href="/" className="radius8 orangeBg" style={{ padding: "10px 15px" }}>
                 Get Started
               </a>
             </li>
