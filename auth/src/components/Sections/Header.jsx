@@ -158,4 +158,3 @@ const DotsWrapper = styled.div
   @media (max-width: 560px) {
     display: none;
   }
-;
