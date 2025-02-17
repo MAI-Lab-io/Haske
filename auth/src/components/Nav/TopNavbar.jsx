@@ -27,15 +27,13 @@ export default function TopNavbar() {
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={setSidebarOpen} />
       {sidebarOpen && <Backdrop toggleSidebar={setSidebarOpen} />}
       <Wrapper
-        className="flexCenter animate greyBg"
+        className="flexCenter animate lighttBg"
         style={y > 100 ? { height: "60px" } : { height: "80px" }}
       >
         <NavInner className="container flexSpaceCenter">
           <Link className="pointer flexNullCenter" to="home" smooth={true}>
             <img src={LogoIcon} alt="Logo" style={{ height: "40px" }} />
-            <h1 style={{ marginLeft: "15px" }} className="font20 extraBold">
-              fanatic
-            </h1>
+            
           </Link>
           <BurgerWrapper className="pointer" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <BurgerIcon />
