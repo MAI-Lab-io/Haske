@@ -96,13 +96,13 @@ const Header = styled.div`
 const Title = styled.h2`
   font-size: 36px;
   font-weight: bold;
-  color: #333;
+  color: #0b093b;
   margin: 0;
 `;
 
 const Description = styled.p`
   font-size: 16px;
-  color: #666;
+  color: #ffff;
   margin-top: 10px;
 `;
 
