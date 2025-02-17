@@ -11,7 +11,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
       <SidebarHeader>
         <div className="logo-container">
           <img src={LogoIcon} alt="logo" className="logo" />
-          <h1 className="whiteColor">fanatic</h1>
+          <h1 className="whiteColor">Haske</h1>
         </div>
         <CloseBtn 
           onClick={() => toggleSidebar(!sidebarOpen)} 
