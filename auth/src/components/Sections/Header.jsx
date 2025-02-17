@@ -62,6 +62,7 @@ const LeftSide = styled.div`
 const RightSide = styled.div`
   width: 50%;
   height: 100%;
+  position: relative; /* Ensure it's the reference for absolute positioning */
   @media (max-width: 960px) {
     width: 100%;
     order: 1;
