@@ -4,87 +4,64 @@ import styled from "styled-components";
 import FullButton from "../Buttons/FullButton";
 // Assets
 import HeaderImage from "../../assets/img/header-img.png";
+import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
+      <VideoBackground className="video-background" />
       <LeftSide className="flexCenter">
-        <Content>
-          <Title className="extraBold font60">
-            Open AI-enabled Teleradiology for the developing world.
-          </Title>
-          <Description className="font13 semiBold">
+        <div>
+          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the developing world.</h1>
+          <HeaderP className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
             Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
-          </Description>
+          </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
           </BtnWrapper>
-        </Content>
+        </div>
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img className="radius8" src={HeaderImage} alt="office" />
+          <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv />
+        <GreyDiv className="lightBg"></GreyDiv>
       </RightSide>
     </Wrapper>
   );
 }
 
 const Wrapper = styled.section`
+  position: relative;
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
+  justify-content: center;
+  overflow: hidden;
   @media (max-width: 960px) {
     flex-direction: column;
-    text-align: center;
   }
 `;
 
 const LeftSide = styled.div`
   width: 50%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: white;
   @media (max-width: 960px) {
     width: 100%;
-    margin-top: 50px;
+    order: 2;
+    margin: 50px 0;
+    text-align: center;
   }
-`;
-
-const Content = styled.div`
-  max-width: 470px;
-`;
-
-const Title = styled.h1`
-  font-size: 3rem;
-  font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 20px;
-  color: #333;
-`;
-
-const Description = styled.p`
-  line-height: 1.7rem;
-  color: #666;
-  margin-bottom: 40px;
-`;
-
-const BtnWrapper = styled.div`
-  max-width: 190px;
-  margin: 0 auto;
-  @media (max-width: 960px) {
-    width: 80%;
+  @media (max-width: 560px) {
+    margin: 80px 0 50px 0;
   }
 `;
 
@@ -92,9 +69,29 @@ const RightSide = styled.div`
   width: 50%;
   height: 100%;
   position: relative;
+  color: white;
   @media (max-width: 960px) {
     width: 100%;
+    order: 1;
     margin-top: 30px;
+  }
+`;
+
+const HeaderP = styled.div`
+  max-width: 470px;
+  padding: 15px 0 50px 0;
+  line-height: 1.5rem;
+  @media (max-width: 960px) {
+    text-align: center;
+    max-width: 100%;
+  }
+`;
+
+const BtnWrapper = styled.div`
+  max-width: 190px;
+  margin-top: 20px;
+  @media (max-width: 960px) {
+    margin: 20px auto;
   }
 `;
 
@@ -104,29 +101,30 @@ const GreyDiv = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-  background: linear-gradient(180deg, #5b617a, #43495d);
-  z-index: 1;
+  z-index: 5;
+  background: linear-gradient(180deg, rgba(91, 97, 122, 0.7), rgba(67, 73, 93, 0.7));
+  backdrop-filter: blur(10px);
   @media (max-width: 960px) {
     display: none;
   }
 `;
 
 const ImageWrapper = styled.div`
-  position: relative;
   display: flex;
   justify-content: flex-end;
+  position: relative;
   z-index: 9;
+  @media (max-width: 960px) {
+    justify-content: center;
+  }
 `;
 
 const Img = styled.img`
   width: 100%;
   max-width: 1000px;
-  height: auto;
+  height: 600px;
+  object-fit: cover;
   border-radius: 8px;
-  transition: all 0.3s ease;
-  &:hover {
-    transform: scale(1.05);
-  }
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -143,10 +141,30 @@ const DotsWrapper = styled.div`
   bottom: 100px;
   z-index: 2;
   @media (max-width: 960px) {
-    right: 50px;
-    bottom: 80px;
+    right: 100px;
   }
   @media (max-width: 560px) {
     display: none;
   }
 `;
+
+const VideoBackground = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("../../assets/background-video.mp4") no-repeat center center/cover;
+  z-index: -1;
+  filter: blur(8px);
+  video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+`;
+
