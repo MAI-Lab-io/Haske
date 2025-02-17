@@ -3,12 +3,14 @@ import styled from "styled-components";
 import { Link } from "react-scroll";
 // Assets
 import LogoImg from "../../assets/haske.png";
+import ContactImg1 from "../../assets/contact-image1.png";
+import ContactImg2 from "../../assets/contact-image2.png";
+import ContactImg3 from "../../assets/contact-image3.png";
 
 export default function Contact() {
-
   const getCurrentYear = () => {
     return new Date().getFullYear();
-  }
+  };
 
   return (
     <Wrapper>
@@ -70,7 +72,7 @@ export default function Contact() {
         <div className="container">
           <InnerWrapper className="flexSpaceCenter" style={{ padding: "30px 0" }}>
             <Link className="flexCenter animate pointer" to="home" smooth={true} offset={-80}>
-              <LogoImg />
+              <img src={LogoImg} alt="Haske Logo" />
               <h1 className="font15 extraBold whiteColor" style={{ marginLeft: "15px" }}>
                 Haske
               </h1>
