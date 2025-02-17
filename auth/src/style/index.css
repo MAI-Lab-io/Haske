@@ -39,7 +39,7 @@
   }
   a {
     text-decoration: none!important;
-    color: #FF4433;
+    color: #d37506;
   }
   a:hover {
     color: #FFAC1C;
@@ -104,8 +104,8 @@
     width: 100%;
   }
   .active {
-    border-bottom: 2px solid #FFAC1C;
-    color: #FFAC1C;
+    border-bottom: 2px solid #d37506;
+    color: #d37506;
   }
   .tag {
     padding: 5px 10px;
