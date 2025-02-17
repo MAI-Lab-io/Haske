@@ -87,18 +87,17 @@ const BtnWrapper = styled.div`
   }
 `;
 const GreyDiv = styled.div`
-  width: 30%;
-  height: 700px;
+  width: 35%; /* Slightly increased width */
+  height: 100%; /* Adjusted to full height */
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 0;
+  z-index: 5; /* Increased z-index to ensure visibility */
   background: linear-gradient(180deg, #5b617a, #43495d);
   @media (max-width: 960px) {
     display: none;
   }
 `;
-
 
 const ImageWrapper = styled.div`
   display: flex;
