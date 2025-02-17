@@ -219,53 +219,65 @@
   .radius6 {
     border-radius: 0.6rem;
   }
-  /* COLORS */
-  .darkColor {
-    color: #0B093B;
-  }
-  .purpleColor {
-    color: #7620FF;
-  }
-  .orangeColor {
-    color: #F2B300;
-  }
-  .lightColor {
-    color: #F5F5F5;
-  }
-  .coralColor {
-    color: #C4FFFF;
-  }
-  .greenColor {
-    color: #49CB86;
-  }
-  .greyColor {
-    color: #707070;
-  }
-  .whiteColor {
-    color: #fff;
-  }
-  /* BACKGROUNDS */
-  .darkBg {
-    background-color: #0B093B;
-  }
-  .purpleBg {
-    background-color: #7620FF;
-  }
-  .orangeBg {
-    background-color: #F2B300;
-  }
-  .lightBg {
-    background-color: #F5F5F5;
-  }
-  .coralBg {
-    background-color: #C4FFFF;
-  }
-  .greenBg {
-    background-color: #49CB86;
-  }
-  .greyBg {
-    background-color: #707070;
-  }
-  .whiteBg {
-    background-color: #fff;
-  }
+ /* COLORS */
+.darkColor {
+  color: #5b617a; /* Dark Gray */
+}
+.purpleColor {
+  color: #7620FF; /* Retained purple color */
+}
+.orangeColor {
+  color: #dd841a; /* Mid Orange */
+}
+.lightColor {
+  color: #eff5ff; /* Gray White */
+}
+.coralColor {
+  color: #C4FFFF; /* Retained coral color */
+}
+.greenColor {
+  color: #49CB86; /* Retained green color */
+}
+.greyColor {
+  color: #a3afcf; /* Light Gray */
+}
+.whiteColor {
+  color: #fff;
+}
+
+/* BACKGROUNDS */
+.darkBg {
+  background-color: #5b617a; /* Dark Gray */
+}
+.purpleBg {
+  background-color: #7620FF; /* Retained purple color */
+}
+.orangeBg {
+  background-color: #dd841a; /* Mid Orange */
+}
+.lightBg {
+  background-color: #eff5ff; /* Gray White */
+}
+.coralBg {
+  background-color: #C4FFFF; /* Retained coral color */
+}
+.greenBg {
+  background-color: #49CB86; /* Retained green color */
+}
+.greyBg {
+  background-color: #a3afcf; /* Light Gray */
+}
+.whiteBg {
+  background-color: #fff;
+}
+
+/* Additional Colors */
+.midGrayBg {
+  background-color: #939fc0; /* Mid Gray */
+}
+.brightOrange {
+  background-color: #FFAC1C; /* Bright Orange */
+}
+.redOrange {
+  background-color: #FF4433; /* Red Orange */
+}
