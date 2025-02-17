@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
@@ -8,14 +8,23 @@ import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (event) => {
+    setMousePosition({
+      x: (event.clientX - window.innerWidth / 2) / 20,
+      y: (event.clientY - window.innerHeight / 2) / 20,
+    });
+  };
+
   return (
-    <Wrapper id="home" className="container flexSpaceCenter">
+    <Wrapper id="home" onMouseMove={handleMouseMove}>
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
+          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the Developing World.</h1>
           <HeaderP className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
+            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -24,16 +33,26 @@ export default function Header() {
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img className="radius8" src={HeaderImage} alt="office" style={{zIndex: 9}} />
+          <Img
+            className="radius8"
+            src={HeaderImage}
+            alt="office"
+            style={{
+              transform: `translateX(${mousePosition.x}px) translateY(${mousePosition.y}px)`,
+              zIndex: 9,
+            }}
+          />
           <QuoteWrapper className="flexCenter whiteBg radius8">
             <QuotesWrapper>
               <QuotesIcon />
             </QuotesWrapper>
             <div>
               <p className="font15 orangeColor">
-                <em> The best way to predict the future is to create it.</em>
+                <em>The best way to predict the future is to create it.</em>
               </p>
-              <p className="font13 orangeColor textRight" style={{marginTop: '10px'}}>Abraham Lincoln</p>
+              <p className="font13 orangeColor textRight" style={{ marginTop: "10px" }}>
+                Abraham Lincoln
+              </p>
             </div>
           </QuoteWrapper>
           <DotsWrapper>
@@ -51,8 +70,14 @@ const Wrapper = styled.section`
   width: 100%;
   min-height: 840px;
   background: linear-gradient(135deg, #eff5ff, #d5e0f7, #5b617a, #a3afcf, #939fc0); /* Gray gradient */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
   @media (max-width: 960px) {
     flex-direction: column;
+    text-align: center;
   }
 `;
 
@@ -63,7 +88,6 @@ const LeftSide = styled.div`
     width: 100%;
     order: 2;
     margin: 50px 0;
-    text-align: center;
   }
   @media (max-width: 560px) {
     margin: 80px 0 50px 0;
@@ -86,7 +110,6 @@ const HeaderP = styled.div`
   line-height: 1.5rem;
   @media (max-width: 960px) {
     padding: 15px 0 50px 0;
-    text-align: center;
     max-width: 100%;
   }
 `;
@@ -125,6 +148,8 @@ const Img = styled.img`
   width: 100%;
   max-width: 1000px;
   height: 600px;
+  object-fit: cover;
+  transition: transform 0.1s ease-in-out;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
