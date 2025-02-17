@@ -39,10 +39,10 @@
   }
   a {
     text-decoration: none!important;
-    color: #0B093B;
+    color: #FF4433;
   }
   a:hover {
-    color: #7620FF;
+    color: #FFAC1C;
   }
   input:-webkit-autofill {
     -webkit-box-shadow:0 0 0 50px #fff inset; /* Change the color to your own background color */
@@ -51,7 +51,7 @@
   }
   body {
     background: #fff;
-    color: #0B093B;
+    color: #dd841a;
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
     font-size: 16px;
@@ -104,8 +104,8 @@
     width: 100%;
   }
   .active {
-    border-bottom: 2px solid #FF4433;
-    color: #FF4433;
+    border-bottom: 2px solid #FFAC1C;
+    color: #FFAC1C;
   }
   .tag {
     padding: 5px 10px;
