@@ -116,7 +116,7 @@ const ImageWrapper = styled.div`
 `;
 const Img = styled.img`
   width: 100%;  /* Adjust the percentage as needed */
-  max-width: 1500px;  /* Set a max width */
+  max-width: 1000px;  /* Set a max width */
   height: 600px;
   @media (max-width: 960px) {
     width: 70%;
