@@ -14,8 +14,8 @@ export default function Header() {
         <div>
           <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
           <HeaderP className="font13 semiBold">
-            Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
+           Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
+           Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -25,12 +25,12 @@ export default function Header() {
       <RightSide>
         <ImageWrapper>
           <Img className="radius8" src={HeaderImage} alt="office" style={{zIndex: 9}} />
-          <QuoteWrapper className="flexCenter whiteBg radius8">
+          <QuoteWrapper className="flexCenter whiteColor radius8">
             <QuotesWrapper>
               <QuotesIcon />
             </QuotesWrapper>
             <div>
-              <p className="font15 orangeColor">
+              <p className="font15 brightOrange">
                 <em> The best way to predict the future is to create it.</em>
               </p>
               <p className="font13 orangeColor textRight" style={{marginTop: '10px'}}>Abraham Lincoln</p>
@@ -45,6 +45,7 @@ export default function Header() {
     </Wrapper>
   );
 }
+
 
 const Wrapper = styled.section
   padding-top: 80px;
@@ -134,7 +135,6 @@ const QuoteWrapper = styled.div
   max-width: 330px;
   padding: 30px;
   z-index: 99;
-  background-color: #fff; /* White background for the quote wrapper */
   @media (max-width: 960px) {
     left: 20px;
   }
@@ -157,4 +157,4 @@ const DotsWrapper = styled.div
   }
   @media (max-width: 560px) {
     display: none;
-  }
+  };
