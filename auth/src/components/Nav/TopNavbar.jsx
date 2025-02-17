@@ -27,13 +27,12 @@ export default function TopNavbar() {
       <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={setSidebarOpen} />
       {sidebarOpen && <Backdrop toggleSidebar={setSidebarOpen} />}
       <Wrapper
-        className="flexCenter animate lighttBg"
+        className="flexCenter animate"
         style={y > 100 ? { height: "60px" } : { height: "80px" }}
       >
         <NavInner className="container flexSpaceCenter">
           <Link className="pointer flexNullCenter" to="home" smooth={true}>
             <img src={LogoIcon} alt="Logo" style={{ height: "40px" }} />
-            
           </Link>
           <BurgerWrapper className="pointer" onClick={() => setSidebarOpen(!sidebarOpen)}>
             <BurgerIcon />
@@ -76,6 +75,8 @@ const Wrapper = styled.nav`
   top: 0;
   left: 0;
   z-index: 999;
+  background: linear-gradient(90deg, #5b617a 0%, #a3afcf 100%);
+  transition: background 0.3s ease-in-out;
 `;
 
 const NavInner = styled.div`
