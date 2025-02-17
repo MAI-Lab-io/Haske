@@ -12,10 +12,10 @@ export default function Header() {
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60">We are Digital Agency.</h1>
+          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
           <HeaderP className="font13 semiBold">
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-            voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+           Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
+           Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -31,9 +31,9 @@ export default function Header() {
             </QuotesWrapper>
             <div>
               <p className="font15 whiteColor">
-                <em>Friends, such as we desire, are dreams and fables. Friendship demands the ability to do without it.</em>
+                <em> The best way to predict the future is to create it.</em>
               </p>
-              <p className="font13 orangeColor textRight" style={{marginTop: '10px'}}>Ralph Waldo Emerson</p>
+              <p className="font13 orangeColor textRight" style={{marginTop: '10px'}}>Abraham Lincoln</p>
             </div>
           </QuoteWrapper>
           <DotsWrapper>
@@ -115,9 +115,9 @@ const ImageWrapper = styled.div`
   }
 `;
 const Img = styled.img`
-  width: 60%;  /* Adjust the percentage as needed */
-  max-width: 400px;  /* Set a max width */
-  height: auto;
+  width: 100%;  /* Adjust the percentage as needed */
+  max-width: 1500px;  /* Set a max width */
+  height: 600px;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
