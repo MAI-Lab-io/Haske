@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
@@ -8,23 +8,14 @@ import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (event) => {
-    setMousePosition({
-      x: (event.clientX - window.innerWidth / 2) / 20,
-      y: (event.clientY - window.innerHeight / 2) / 20,
-    });
-  };
-
   return (
-    <Wrapper id="home" onMouseMove={handleMouseMove}>
+    <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the Developing World.</h1>
+          <h1 className="extraBold font60"> Open AI-enabled Teleradiology for the developing world.</h1>
           <HeaderP className="font13 semiBold">
             Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
+            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics
           </HeaderP>
           <BtnWrapper>
             <FullButton title="Get Started" />
@@ -33,26 +24,16 @@ export default function Header() {
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img
-            className="radius8"
-            src={HeaderImage}
-            alt="office"
-            style={{
-              transform: `translateX(${mousePosition.x}px) translateY(${mousePosition.y}px)`,
-              zIndex: 9,
-            }}
-          />
+          <Img className="radius8" src={HeaderImage} alt="office" style={{zIndex: 9}} />
           <QuoteWrapper className="flexCenter whiteBg radius8">
             <QuotesWrapper>
               <QuotesIcon />
             </QuotesWrapper>
             <div>
               <p className="font15 orangeColor">
-                <em>The best way to predict the future is to create it.</em>
+                <em> The best way to predict the future is to create it.</em>
               </p>
-              <p className="font13 orangeColor textRight" style={{ marginTop: "10px" }}>
-                Abraham Lincoln
-              </p>
+              <p className="font13 orangeColor textRight" style={{marginTop: '10px'}}>Abraham Lincoln</p>
             </div>
           </QuoteWrapper>
           <DotsWrapper>
@@ -65,36 +46,28 @@ export default function Header() {
   );
 }
 
-const Wrapper = styled.section`
+const Wrapper = styled.section
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
-  background: linear-gradient(135deg, #eff5ff, #d5e0f7, #5b617a, #a3afcf, #939fc0); /* Gray gradient */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
   @media (max-width: 960px) {
     flex-direction: column;
-    text-align: center;
   }
-`;
-
-const LeftSide = styled.div`
+;
+const LeftSide = styled.div
   width: 50%;
   height: 100%;
   @media (max-width: 960px) {
     width: 100%;
     order: 2;
     margin: 50px 0;
+    text-align: center;
   }
   @media (max-width: 560px) {
     margin: 80px 0 50px 0;
   }
-`;
-
-const RightSide = styled.div`
+;
+const RightSide = styled.div
   width: 50%;
   height: 100%;
   @media (max-width: 960px) {
@@ -102,26 +75,24 @@ const RightSide = styled.div`
     order: 1;
     margin-top: 30px;
   }
-`;
-
-const HeaderP = styled.div`
+;
+const HeaderP = styled.div
   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.5rem;
   @media (max-width: 960px) {
     padding: 15px 0 50px 0;
+    text-align: center;
     max-width: 100%;
   }
-`;
-
-const BtnWrapper = styled.div`
+;
+const BtnWrapper = styled.div
   max-width: 190px;
   @media (max-width: 960px) {
     margin: 0 auto;
   }
-`;
-
-const GreyDiv = styled.div`
+;
+const GreyDiv = styled.div
   width: 30%;
   height: 700px;
   position: absolute;
@@ -131,9 +102,8 @@ const GreyDiv = styled.div`
   @media (max-width: 960px) {
     display: none;
   }
-`;
-
-const ImageWrapper = styled.div`
+;
+const ImageWrapper = styled.div
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -142,14 +112,11 @@ const ImageWrapper = styled.div`
     width: 100%;
     justify-content: center;
   }
-`;
-
-const Img = styled.img`
-  width: 100%;
-  max-width: 1000px;
+;
+const Img = styled.img
+  width: 100%;  /* Adjust the percentage as needed */
+  max-width: 1000px;  /* Set a max width */
   height: 600px;
-  object-fit: cover;
-  transition: transform 0.1s ease-in-out;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -158,31 +125,29 @@ const Img = styled.img`
     width: 80%;
     max-width: 300px;
   }
-`;
+;
 
-const QuoteWrapper = styled.div`
+const QuoteWrapper = styled.div
   position: absolute;
   left: 0;
   bottom: 50px;
   max-width: 330px;
   padding: 30px;
   z-index: 99;
-  background-color: #fff;
+  background-color: #fff; /* White background for the quote wrapper */
   @media (max-width: 960px) {
     left: 20px;
   }
   @media (max-width: 560px) {
     bottom: -50px;
   }
-`;
-
-const QuotesWrapper = styled.div`
+;
+const QuotesWrapper = styled.div
   position: absolute;
   left: -20px;
   top: -10px;
-`;
-
-const DotsWrapper = styled.div`
+;
+const DotsWrapper = styled.div
   position: absolute;
   right: -100px;
   bottom: 100px;
@@ -193,4 +158,4 @@ const DotsWrapper = styled.div`
   @media (max-width: 560px) {
     display: none;
   }
-`;
+;
