@@ -2,12 +2,17 @@ import React from "react";
 import Slider from "react-slick";
 import styled from "styled-components";
 // Assets
-import ClientLogo01 from "../../assets/img/clients/logo01.svg"
+import ClientLogo01 from "../../assets/img/clients/logo01.svg";
 import ClientLogo02 from "../../assets/img/clients/logo02.svg";
 import ClientLogo03 from "../../assets/img/clients/logo03.svg";
 import ClientLogo04 from "../../assets/img/clients/logo04.svg";
 import ClientLogo05 from "../../assets/img/clients/logo05.svg";
 import ClientLogo06 from "../../assets/img/clients/logo06.svg";
+import sponsor1 from "../assets/sponsor1.png";
+import sponsor2 from "../assets/sponsor2.png";
+import sponsor3 from "../assets/sponsor3.png";
+import sponsor4 from "../assets/sponsor4.png";
+import sponsor5 from "../assets/sponsor5.png";
 
 export default function ClientSlider() {
   const settings = {
@@ -40,9 +45,38 @@ export default function ClientSlider() {
       },
     ],
   };
+
   return (
     <div>
       <Slider {...settings}>
+        {/* Sponsors */}
+        <LogoWrapper className="flexCenter">
+          <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer">
+            <ImgStyle src={sponsor1} alt="Upenn" />
+          </a>
+        </LogoWrapper>
+        <LogoWrapper className="flexCenter">
+          <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">
+            <ImgStyle src={sponsor2} alt="AWS" />
+          </a>
+        </LogoWrapper>
+        <LogoWrapper className="flexCenter">
+          <a href="https://crestviewradiology.org/" target="_blank" rel="noopener noreferrer">
+            <ImgStyle src={sponsor3} alt="CrestView" />
+          </a>
+        </LogoWrapper>
+        <LogoWrapper className="flexCenter">
+          <a href="https://lacunafund.org/" target="_blank" rel="noopener noreferrer">
+            <ImgStyle src={sponsor4} alt="Lacuna" />
+          </a>
+        </LogoWrapper>
+        <LogoWrapper className="flexCenter">
+          <a href="https://airg.nitda.gov.ng/" target="_blank" rel="noopener noreferrer">
+            <ImgStyle src={sponsor5} alt="NAIRS" />
+          </a>
+        </LogoWrapper>
+
+        {/* Example additional logos if needed */}
         <LogoWrapper className="flexCenter">
           <ImgStyle src={ClientLogo01} alt="client logo" />
         </LogoWrapper>
@@ -60,18 +94,6 @@ export default function ClientSlider() {
         </LogoWrapper>
         <LogoWrapper className="flexCenter">
           <ImgStyle src={ClientLogo06} alt="client logo" />
-        </LogoWrapper>
-        <LogoWrapper className="flexCenter">
-          <ImgStyle src={ClientLogo03} alt="client logo" />
-        </LogoWrapper>
-        <LogoWrapper className="flexCenter">
-          <ImgStyle src={ClientLogo04} alt="client logo" />
-        </LogoWrapper>
-        <LogoWrapper className="flexCenter">
-          <ImgStyle src={ClientLogo01} alt="client logo" />
-        </LogoWrapper>
-        <LogoWrapper className="flexCenter">
-          <ImgStyle src={ClientLogo02} alt="client logo" />
         </LogoWrapper>
       </Slider>
     </div>
