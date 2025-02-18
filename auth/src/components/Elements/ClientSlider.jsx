@@ -18,6 +18,8 @@ export default function ClientSlider() {
     centerMode: true,
     centerPadding: "20px",
     focusOnSelect: true,
+    autoplay: true,
+    autoplaySpeed: 3000,
     responsive: [
       {
         breakpoint: 1024,
@@ -53,64 +55,40 @@ export default function ClientSlider() {
       </Header>
 
       <Slider {...settings}>
-        <LogoWrapper>
-          <a
-            href="https://www.med.upenn.edu/globalhealth/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit Upenn"
-          >
-            <ImgStyle src={sponsor1} alt="Upenn" />
+        <LogoContainer>
+          <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer" aria-label="Visit Upenn">
+            <Logo src={sponsor1} alt="Upenn" />
           </a>
-        </LogoWrapper>
-        <LogoWrapper>
-          <a
-            href="https://aws.amazon.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit AWS"
-          >
-            <ImgStyle src={sponsor2} alt="AWS" />
+        </LogoContainer>
+        <LogoContainer>
+          <a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit AWS">
+            <Logo src={sponsor2} alt="AWS" />
           </a>
-        </LogoWrapper>
-        <LogoWrapper>
-          <a
-            href="https://crestviewradiology.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit CrestView"
-          >
-            <ImgStyle src={sponsor3} alt="CrestView" />
+        </LogoContainer>
+        <LogoContainer>
+          <a href="https://crestviewradiology.org/" target="_blank" rel="noopener noreferrer" aria-label="Visit CrestView">
+            <Logo src={sponsor3} alt="CrestView" />
           </a>
-        </LogoWrapper>
-        <LogoWrapper>
-          <a
-            href="https://lacunafund.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit Lacuna"
-          >
-            <ImgStyle src={sponsor4} alt="Lacuna" />
+        </LogoContainer>
+        <LogoContainer>
+          <a href="https://lacunafund.org/" target="_blank" rel="noopener noreferrer" aria-label="Visit Lacuna">
+            <Logo src={sponsor4} alt="Lacuna" />
           </a>
-        </LogoWrapper>
-        <LogoWrapper blackBackground>
-          <a
-            href="https://airg.nitda.gov.ng/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Visit NAIRS"
-          >
-            <ImgStyle src={sponsor5} alt="NAIRS" />
+        </LogoContainer>
+        <LogoContainer>
+          <a href="https://airg.nitda.gov.ng/" target="_blank" rel="noopener noreferrer" aria-label="Visit NAIRS">
+            <Logo src={sponsor5} alt="NAIRS" />
           </a>
-        </LogoWrapper>
+        </LogoContainer>
       </Slider>
     </SliderWrapper>
   );
 }
 
 const SliderWrapper = styled.div`
-  margin-top: 50px;
-  padding: 0 20px;
+  margin: 50px auto;
+  padding: 0 5%;
+  max-width: 1200px;
 `;
 
 const Header = styled.div`
@@ -121,7 +99,7 @@ const Header = styled.div`
 const Title = styled.h2`
   font-size: 36px;
   font-weight: bold;
-  color: #0b093b;
+  color: #0F172A;
   margin: 0;
   @media (max-width: 768px) {
     font-size: 28px;
@@ -137,37 +115,26 @@ const Description = styled.p`
   }
 `;
 
-const LogoWrapper = styled.div`
+const LogoContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 150px;
   cursor: pointer;
-  padding: 20px;
-  opacity: 0.9;
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
-  background-color: ${(props) => (props.blackBackground ? "#000" : "#fff")};
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 0 10px;
+  padding: 15px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease;
 
   &:hover {
     opacity: 1;
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-
-  :focus-visible {
-    outline: none;
+    transform: scale(1.1);
   }
 
   @media (max-width: 768px) {
-    height: 120px;
-    padding: 15px;
+    padding: 10px;
   }
 `;
 
-const ImgStyle = styled.img`
+const Logo = styled.img`
   max-height: 80px;
   max-width: 100%;
   width: auto;
