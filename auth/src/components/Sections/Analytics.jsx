@@ -4,12 +4,12 @@ import styled from "styled-components";
 import InfoBox from "../Elements/ProjectBox";
 import FullButton from "../Buttons/FullButton";
 // Assets
-import InfoImg1 from "../../assets/img/projects/1.jpg";
-import InfoImg2 from "../../assets/img/projects/2.jpg";
-import InfoImg3 from "../../assets/img/projects/3.jpg";
-import InfoImg4 from "../../assets/img/projects/4.jpg";
-import InfoImg5 from "../../assets/img/projects/5.jpg";
-import InfoImg6 from "../../assets/img/projects/6.jpg";
+import InfoImg1 from "../../assets/img/analytics/1.jpg";
+import InfoImg2 from "../../assets/img/analytics/2.jpg";
+import InfoImg3 from "../../assets/img/analytics/3.jpg";
+import InfoImg4 from "../../assets/img/analytics/4.jpg";
+import InfoImg5 from "../../assets/img/analytics/5.jpg";
+import InfoImg6 from "../../assets/img/analytics/6.jpg";
 import AddImage2 from "../../assets/img/add/add2.png";
 
 export default function Analytics() {
