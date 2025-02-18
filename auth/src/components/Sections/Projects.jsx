@@ -18,7 +18,7 @@ export default function Analytics() {
       <div className="whiteBg">
         <div className="container">
           <HeaderInfo>
-            <h1 className="font40 extraBold">Website Analytics</h1>
+            <h1 className="font40 extraBold">Analytics</h1>
             <p className="font13">
               View key metrics and insights from our ongoing efforts and growth. 
               We are proud of our journey in scaling up the platform's impact.
