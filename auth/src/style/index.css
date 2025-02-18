@@ -42,7 +42,7 @@
     color: #ffff;
   }
   a:hover {
-    color: #FFAC1C;
+    color: #20A39E;
   }
   input:-webkit-autofill {
     -webkit-box-shadow:0 0 0 50px #fff inset; /* Change the color to your own background color */
@@ -50,8 +50,8 @@
     -webkit-text-fill-color: #fff;
   }
   body {
-    background: #fff;
-    color: #0B093B;
+    background: #E5E7EB;
+    color: #0F172A;
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
     font-size: 16px;
@@ -59,7 +59,7 @@
   }
   .container {
     width: 100%;
-    max-width: 1220px;
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0px 30px;
   }
@@ -104,8 +104,8 @@
     width: 100%;
   }
   .active {
-    border-bottom: 2px solid #FF4433;
-    color: #d37506;
+    border-bottom: 2px solid #0F172A;
+    color: #3B82F6;
   }
   .tag {
     padding: 5px 10px;
@@ -221,7 +221,7 @@
   }
  /* COLORS */
 .darkColor {
-  color: #5b617a; /* Dark Gray */
+  color: #0F172A; /* Dark Gray */
 }
 .purpleColor {
   color: #7620FF; /* Retained purple color */
@@ -256,10 +256,10 @@
   background-color: #dd841a; /* Mid Orange */
 }
 .lightBg {
-  background-color: #0b093b; /* Gray White */
+  background-color: #E5E7EB; /* Gray White */
 }
 .lighttBg {
-  background-color: #eff5ff; /* Gray White */
+  background-color: #E5E7EB; /* Gray White */
 }
 .coralBg {
   background-color: #C4FFFF; /* Retained coral color */
