@@ -75,7 +75,7 @@ const Wrapper = styled.nav`
   top: 0;
   left: 0;
   z-index: 999;
-  background: linear-gradient(90deg,  #ffffff 0%,  #E5E7EB 0%, #0F172A 100%);
+  background: linear-gradient(90deg,  #ffffff 0%,  #E5E7EB 0%, #0F172A 75%);
   transition: background 0.3s ease-in-out;
 `;
 
