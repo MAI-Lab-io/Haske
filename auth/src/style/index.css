@@ -221,7 +221,7 @@
   }
  /* COLORS */
 .darkColor {
-  color: #0F172A; /* Dark Gray */
+  color: #0F172A; /* Deep Blue */
 }
 .purpleColor {
   color: #7620FF; /* Retained purple color */
@@ -247,7 +247,7 @@
 
 /* BACKGROUNDS */
 .darkBg {
-  background-color: #5b617a; /* Dark Gray */
+  background-color: #0F172A; /* Dark Gray */
 }
 .purpleBg {
   background-color: #7620FF; /* Retained purple color */
