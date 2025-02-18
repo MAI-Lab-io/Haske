@@ -3,7 +3,7 @@ import * as React from "react";
 function SvgComponent(props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={186.223} height={249.21} viewBox="0 0 186.223 249.21" {...props}>
-      <g data-name="Group 102" fill="#bebdce">
+      <g data-name="Group 102" fill="#dd841a">
         <g data-name="Group 59" transform="translate(-.09 .208)">
           <ellipse data-name="Ellipse 1" cx={4} cy={5} rx={4} ry={5} transform="translate(.228 -.08)" />
           <circle data-name="Ellipse 2" cx={4.565} cy={4.565} r={4.565} transform="translate(.09 39.806)" />
