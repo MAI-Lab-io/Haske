@@ -56,7 +56,7 @@ export default function ClientSlider() {
 
       <Slider {...settings}>
         <LogoContainer>
-          <a href="https://www.med.upenn.edu/globalhealth/" target="_blank" rel="noopener noreferrer" aria-label="Visit Upenn">
+          <a href="https://www.pennmedicine.org/departments-and-centers/department-of-radiology/radiology-research/labs-and-centers/biomedical-imaging-informatics/center-for-global-and-population-health-research" target="_blank" rel="noopener noreferrer" aria-label="Visit Upenn">
             <Logo src={sponsor1} alt="Upenn" />
           </a>
         </LogoContainer>
