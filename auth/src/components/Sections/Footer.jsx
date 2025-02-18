@@ -17,12 +17,10 @@ export default function Contact() {
           <InnerWrapper className="flexSpaceCenter" style={{ padding: "30px 0" }}>
             <Link className="flexCenter animate pointer" to="home" smooth={true} offset={-80}>
               <LogoImage src={LogoImg} alt="Haske Logo" />
-              <h1 className="font15 extraBold whiteColor" style={{ marginLeft: "15px" }}>
-                Fanatic
-              </h1>
+              
             </Link>
             <StyleP className="whiteColor font13">
-              © {getCurrentYear()} - <span className="purpleColor font13">Haske</span> All Rights Reserved
+              © {getCurrentYear()} - <span className="orangeColor font13">Haske</span> All Rights Reserved
             </StyleP>
 
             <Link className="whiteColor animate pointer font13" to="home" smooth={true} offset={-80}>
