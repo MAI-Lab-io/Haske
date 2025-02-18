@@ -11,13 +11,12 @@ export default function Contact() {
       <div className="lightBg">
         <div className="container">
           <HeaderInfo>
-            <h1 className="font40 extraBold">Partner with Us</h1>
-            <p className="font13">
+            <h1 className="font40 extraBold">Get in Touch: Let's Discuss Innovative Health Solutions</h1>
+            <p className="font15">
               Is your institution looking to integrate innovative digital imaging and diagnostic tools?
               <br />
               At Haske, we are committed to enhancing operational efficiency and advancing medical diagnostics. If your institution is interested in exploring a partnership or implementing Haske in your operations, we would be delighted to discuss how we can support your goals.
-              <br />
-              Additionally, we are curious to know if your institution currently utilizes any digitizers or digital imaging tools. This will help us understand how best to tailor our solutions to fit your needs.
+              
             </p>
           </HeaderInfo>
           <div className="row" style={{ paddingBottom: "30px" }}>
@@ -29,9 +28,7 @@ export default function Contact() {
                 <input type="text" id="contact" name="contact" className="font20 extraBold" />
                 <label className="font13">Email Address:</label>
                 <input type="email" id="email" name="email" className="font20 extraBold" />
-                <label className="font13">Do you currently utilize any digitizers or digital imaging tools in your institution?</label>
-                <textarea rows="4" cols="50" type="text" id="tools" name="tools" className="font20 extraBold" placeholder="Please specify the tools your institution currently uses." />
-                <label className="font13">Additional Inquiry or Comments:</label>
+                <label className="font13">What is your Inquiry:</label>
                 <textarea rows="4" cols="50" type="text" id="message" name="message" className="font20 extraBold" placeholder="Feel free to ask any specific questions or provide additional information." />
               </Form>
               <SumbitWrapper className="flex">
@@ -90,21 +87,23 @@ const Form = styled.form`
   }
 `;
 const ButtonInput = styled.input`
-  border: 1px solid #7620ff;
-  background-color: #7620ff;
+  border: 1px solid #dd841a;
+  background-color: #0F172A;
   width: 100%;
   padding: 15px;
   outline: none;
   color: #fff;
   :hover {
-    background-color: #580cd2;
-    border: 1px solid #7620ff;
+    background-color: #dd841a;
+    border: 1px solid #0F172A;
     color: #fff;
   }
   @media (max-width: 991px) {
     margin: 0 auto;
   }
 `;
+
+
 const ContactImgBox = styled.div`
   max-width: 180px; 
   align-self: flex-end; 
