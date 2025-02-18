@@ -58,8 +58,8 @@
     font-weight: 400;
   }
   .container {
-    width: 120%;
-    max-width: 1520px;
+    width: 100%;
+    max-width: 1320px;
     margin: 0 auto;
     padding: 0px 30px;
   }
