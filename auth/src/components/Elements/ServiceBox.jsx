@@ -45,8 +45,8 @@ const IconStyle = styled.div`
 `;
 
 const IconImage = styled.img`
-  width: 50px; /* Adjust the size as needed */
-  height: 50px;
+  width: 100px; /* Adjust the size as needed */
+  height: 100px;
   object-fit: contain;
 `;
 
