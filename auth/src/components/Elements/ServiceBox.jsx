@@ -1,24 +1,29 @@
 import React from "react";
 import styled from "styled-components";
+import ImagingIcon from "../../assets/img/imaging.png";
+import DiagnosisIcon from "../../assets/img/diagnosis.png";
+import CloudComputingIcon from "../../assets/img/cloud-computing.png";
+import CostEffectiveIcon from "../../assets/img/cost-effective.png";
+
 
 export default function ServiceBox({ icon, title, subtitle }) {
   let getIcon;
 
-  switch (icon) {
-    case "imaging":
-      getIcon = <IconImage src="../../assets/img/imaging.png" alt="imaging Icon" />;
-      break;
-    case "diagnosis":
-      getIcon = <IconImage src="../../assets/img/diagnosis.png" alt="diagnosis Icon" />;
-      break;
-    case "cloud_computing":
-      getIcon = <IconImage src="../../assets/img/cloud-computing.png" alt="cloud_computing Icon" />;
-      break;
-    case "cost_effective":
-      getIcon = <IconImage src="../../assets/img/cost-effective.png" alt="cost_effective Icon" />;
-      break;
-    
-  }
+ switch (icon) {
+  case "imaging":
+    getIcon = <IconImage src={ImagingIcon} alt="imaging Icon" />;
+    break;
+  case "diagnosis":
+    getIcon = <IconImage src={DiagnosisIcon} alt="diagnosis Icon" />;
+    break;
+  case "cloud_computing":
+    getIcon = <IconImage src={CloudComputingIcon} alt="cloud_computing Icon" />;
+    break;
+  case "cost_effective":
+    getIcon = <IconImage src={CostEffectiveIcon} alt="cost_effective Icon" />;
+    break;
+}
+
 
   return (
     <Wrapper className="flex flexColumn">
