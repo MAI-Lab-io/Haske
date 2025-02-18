@@ -29,27 +29,27 @@ export default function Services() {
           <ServiceBoxRow className="flex">
             <ServiceBoxWrapper>
               <ServiceBox
-                icon="roller"
+                icon="imaging"
                 title="Efficient Medical Imaging"
                 subtitle="Haske provides seamless archival and retrieval of medical images, ensuring fast and efficient management of imaging data."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
               <ServiceBox
-                icon="monitor"
+                icon="diagnosis"
                 title="AI-Aided Diagnosis"
                 subtitle="Haske integrates AI tools to assist in diagnosis, providing timely insights that enhance clinical decision-making."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
               <ServiceBox
-                icon="browser"
+                icon="cloud_computing"
                 title="Cloud-Based Platform"
                 subtitle="Hosted on AWS, Haske offers scalable, secure access to medical imaging data, enabling easy integration with diagnostic tools."
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
-              <ServiceBox icon="printer" title="Affordable Solutions" subtitle="Haske is designed to be cost-effective, offering a solution that reduces the financial burden on healthcare centers in Nigeria." />
+              <ServiceBox icon="cost_effective" title="Affordable Solutions" subtitle="Haske is designed to be cost-effective, offering a solution that reduces the financial burden on healthcare centers in Nigeria." />
             </ServiceBoxWrapper>
           </ServiceBoxRow>
         </div>
