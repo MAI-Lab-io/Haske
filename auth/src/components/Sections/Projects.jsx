@@ -1,9 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 // Components
-import InfoBox from "../Elements/InfoBox"; // You can create a similar component for displaying the data
+import InfoBox from "../Elements/InfoBox";
 import FullButton from "../Buttons/FullButton";
 // Assets
+import InfoImg1 from "../../assets/img/projects/1.png";
+import InfoImg2 from "../../assets/img/projects/2.png";
+import InfoImg3 from "../../assets/img/projects/3.png";
+import InfoImg4 from "../../assets/img/projects/4.png";
+import InfoImg5 from "../../assets/img/projects/5.png";
+import InfoImg6 from "../../assets/img/projects/6.png";
 import AddImage2 from "../../assets/img/add/add2.png";
 
 export default function Analytics() {
@@ -14,60 +20,65 @@ export default function Analytics() {
           <HeaderInfo>
             <h1 className="font40 extraBold">Website Analytics</h1>
             <p className="font13">
-              Check out our key performance metrics and the impact we're making in the health sector.
-              <br />
-              These numbers reflect our ongoing commitment to improving healthcare accessibility.
+              View key metrics and insights from our ongoing efforts and growth. 
+              We are proud of our journey in scaling up the platform's impact.
             </p>
           </HeaderInfo>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
+                img={InfoImg1}
                 title="Institutions Deployed"
-                count="350"
-                description="Number of healthcare institutions currently using our platform."
+                text="Currently deployed in over 150 institutions globally."
+                action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
+                img={InfoImg2}
                 title="Total Images Processed"
-                count="2,800,000"
-                description="Total medical images analyzed and processed so far."
+                text="We've processed over 2 million images across various platforms."
+                action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
-                title="Users Engaged"
-                count="120,000"
-                description="Number of healthcare professionals and users interacting with the platform."
+                img={InfoImg3}
+                title="Total Active Regions"
+                text="Currently operational in 10 active regions worldwide."
+                action={() => alert("clicked")}
               />
             </div>
           </div>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
-                title="Active Sessions"
-                count="2,500"
-                description="Real-time active sessions happening on the platform."
+                img={InfoImg4}
+                title="Users Engaged"
+                text="Over 30,000 active users engaging daily with our platform."
+                action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
-                title="New Partnerships"
-                count="45"
-                description="New healthcare partnerships in the past quarter."
+                img={InfoImg5}
+                title="Images Uploaded Monthly"
+                text="On average, over 500,000 images are uploaded monthly."
+                action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <InfoBox
-                title="Research Published"
-                count="30"
-                description="Research papers and studies published using our platform data."
+                img={InfoImg6}
+                title="Platform Uptime"
+                text="Our platform boasts 99.9% uptime, ensuring seamless access."
+                action={() => alert("clicked")}
               />
             </div>
           </div>
           <div className="row flexCenter">
             <div style={{ margin: "50px 0", width: "200px" }}>
-              <FullButton title="See Full Report" action={() => alert("clicked")} />
+              <FullButton title="View More Insights" action={() => alert("clicked")} />
             </div>
           </div>
         </div>
@@ -83,10 +94,11 @@ export default function Analytics() {
               </AddLeftInner>
             </AddLeft>
             <AddRight>
-              <h4 className="font15 semiBold">Our Vision</h4>
-              <h2 className="font40 extraBold">Advancing Healthcare with Technology</h2>
+              <h4 className="font15 semiBold">A few words about company</h4>
+              <h2 className="font40 extraBold">Our Mission and Vision</h2>
               <p className="font12">
-                We are committed to providing cutting-edge solutions that enhance the quality of healthcare services worldwide.
+                We are committed to providing world-class solutions for healthcare imaging and analytics. 
+                Our platform is designed to enhance the efficiency and accuracy of healthcare professionals in their daily tasks.
               </p>
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
                 <div style={{ width: "190px" }}>
