@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
@@ -8,6 +9,12 @@ import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
+  const navigate = useNavigate();
+
+  const handleGetStartedClick = () => {
+    navigate("/register"); // Replace with the actual URL
+  };
+
   return (
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
@@ -18,7 +25,7 @@ export default function Header() {
             Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
           </HeaderP>
           <BtnWrapper>
-            <FullButton title="Get Started" />
+            <FullButton title="Get Started" onClick={handleGetStartedClick} />
           </BtnWrapper>
         </div>
       </LeftSide>
@@ -29,7 +36,7 @@ export default function Header() {
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv className="lightBg"></GreyDiv> {/* Ensure this div has the gradient */}
+        <GreyDiv className="lightBg"></GreyDiv>
       </RightSide>
     </Wrapper>
   );
@@ -39,7 +46,7 @@ const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
-  display: flex; /* Ensure it's a flex container */
+  display: flex;
   @media (max-width: 960px) {
     flex-direction: column;
   }
@@ -54,15 +61,12 @@ const LeftSide = styled.div`
     margin: 50px 0;
     text-align: center;
   }
-  @media (max-width: 560px) {
-    margin: 80px 0 50px 0;
-  }
 `;
 
 const RightSide = styled.div`
   width: 50%;
   height: 100%;
-  position: relative; /* Ensure it's the reference for absolute positioning */
+  position: relative;
   @media (max-width: 960px) {
     width: 100%;
     order: 1;
@@ -75,9 +79,7 @@ const HeaderP = styled.p`
   padding: 15px 0 50px 0;
   line-height: 1.5rem;
   @media (max-width: 960px) {
-    padding: 15px 0 50px 0;
     text-align: center;
-    max-width: 100%;
   }
 `;
 
@@ -89,15 +91,15 @@ const BtnWrapper = styled.div`
 `;
 
 const GreyDiv = styled.div`
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 5; /* Ensure it is above other elements */
+  z-index: 5;
   background: linear-gradient(180deg, #5b617a, #43495d);
   @media (max-width: 960px) {
-    display: none; /* Hide on smaller screens if necessary */
+    display: none;
   }
 `;
 
@@ -120,33 +122,6 @@ const Img = styled.img`
     width: 70%;
     max-width: 350px;
   }
-  @media (max-width: 560px) {
-    width: 80%;
-    max-width: 300px;
-  }
-`;
-
-const QuoteWrapper = styled.div`
-  position: absolute;
-  left: 0;
-  bottom: 50px;
-  max-width: 330px;
-  padding: 30px;
-  z-index: 99;
-  background-color: white;
-  color: orange;
-  @media (max-width: 960px) {
-    left: 20px;
-  }
-  @media (max-width: 560px) {
-    bottom: -50px;
-  }
-`;
-
-const QuotesWrapper = styled.div`
-  position: absolute;
-  left: -20px;
-  top: -10px;
 `;
 
 const DotsWrapper = styled.div`
