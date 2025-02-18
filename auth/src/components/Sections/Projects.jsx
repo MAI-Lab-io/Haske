@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 // Components
-import InfoBox from "../Elements/InfoBox";
+import InfoBox from "../Elements/ProjectBox";
 import FullButton from "../Buttons/FullButton";
 // Assets
 import InfoImg1 from "../../assets/img/projects/1.png";
