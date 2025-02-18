@@ -58,7 +58,7 @@ export default function TopNavbar() {
               <a href="/" style={{ padding: "10px 30px 10px 0" }}>Log in</a>
             </li>
             <li className="semiBold font15 pointer flexCenter">
-              <a href="/" className="radius8 orangeBg" style={{ padding: "10px 15px" }}>
+              <a href="/" className="radius8 lightBg" style={{ padding: "10px 15px" }}>
                 Get Started
               </a>
             </li>
@@ -75,7 +75,7 @@ const Wrapper = styled.nav`
   top: 0;
   left: 0;
   z-index: 999;
-  background: linear-gradient(90deg,  #ffffff 0%,  #eff5ff 0%, #5b617a 100%);
+  background: linear-gradient(90deg,  #ffffff 0%,  #E5E7EB 0%, #0F172A 100%);
   transition: background 0.3s ease-in-out;
 `;
 
