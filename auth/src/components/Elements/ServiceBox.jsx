@@ -6,16 +6,16 @@ export default function ServiceBox({ icon, title, subtitle }) {
 
   switch (icon) {
     case "imaging":
-      getIcon = <IconImage src="/assets/images/imaging.png" alt="imaging Icon" />;
+      getIcon = <IconImage src="../../assets/images/imaging.png" alt="imaging Icon" />;
       break;
     case "diagnosis":
-      getIcon = <IconImage src="/assets/images/diagnosis.png" alt="diagnosis Icon" />;
+      getIcon = <IconImage src="../../assets/images/diagnosis.png" alt="diagnosis Icon" />;
       break;
     case "cloud_computing":
-      getIcon = <IconImage src="/assets/images/cloud-computing.png" alt="cloud_computing Icon" />;
+      getIcon = <IconImage src="../../assets/images/cloud-computing.png" alt="cloud_computing Icon" />;
       break;
     case "cost_effective":
-      getIcon = <IconImage src="/assets/images/cost-effective.png" alt="cost_effective Icon" />;
+      getIcon = <IconImage src="../../assets/images/cost-effective.png" alt="cost_effective Icon" />;
       break;
     
   }
