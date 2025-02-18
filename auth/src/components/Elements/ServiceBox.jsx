@@ -1,32 +1,24 @@
 import React from "react";
 import styled from "styled-components";
-// Assets
-import RollerIcon from "../../assets/svg/Services/RollerIcon";
-import MonitorIcon from "../../assets/svg/Services/MonitorIcon";
-import BrowserIcon from "../../assets/svg/Services/BrowserIcon";
-import PrinterIcon from "../../assets/svg/Services/PrinterIcon";
 
-export default function ServiceBox({icon, title, subtitle}) {
+export default function ServiceBox({ icon, title, subtitle }) {
   let getIcon;
 
   switch (icon) {
-    case "roller":
-      getIcon = <RollerIcon />;
+    case "imaging":
+      getIcon = <IconImage src="/assets/images/imaging.png" alt="imaging Icon" />;
       break;
-    case "monitor":
-      getIcon = <MonitorIcon />;
+    case "diagnosis":
+      getIcon = <IconImage src="/assets/images/diagnosis.png" alt="diagnosis Icon" />;
       break;
-    case "browser":
-      getIcon = <BrowserIcon />;
+    case "cloud_computing":
+      getIcon = <IconImage src="/assets/images/cloud-computing.png" alt="cloud_computing Icon" />;
       break;
-    case "printer":
-      getIcon = <PrinterIcon />;
+    case "cost_effective":
+      getIcon = <IconImage src="/assets/images/cost-effective.png" alt="cost_effective Icon" />;
       break;
-    default:
-      getIcon = <RollerIcon />;
-      break;
+    
   }
-
 
   return (
     <Wrapper className="flex flexColumn">
@@ -40,11 +32,19 @@ export default function ServiceBox({icon, title, subtitle}) {
 const Wrapper = styled.div`
   width: 100%;
 `;
+
 const IconStyle = styled.div`
   @media (max-width: 860px) {
     margin: 0 auto;
   }
 `;
+
+const IconImage = styled.img`
+  width: 50px; /* Adjust the size as needed */
+  height: 50px;
+  object-fit: contain;
+`;
+
 const TitleStyle = styled.h2`
   width: 100%;
   max-width: 300px;
@@ -54,6 +54,7 @@ const TitleStyle = styled.h2`
     padding: 20px 0;
   }
 `;
+
 const SubtitleStyle = styled.p`
   width: 100%;
   max-width: 300px;
