@@ -22,7 +22,7 @@ export default function Services() {
         <div className="container">
           <HeaderInfo>
             <h1 className="font40 extraBold">Our Awesome Services</h1>
-            <p className="font13">
+            <p className="font15">
               Haske is an open, AI-powered, web-based PACS platform developed to address the challenges of inaccessibility and high costs of commercial PACS platforms in Nigeria. It is designed to enhance diagnosis in Radiology departments and provide a more equitable and efficient healthcare system for underserved regions. By leveraging Orthanc functionalities and AI models, Haske aims to improve medical image management, diagnosis, and interoperability for resource-limited settings like Nigeria.
             </p>
           </HeaderInfo>
