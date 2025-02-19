@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField, MenuItem, Button } from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField } from "@mui/material";
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
@@ -21,7 +21,7 @@ const Analytics = () => {
       .catch((error) => console.error("Error fetching logs:", error));
   }, []);
 
-  const filteredLogs = logs.filter((log) => 
+  const filteredLogs = logs.filter((log) =>
     log.action.toLowerCase() === "user signed in" &&
     (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
   );
@@ -32,15 +32,18 @@ const Analytics = () => {
 
   const aggregatedData = {};
   filteredLogs.forEach((log) => {
-    const weekNumber = Math.floor(new Date(log.timestamp).getTime() / (1000 * 60 * 60 * 24 * 7));
-    if (!aggregatedData[weekNumber]) {
-      aggregatedData[weekNumber] = { week: `Week ${weekNumber}` };
+    const date = new Date(log.timestamp);
+    const weekStart = new Date(date.setDate(date.getDate() - date.getDay())); // Get start of the week
+    const formattedWeek = `Week ${Math.ceil(date.getDate() / 7)} (${weekStart.toLocaleDateString()})`;
+
+    if (!aggregatedData[formattedWeek]) {
+      aggregatedData[formattedWeek] = { week: formattedWeek };
     }
     if (!userColors[log.email]) {
       userColors[log.email] = colors[colorIndex % colors.length];
       colorIndex++;
     }
-    aggregatedData[weekNumber][log.email] = (aggregatedData[weekNumber][log.email] || 0) + 1;
+    aggregatedData[formattedWeek][log.email] = (aggregatedData[formattedWeek][log.email] || 0) + 1;
   });
 
   const chartDataArray = Object.values(aggregatedData);
@@ -51,7 +54,7 @@ const Analytics = () => {
         User Activity Logs
       </Typography>
       
-      <TextField 
+      <TextField
         label="Search by Email"
         variant="outlined"
         size="small"
@@ -60,9 +63,9 @@ const Analytics = () => {
       />
       
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="week" stroke="#ccc" />
+          <XAxis dataKey="week" stroke="#ccc" angle={-20} textAnchor="end" interval={0} />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
           {Object.keys(userColors).map((email) => (
