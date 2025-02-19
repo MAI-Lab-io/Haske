@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f4f7fa; /* Lighter background */
+  background-color: #E5E7EB; /* Lighter background */
 }
 
 .form-wrapper {
@@ -49,7 +49,7 @@
 }
 
 .signin-input:focus {
-  border-color: #5d455f; /* Highlight border on focus */
+  border-color: #dd841a; /* Highlight border on focus */
 }
 
 .password-input-container {
@@ -70,7 +70,7 @@
 
 .signin-button {
   padding: 14px;
-  background-color: #5d455f;
+  background-color: #0F172A;
   color: white;
   border: none;
   border-radius: 6px;
@@ -80,7 +80,7 @@
 }
 
 .signin-button:hover {
-  background-color: #6e4f67;
+  background-color: #dd841a;
 }
 
 .signin-button:disabled {
@@ -89,8 +89,8 @@
 }
 
 .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #5d455f;
+  border: 4px solid #dd841a;
+  border-top: 4px solid #0F172A;
   border-radius: 50%;
   width: 24px;
   height: 24px;
