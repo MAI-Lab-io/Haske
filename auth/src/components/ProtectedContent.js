@@ -49,74 +49,37 @@ function ProtectedContent() {
         }
     }, [isVerified, isAdmin]);
 
-const handleSignOut = () => {
-  const user = auth.currentUser;
-  if (user) {
-    // Log the sign-out action before signing out
-    fetch('https://haske.online:8080/api/verification/log-action', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: user.email,
-        action: 'user signed out', // Log the sign-out action
-      }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log('Sign out action logged');
-        } else {
-          console.error('Failed to log sign out');
+    const handleSignOut = () => {
+        const user = auth.currentUser;
+        if (user) {
+            fetch('https://haske.online:8080/api/verification/log-action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: user.email,
+                    action: 'user signed out',
+                }),
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        console.log('Sign out action logged');
+                    } else {
+                        console.error('Failed to log sign out');
+                    }
+                    auth.signOut().then(() => {
+                        navigate("/", { state: { message: "Signed out successfully!" } });
+                        setTimeout(() => {
+                            navigate("/", { replace: true });
+                        }, 3000);
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error logging sign out action:', error);
+                });
         }
-
-        // Proceed to sign out the user
-        auth.signOut().then(() => {
-          // Display message for 3 seconds before redirecting
-          navigate("/", { state: { message: "Signed out successfully!" } });
-          
-          // Optionally, you could store a timestamp or flag to control the visibility in the parent component
-          setTimeout(() => {
-            navigate("/", { replace: true }); // Optionally redirect to home or a different page if needed
-          }, 3000); // 3 seconds delay to show the message
-        });
-      })
-      .catch((error) => {
-        console.error('Error logging sign out action:', error);
-      });
-  }
-};
-
-
-    
-    // Inactivity timeout functionality
-    useEffect(() => {
-        let inactivityTimeout;
-        
-        const resetInactivityTimer = () => {
-            clearTimeout(inactivityTimeout);
-            inactivityTimeout = setTimeout(handleSignOut, 5 * 60 * 1000); // 5 minutes of inactivity
-        };
-
-        // Listen for user activity
-        window.addEventListener('mousemove', resetInactivityTimer);
-        window.addEventListener('keydown', resetInactivityTimer);
-        window.addEventListener("click", resetInactivityTimer);
-        window.addEventListener("scroll", resetInactivityTimer);
-
-        // Set the initial timeout when the component mounts
-        resetInactivityTimer();
-
-        // Cleanup listeners on component unmount
-        return () => {
-            clearTimeout(inactivityTimeout);
-            window.removeEventListener('mousemove', resetInactivityTimer);
-            window.removeEventListener('keydown', resetInactivityTimer);
-            window.removeEventListener("click", resetInactivityTimer);
-            window.removeEventListener("scroll", resetInactivityTimer);
-            
-        };
-    }, []);
+    };
 
     const handleInstitutionChange = (event) => {
         setSelectedInstitution(event.target.value);
