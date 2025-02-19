@@ -27,7 +27,6 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(menuItems[0].path);
   const [isAdmin, setIsAdmin] = useState(null); // Null means loading
-  const [timer, setTimer] = useState(null); // Timer to track inactivity
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -54,33 +53,7 @@ const AdminLayout = () => {
     };
 
     checkAdminStatus();
-    const handleInactivity = () => {
-      setTimer(setTimeout(() => {
-        handleSignOut();
-      }, 5 * 60 * 1000)); // 5 minutes
-    };
-
-    // Reset the timer on any user interaction (mousemove, keydown, click, scroll)
-    const resetInactivityTimer = () => {
-      if (timer) clearTimeout(timer); // Clear the previous timeout
-      handleInactivity(); // Start a new timer
-    };
-
-    // Add event listeners for inactivity detection
-    window.addEventListener("mousemove", resetInactivityTimer);
-    window.addEventListener("keydown", resetInactivityTimer);
-    window.addEventListener("click", resetInactivityTimer);
-    window.addEventListener("scroll", resetInactivityTimer);
-
-    // Clean up event listeners on unmount
-    return () => {
-      window.removeEventListener("mousemove", resetInactivityTimer);
-      window.removeEventListener("keydown", resetInactivityTimer);
-      window.removeEventListener("click", resetInactivityTimer);
-      window.removeEventListener("scroll", resetInactivityTimer);
-      if (timer) clearTimeout(timer); // Clear timeout on cleanup
-    };
-  }, [navigate, timer]);
+  }, [navigate]);
   
   const handleSignOut = () => {
     auth.signOut().then(() => {
