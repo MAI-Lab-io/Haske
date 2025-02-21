@@ -8,44 +8,45 @@ import sponsor3 from "../../assets/sponsor3.png";
 import sponsor4 from "../../assets/sponsor4.png";
 import sponsor5 from "../../assets/sponsor5.png";
 
-const settings = {
-  infinite: true,
-  speed: 3000, // Slow transition speed
-  slidesToShow: 6,
-  slidesToScroll: 1,
-  arrows: false,
-  centerMode: true,
-  centerPadding: "20px",
-  focusOnSelect: true,
-  autoplay: true,
-  autoplaySpeed: 0, // Removes pauses between slides
-  cssEase: "linear", // Ensures smooth, continuous movement
-  pauseOnHover: false,
-  pauseOnFocus: false,
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 4,
-        slidesToScroll: 2,
+export default function ClientSlider() {
+  const settings = {
+    infinite: true,
+    speed: 5000, // Slow, continuous transition
+    slidesToShow: 6,
+    slidesToScroll: 1,
+    arrows: false,
+    centerMode: true,
+    centerPadding: "20px",
+    focusOnSelect: true,
+    autoplay: true,
+    autoplaySpeed: 1, // Minimal delay to maintain smooth motion
+    cssEase: "linear", // Ensures continuous scrolling
+    pauseOnHover: false,
+    pauseOnFocus: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 2,
+        },
       },
-    },
-    {
-      breakpoint: 768,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 1,
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
       },
-    },
-    {
-      breakpoint: 480,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
       },
-    },
-  ],
-};
+    ],
+  };
 
   return (
     <SliderWrapper>
