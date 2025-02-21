@@ -114,6 +114,7 @@ const Img = styled.img`
   max-width: 1600px;
   height: auto;
   animation: ${float} 6s ease-in-out infinite;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1); /* Subtle shadow */
   @media (max-width: 960px) {
     width: 80%;
     max-width: 400px;
