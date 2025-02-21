@@ -9,21 +9,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  background: linear-gradient(135deg, #0F172A, #1E3A8A); /* Deep blue gradient */
   position: relative;
   overflow: hidden;
 }
 
 .image-container {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
 }
 
 .background-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 80%; /* Adjust the size of the image */
+  max-height: 80%; /* Adjust the size of the image */
+  object-fit: contain; /* Ensures the image is fully visible and centered */
+  border-radius: 12px; /* Optional: Adds rounded corners to the image */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow */
 }
 
 .right-column {
