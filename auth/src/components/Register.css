@@ -1,6 +1,7 @@
 .register-container {
   display: flex;
-  height: 100vh;
+  flex-direction: column; /* Stack columns vertically on mobile */
+  min-height: 100vh;
   background-color: #E5E7EB; /* Lighter background */
 }
 
@@ -12,6 +13,7 @@
   background: linear-gradient(135deg, #0F172A, #fff 0%); /* Deep blue gradient */
   position: relative;
   overflow: hidden;
+  padding: 20px; /* Add padding for smaller screens */
 }
 
 .image-container {
@@ -23,8 +25,8 @@
 }
 
 .background-image {
-  max-width: 80%; /* Adjust the size of the image */
-  max-height: 80%; /* Adjust the size of the image */
+  max-width: 100%; /* Adjust the size of the image for mobile */
+  max-height: 100%; /* Adjust the size of the image for mobile */
   object-fit: contain; /* Ensures the image is fully visible and centered */
   border-radius: 12px; /* Optional: Adds rounded corners to the image */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow */
@@ -36,25 +38,27 @@
   align-items: center;
   justify-content: center;
   background-color: white;
+  padding: 20px; /* Add padding for smaller screens */
 }
 
 .form-wrapper {
   background-color: white;
-  padding: 40px;
+  padding: 20px; /* Reduce padding for smaller screens */
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  width: 400px;
+  width: 100%; /* Full width on mobile */
+  max-width: 400px; /* Limit width for larger screens */
   text-align: center;
 }
 
 .logo {
-  width: 100px;
-  margin-bottom: 20px;
+  width: 80px; /* Reduce logo size for mobile */
+  margin-bottom: 15px;
 }
 
 .form-title {
-  margin-bottom: 20px;
-  font-size: 2rem;
+  margin-bottom: 15px;
+  font-size: 1.5rem; /* Reduce font size for mobile */
   color: #0F172A;
 }
 
@@ -64,11 +68,11 @@
 }
 
 .register-input {
-  margin-bottom: 20px;
-  padding: 12px;
+  margin-bottom: 15px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduce font size for mobile */
   width: 100%;
   transition: border-color 0.3s;
 }
@@ -78,13 +82,13 @@
 }
 
 .register-button {
-  padding: 14px;
+  padding: 12px;
   background-color: #0F172A;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduce font size for mobile */
   transition: background-color 0.3s;
 }
 
@@ -103,8 +107,8 @@
 }
 
 .register-footer {
-  margin-top: 20px;
-  font-size: 0.9rem;
+  margin-top: 15px;
+  font-size: 0.8rem; /* Reduce font size for mobile */
 }
 
 .register-footer a {
@@ -114,4 +118,43 @@
 
 .register-footer a:hover {
   text-decoration: underline;
+}
+
+/* Media Queries for Mobile Responsiveness */
+@media (min-width: 768px) {
+  .register-container {
+    flex-direction: row; /* Revert to side-by-side layout on larger screens */
+  }
+
+  .left-column {
+    padding: 0; /* Remove padding for larger screens */
+  }
+
+  .right-column {
+    padding: 0; /* Remove padding for larger screens */
+  }
+
+  .form-wrapper {
+    padding: 40px; /* Revert to original padding for larger screens */
+  }
+
+  .logo {
+    width: 100px; /* Revert to original logo size for larger screens */
+  }
+
+  .form-title {
+    font-size: 2rem; /* Revert to original font size for larger screens */
+  }
+
+  .register-input {
+    font-size: 1rem; /* Revert to original font size for larger screens */
+  }
+
+  .register-button {
+    font-size: 1rem; /* Revert to original font size for larger screens */
+  }
+
+  .register-footer {
+    font-size: 0.9rem; /* Revert to original font size for larger screens */
+  }
 }
