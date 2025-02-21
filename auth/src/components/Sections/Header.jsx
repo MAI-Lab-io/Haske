@@ -47,7 +47,7 @@ const Wrapper = styled.section`
   min-height: 840px;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #ffffff, #f0f4f8);
+  background: #fff;
   color: #0f172a; /* Blue text color */
   @media (max-width: 960px) {
     flex-direction: column;
@@ -110,8 +110,8 @@ const ImageWrapper = styled.div`
 `;
 
 const Img = styled.img`
-  width: 150%;
-  max-width: 1800px;
+  width: 130%;
+  max-width: 1600px;
   height: auto;
   animation: ${float} 6s ease-in-out infinite;
   @media (max-width: 960px) {
