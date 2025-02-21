@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
-import HeaderImage from "../../assets/img/header-imgg.png";
+import HeaderImage from "../../assets/img/header-img.png";
 import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
