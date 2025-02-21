@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
 import "./VerifyPage.css"; // Import CSS file for styles
+import logo from "../assets/haske.png"; // Import your logo here
+import backgroundImage from "../assets/sigin-image.png"; // Import your background image here
 
 const VerifyPage = () => {
   const navigate = useNavigate(); // Initialize navigation
@@ -83,89 +85,97 @@ const VerifyPage = () => {
 
   return (
     <div className="verify-container">
-      <div className="form-wrapper">
-        <h2 className="form-title">Users Profile</h2>
-        <form className="verify-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="first_name"
-            placeholder="First Name"
-            value={formData.first_name}
-            onChange={handleChange}
-            required
-            className="verify-input"
-          />
-          <input
-            type="text"
-            name="last_name"
-            placeholder="Last Name"
-            value={formData.last_name}
-            onChange={handleChange}
-            required
-            className="verify-input"
-          />
-          <select
-            name="institution_name"
-            value={formData.institution_name}
-            onChange={handleChange}
-            required
-            className="verify-select"
-          >
-            <option value="">Select Institution Name</option>
-            {institutions.map((inst, index) => (
-              <option key={index} value={inst}>
-                {inst}
-              </option>
-            ))}
-          </select>
-          <textarea
-            name="institution_address"
-            placeholder="Institution Address"
-            value={formData.institution_address}
-            onChange={handleChange}
-            required
-            className="verify-textarea"
-          ></textarea>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            required
-            className="verify-select"
-          >
-            <option value="">Select Role</option>
-            {roles.map((role, index) => (
-              <option key={index} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            readOnly // Make email field read-only since it's pre-filled
-            className="verify-input"
-          />
-          <input
-            type="text"
-            name="phone_number"
-            placeholder="Phone Number"
-            value={formData.phone_number}
-            onChange={handleChange}
-            required
-            className="verify-input"
-          />
-          <button type="submit" className="verify-button">
-            Complete Profile
-          </button>
-        </form>
+      <div className="left-column">
+        <div className="image-container">
+          <img src={backgroundImage} alt="Background" className="background-image" />
+        </div>
+      </div>
+      <div className="right-column">
+        <div className="form-wrapper">
+          <img src={logo} alt="Logo" className="logo" />
+          <h2 className="form-title">Profile Setup</h2>
+          <form className="verify-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              name="first_name"
+              placeholder="First Name"
+              value={formData.first_name}
+              onChange={handleChange}
+              required
+              className="verify-input"
+            />
+            <input
+              type="text"
+              name="last_name"
+              placeholder="Last Name"
+              value={formData.last_name}
+              onChange={handleChange}
+              required
+              className="verify-input"
+            />
+            <select
+              name="institution_name"
+              value={formData.institution_name}
+              onChange={handleChange}
+              required
+              className="verify-select"
+            >
+              <option value="">Select Institution Name</option>
+              {institutions.map((inst, index) => (
+                <option key={index} value={inst}>
+                  {inst}
+                </option>
+              ))}
+            </select>
+            <textarea
+              name="institution_address"
+              placeholder="Institution Address"
+              value={formData.institution_address}
+              onChange={handleChange}
+              required
+              className="verify-textarea"
+            ></textarea>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              className="verify-select"
+            >
+              <option value="">Select Role</option>
+              {roles.map((role, index) => (
+                <option key={index} value={role}>
+                  {role}
+                </option>
+              ))}
+            </select>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              readOnly // Make email field read-only since it's pre-filled
+              className="verify-input"
+            />
+            <input
+              type="text"
+              name="phone_number"
+              placeholder="Phone Number"
+              value={formData.phone_number}
+              onChange={handleChange}
+              required
+              className="verify-input"
+            />
+            <button type="submit" className="verify-button">
+              Finish setting up my account
+            </button>
+          </form>
 
-        {/* Display Notification */}
-        {notification && <p className="verify-notification">{notification}</p>}
+          {/* Display Notification */}
+          {notification && <p className="verify-notification">{notification}</p>}
+        </div>
       </div>
     </div>
   );
