@@ -52,7 +52,7 @@
 }
 
 .logo {
-  width: 80px; /* Reduce logo size for mobile */
+  width: 100px; /* Reduce logo size for mobile */
   margin-bottom: 15px;
 }
 
@@ -139,7 +139,7 @@
   }
 
   .logo {
-    width: 100px; /* Revert to original logo size for larger screens */
+    width: 150px; /* Revert to original logo size for larger screens */
   }
 
   .form-title {
