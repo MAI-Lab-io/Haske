@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
-import HeaderImage from "../../assets/img/header-img.png";
+import HeaderImage from "../../assets/img/header-imgg.png";
 import QuotesIcon from "../../assets/svg/Quotes";
 import Dots from "../../assets/svg/Dots";
 
@@ -31,7 +31,7 @@ export default function Header() {
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GradientDiv className="techGradient"></GradientDiv>
+        <GradientDiv className="whiteGradient"></GradientDiv>
       </RightSide>
     </Wrapper>
   );
@@ -50,8 +50,8 @@ const Wrapper = styled.section`
   min-height: 840px;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: #fff;
+  background: linear-gradient(135deg, #ffffff, #E5E7EB); /* White gradient background */
+  color: #0F172A; /* Blue text color */
   @media (max-width: 960px) {
     flex-direction: column;
     text-align: center;
@@ -86,7 +86,7 @@ const HeaderP = styled.p`
   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.8rem;
-  color: #cbd5e1;
+  color: #334155; /* Slightly lighter blue for paragraph text */
   @media (max-width: 960px) {
     padding: 15px 0 50px 0;
     text-align: center;
@@ -108,7 +108,7 @@ const GradientDiv = styled.div`
   top: 0;
   right: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(91, 97, 122, 0.8), rgba(67, 73, 93, 0.8));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(240, 244, 248, 0.8)); /* White gradient overlay */
   @media (max-width: 960px) {
     display: none;
   }
@@ -130,7 +130,7 @@ const Img = styled.img`
   max-width: 1000px;
   height: 600px;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2); /* Subtle blue shadow */
   animation: ${float} 6s ease-in-out infinite;
   @media (max-width: 960px) {
     width: 70%;
@@ -148,7 +148,7 @@ const TechOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.6));
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(240, 244, 248, 0.6)); /* White gradient overlay */
   border-radius: 12px;
   z-index: 10;
 `;
