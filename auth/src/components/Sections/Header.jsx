@@ -23,12 +23,10 @@ export default function Header() {
         </div>
       </LeftSide>
       <RightSide>
-        <ImageWrapper>
-          <Img className="floating" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
-          <DotsWrapper>
-            <Dots />
-          </DotsWrapper>
-        </ImageWrapper>
+        <Img className="floating" src={HeaderImage} alt="office" />
+        <DotsWrapper>
+          <Dots />
+        </DotsWrapper>
       </RightSide>
     </Wrapper>
   );
@@ -47,7 +45,7 @@ const Wrapper = styled.section`
   min-height: 840px;
   display: flex;
   align-items: center;
-  background: #fff;
+  background: #F9FAFB;
   color: #0f172a; /* Blue text color */
   @media (max-width: 960px) {
     flex-direction: column;
@@ -98,26 +96,20 @@ const BtnWrapper = styled.div`
   }
 `;
 
-const ImageWrapper = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  z-index: 9;
-  @media (max-width: 960px) {
-    width: 100%;
-    justify-content: center;
-  }
-`;
-
 const Img = styled.img`
   width: 130%;
   max-width: 1600px;
   height: auto;
   animation: ${float} 6s ease-in-out infinite;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1); /* Subtle shadow */
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
   @media (max-width: 960px) {
     width: 80%;
     max-width: 400px;
+    position: relative;
+    right: auto;
   }
   @media (max-width: 560px) {
     width: 90%;
