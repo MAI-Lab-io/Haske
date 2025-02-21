@@ -74,7 +74,7 @@ function Register() {
           className="form-wrapper"
         >
           <img src={logo} alt="Logo" className="logo" />
-          <h2 className="form-title">Create an Account</h2>
+          <h2 className="form-title">Setup your account here!</h2>
           <form className="register-form" onSubmit={handleRegister}>
             <input
               type="email"
