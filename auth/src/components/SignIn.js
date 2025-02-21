@@ -64,8 +64,8 @@ const SignIn = () => {
           className="form-wrapper"
         >
           <img src={logo} alt="Logo" className="logo" />
-          <h2 className="form-title">Welcome Back</h2>
-          <p className="form-subtitle">Sign in to continue</p>
+          <h2 className="form-title">Welcome to Haske! 👋🏻</h2>
+          <p className="form-subtitle">Please sign in to access patients medical images</p>
 
           <form className="signin-form" onSubmit={handleSignIn}>
             <input
@@ -110,7 +110,7 @@ const SignIn = () => {
           {message && <p className="signin-message">{message}</p>}
 
           <p className="signin-footer">
-            Don't have an account? <a href="/register">Register</a>
+            New on our platform? <a href="/register">Create an account</a>
           </p>
           <p className="forgot-password-link" onClick={() => sendPasswordResetEmail(auth, email)}>
             Forgot Password?
