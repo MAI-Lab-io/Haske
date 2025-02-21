@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { auth } from "../firebaseConfig";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import "./Register.css"; // Import CSS file for styles
+import logo from "./logo.png"; // Import your logo here
+import backgroundImage from "./background.png"; // Import your background image here
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -41,7 +44,7 @@ function Register() {
       await createUserWithEmailAndPassword(auth, email, password);
       setLoading(false);
       alert("Registration successful! Please complete your profile.");
-      
+
       // Redirect to verify-waiting page
       navigate("/verification", { state: { email } });
     } catch (error) {
@@ -58,33 +61,55 @@ function Register() {
 
   return (
     <div className="register-container">
-      <div className="form-wrapper">
-        <h2 className="form-title">Create an Account</h2>
-        <form className="register-form" onSubmit={handleRegister}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
-            className="register-input"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="register-input"
-          />
-          <button type="submit" className="register-button" disabled={loading}>
-            {loading ? "Processing..." : "Register"}
-          </button>
-        </form>
-        {error && <p className="register-error">{error}</p>}
-        <p className="register-footer">
-          Already have an account? <a href="/signin" onClick={handleSignIn}>Sign In</a>
-        </p>
+      <div className="left-column">
+        <div className="image-container">
+          <img src={backgroundImage} alt="Background" className="background-image" />
+        </div>
+      </div>
+      <div className="right-column">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="form-wrapper"
+        >
+          <img src={logo} alt="Logo" className="logo" />
+          <h2 className="form-title">Create an Account</h2>
+          <form className="register-form" onSubmit={handleRegister}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+              className="register-input"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+              className="register-input"
+            />
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="register-button"
+              disabled={loading}
+            >
+              {loading ? "Processing..." : "Register"}
+            </motion.button>
+          </form>
+          {error && <p className="register-error">{error}</p>}
+          <p className="register-footer">
+            Already have an account?{" "}
+            <a href="/signin" onClick={handleSignIn}>
+              Sign In
+            </a>
+          </p>
+        </motion.div>
       </div>
     </div>
   );
