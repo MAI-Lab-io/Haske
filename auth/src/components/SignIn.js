@@ -3,7 +3,6 @@ import { auth } from "../firebaseConfig";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  signOut,
   onAuthStateChanged,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
@@ -50,6 +49,7 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
+      <div className="animated-bg"></div>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
