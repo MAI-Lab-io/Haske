@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
-import logo from "../assets/logo.png";
+import logo from "../assets/haske.png";
 import signinImage from "../assets/signin-image.png";
 
 const SignIn = () => {
