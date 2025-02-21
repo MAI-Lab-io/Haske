@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
@@ -12,37 +12,49 @@ export default function Header() {
     <Wrapper id="home" className="container flexSpaceCenter">
       <LeftSide className="flexCenter">
         <div>
-          <h1 className="extraBold font60">Open AI-enabled Teleradiology for the developing world.</h1>
-          <HeaderP className="font13 semiBold">
-            Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance,
-            Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
+          <h1 className="extraBold font60">
+            Open AI-enabled Teleradiology for the developing world.
+          </h1>
+          <HeaderP className="font15 semiBold">
+            Haske: an open-source, AI-powered PACS platform designed to revolutionize radiology in low-resource settings like Nigeria. With cloud-based accessibility and FHIR compliance, Haske offers a cost-effective solution for seamless image management and AI-driven diagnostics.
           </HeaderP>
-         <BtnWrapper>
-      <FullButton title="Get Started" href="/register" />
-    </BtnWrapper>
-
+          <BtnWrapper>
+            <FullButton title="Get Started" href="/register" />
+          </BtnWrapper>
         </div>
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img className="radius8" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
+          <Img className="radius8 floating" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
+          <TechOverlay />
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GreyDiv className="lightBg"></GreyDiv> {/* Ensure this div has the gradient */}
+        <GradientDiv className="techGradient"></GradientDiv>
       </RightSide>
     </Wrapper>
   );
 }
 
+// Floating animation for the image
+const float = keyframes`
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+`;
+
 const Wrapper = styled.section`
   padding-top: 80px;
   width: 100%;
   min-height: 840px;
-  display: flex; /* Ensure it's a flex container */
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
   @media (max-width: 960px) {
     flex-direction: column;
+    text-align: center;
   }
 `;
 
@@ -53,7 +65,6 @@ const LeftSide = styled.div`
     width: 100%;
     order: 2;
     margin: 50px 0;
-    text-align: center;
   }
   @media (max-width: 560px) {
     margin: 80px 0 50px 0;
@@ -63,7 +74,7 @@ const LeftSide = styled.div`
 const RightSide = styled.div`
   width: 50%;
   height: 100%;
-  position: relative; /* Ensure it's the reference for absolute positioning */
+  position: relative;
   @media (max-width: 960px) {
     width: 100%;
     order: 1;
@@ -74,7 +85,8 @@ const RightSide = styled.div`
 const HeaderP = styled.p`
   max-width: 470px;
   padding: 15px 0 50px 0;
-  line-height: 1.5rem;
+  line-height: 1.8rem;
+  color: #cbd5e1;
   @media (max-width: 960px) {
     padding: 15px 0 50px 0;
     text-align: center;
@@ -89,16 +101,16 @@ const BtnWrapper = styled.div`
   }
 `;
 
-const GreyDiv = styled.div`
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
+const GradientDiv = styled.div`
+  width: 100%;
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 5; /* Ensure it is above other elements */
-  background: linear-gradient(180deg, #5b617a, #43495d);
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(91, 97, 122, 0.8), rgba(67, 73, 93, 0.8));
   @media (max-width: 960px) {
-    display: none; /* Hide on smaller screens if necessary */
+    display: none;
   }
 `;
 
@@ -117,6 +129,9 @@ const Img = styled.img`
   width: 100%;
   max-width: 1000px;
   height: 600px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: ${float} 6s ease-in-out infinite;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -127,27 +142,15 @@ const Img = styled.img`
   }
 `;
 
-const QuoteWrapper = styled.div`
+const TechOverlay = styled.div`
   position: absolute;
+  top: 0;
   left: 0;
-  bottom: 50px;
-  max-width: 330px;
-  padding: 30px;
-  z-index: 99;
-  background-color: white;
-  color: orange;
-  @media (max-width: 960px) {
-    left: 20px;
-  }
-  @media (max-width: 560px) {
-    bottom: -50px;
-  }
-`;
-
-const QuotesWrapper = styled.div`
-  position: absolute;
-  left: -20px;
-  top: -10px;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.6));
+  border-radius: 12px;
+  z-index: 10;
 `;
 
 const DotsWrapper = styled.div`
