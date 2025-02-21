@@ -1,27 +1,61 @@
 .verify-container {
   display: flex;
-  justify-content: center;
+  height: 100vh;
+  background-color: #E5E7EB; /* Lighter background */
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
   align-items: center;
-  min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
+  justify-content: center;
+  background: linear-gradient(135deg, #0F172A, #fff 0%); /* Deep blue gradient */
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.background-image {
+  max-width: 80%; /* Adjust the size of the image */
+  max-height: 80%; /* Adjust the size of the image */
+  object-fit: contain; /* Ensures the image is fully visible and centered */
+  border-radius: 12px; /* Optional: Adds rounded corners to the image */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow */
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 }
 
 .form-wrapper {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
+  background-color: white; 
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  text-align: center;
+}
+
+.logo {
+  width: 100px;
+  margin-bottom: 20px;
 }
 
 .form-title {
-  font-size: 24px;
-  font-weight: bold;
   margin-bottom: 20px;
-  text-align: center;
-  color: #333;
+  font-size: 2rem;
+  color: #0F172A;
 }
 
 .verify-form {
@@ -33,11 +67,17 @@
 .verify-input,
 .verify-textarea {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 12px;
+  border: 1px solid #ddd; 
+  border-radius: 6px;
+  font-size: 1rem;
   color: #333;
+  transition: border-color 0.3s;
+}
+
+.verify-input:focus,
+.verify-textarea:focus {
+  border-color: #dd841a; /* Highlight border on focus */
 }
 
 .verify-textarea {
@@ -46,17 +86,18 @@
 }
 
 .verify-button {
-  background-color: #5d455f;
-  color: #fff;
-  padding: 12px;
-  font-size: 16px;
+  padding: 14px;
+  background-color: #0F172A;
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
 }
 
 .verify-button:hover {
-  background-color: #0056b3;
+  background-color: #dd841a;
 }
 
 .verify-notification {
@@ -72,9 +113,14 @@
 
 .verify-select {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s;
+}
+
+.verify-select:focus {
+  border-color: #dd841a; /* Highlight border on focus */
 }
