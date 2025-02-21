@@ -110,8 +110,8 @@ const ImageWrapper = styled.div`
 `;
 
 const Img = styled.img`
-  width: 100%;
-  max-width: 600px;
+  width: 150%;
+  max-width: 1800px;
   height: auto;
   animation: ${float} 6s ease-in-out infinite;
   @media (max-width: 960px) {
