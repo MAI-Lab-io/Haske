@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
-import HeaderImage from "../../assets/img/header-imgg.png";
+import HeaderImage from "../../assets/img/header-img.png";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
@@ -24,7 +24,7 @@ export default function Header() {
       </LeftSide>
       <RightSide>
         <ImageWrapper>
-          <Img className="radius8 floating" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
+          <Img className="floating" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
@@ -34,11 +34,11 @@ export default function Header() {
   );
 }
 
-// Floating and rotating animation for the image
+// Floating animation for the image
 const float = keyframes`
-  0% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(10deg); }
-  100% { transform: translateY(0) rotate(0deg); }
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
 `;
 
 const Wrapper = styled.section`
@@ -111,18 +111,15 @@ const ImageWrapper = styled.div`
 
 const Img = styled.img`
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
   animation: ${float} 6s ease-in-out infinite;
-  transform-style: preserve-3d;
   @media (max-width: 960px) {
-    width: 70%;
-    max-width: 350px;
+    width: 80%;
+    max-width: 400px;
   }
   @media (max-width: 560px) {
-    width: 80%;
+    width: 90%;
     max-width: 300px;
   }
 `;
