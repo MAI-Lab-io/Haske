@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "./SignIn.css";
-import logo from "./logo.png"; // Import your logo here
-import backgroundImage from "./background.png"; // Import your background image here
+import logo from "../assets/haske.png"; // Import your logo here
+import backgroundImage from "../assets/signin-image.png"; // Import your background image here
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
