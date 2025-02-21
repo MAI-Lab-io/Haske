@@ -3,8 +3,7 @@ import styled, { keyframes } from "styled-components";
 // Components
 import FullButton from "../Buttons/FullButton";
 // Assets
-import HeaderImage from "../../assets/img/header-img.png";
-import QuotesIcon from "../../assets/svg/Quotes";
+import HeaderImage from "../../assets/img/header-imgg.png";
 import Dots from "../../assets/svg/Dots";
 
 export default function Header() {
@@ -26,22 +25,20 @@ export default function Header() {
       <RightSide>
         <ImageWrapper>
           <Img className="radius8 floating" src={HeaderImage} alt="office" style={{ zIndex: 9 }} />
-          <TechOverlay />
           <DotsWrapper>
             <Dots />
           </DotsWrapper>
         </ImageWrapper>
-        <GradientDiv className="whiteGradient"></GradientDiv>
       </RightSide>
     </Wrapper>
   );
 }
 
-// Floating animation for the image
+// Floating and rotating animation for the image
 const float = keyframes`
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0); }
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+  100% { transform: translateY(0) rotate(0deg); }
 `;
 
 const Wrapper = styled.section`
@@ -50,8 +47,8 @@ const Wrapper = styled.section`
   min-height: 840px;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #ffffff, #E5E7EB); /* White gradient background */
-  color: #0F172A; /* Blue text color */
+  background: linear-gradient(135deg, #ffffff, #f0f4f8);
+  color: #0f172a; /* Blue text color */
   @media (max-width: 960px) {
     flex-direction: column;
     text-align: center;
@@ -86,7 +83,7 @@ const HeaderP = styled.p`
   max-width: 470px;
   padding: 15px 0 50px 0;
   line-height: 1.8rem;
-  color: #334155; /* Slightly lighter blue for paragraph text */
+  color: #0f172a; /* Blue text color */
   @media (max-width: 960px) {
     padding: 15px 0 50px 0;
     text-align: center;
@@ -98,19 +95,6 @@ const BtnWrapper = styled.div`
   max-width: 190px;
   @media (max-width: 960px) {
     margin: 0 auto;
-  }
-`;
-
-const GradientDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(240, 244, 248, 0.8)); /* White gradient overlay */
-  @media (max-width: 960px) {
-    display: none;
   }
 `;
 
@@ -127,11 +111,12 @@ const ImageWrapper = styled.div`
 
 const Img = styled.img`
   width: 100%;
-  max-width: 1000px;
-  height: 600px;
+  max-width: 500px;
+  height: auto;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2); /* Subtle blue shadow */
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3);
   animation: ${float} 6s ease-in-out infinite;
+  transform-style: preserve-3d;
   @media (max-width: 960px) {
     width: 70%;
     max-width: 350px;
@@ -140,17 +125,6 @@ const Img = styled.img`
     width: 80%;
     max-width: 300px;
   }
-`;
-
-const TechOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.6), rgba(240, 244, 248, 0.6)); /* White gradient overlay */
-  border-radius: 12px;
-  z-index: 10;
 `;
 
 const DotsWrapper = styled.div`
