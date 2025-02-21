@@ -4,8 +4,8 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./Register.css"; // Import CSS file for styles
-import logo from "./logo.png"; // Import your logo here
-import backgroundImage from "./background.png"; // Import your background image here
+import logo from "./assets/haske.png"; // Import your logo here
+import backgroundImage from "./assets/signin-image.png"; // Import your background image here
 
 function Register() {
   const [email, setEmail] = useState("");
