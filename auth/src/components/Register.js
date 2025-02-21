@@ -16,7 +16,7 @@ function Register() {
 
   // Function to handle sign-in if the user already has an account
   const handleSignIn = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default link behavior
     setLoading(true);
     setError(null);
 
@@ -105,7 +105,13 @@ function Register() {
           {error && <p className="register-error">{error}</p>}
           <p className="register-footer">
             Already have an account?{" "}
-            <a href="/signin" onClick={handleSignIn}>
+            <a
+              href="/signin"
+              onClick={(e) => {
+                e.preventDefault(); // Prevent default link behavior
+                handleSignIn(e); // Call the handleSignIn function
+              }}
+            >
               Sign In
             </a>
           </p>
