@@ -1,9 +1,37 @@
 .signin-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
   height: 100vh;
   background-color: #E5E7EB; /* Lighter background */
+}
+
+.left-column {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
 }
 
 .form-wrapper {
@@ -13,6 +41,11 @@
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   width: 400px;
   text-align: center;
+}
+
+.logo {
+  width: 100px;
+  margin-bottom: 20px;
 }
 
 .form-title {
@@ -35,7 +68,6 @@
   width: 100%; /* Ensure both inputs take up full width of the container */
   transition: border-color 0.3s;
 }
-
 
 .forgot-password-link {
   color: #dd841a;
@@ -106,23 +138,6 @@
   color: red;
   margin-top: 10px;
 }
-
-.animated-bg {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
-  background-size: 400% 400%;
-  animation: gradientBG 10s ease infinite;
-  z-index: -1;
-}
-
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 
 .signin-footer {
   margin-top: 20px;
