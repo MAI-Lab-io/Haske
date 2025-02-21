@@ -52,7 +52,7 @@
 }
 
 .logo {
-  width: 80px; /* Slightly smaller logo on mobile */
+  width: 100px; /* Slightly smaller logo on mobile */
   margin-bottom: 15px;
 }
 
@@ -148,7 +148,7 @@
   }
 
   .logo {
-    width: 100px; /* Restore logo size on larger screens */
+    width: 150px; /* Restore logo size on larger screens */
   }
 
   .form-title {
