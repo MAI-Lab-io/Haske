@@ -101,7 +101,7 @@ const Img = styled.img`
   max-width: 1600px;
   height: auto;
   animation: ${float} 6s ease-in-out infinite;
-  position: absolute;
+  position: relative;
   top: 0;
   right: 0;
   z-index: 1;
