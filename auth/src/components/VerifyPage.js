@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
 import "./VerifyPage.css"; // Import CSS file for styles
 import logo from "../assets/haske.png"; // Import your logo here
-import backgroundImage from "../assets/sigin-image.png"; // Import your background image here
+import backgroundImage from "../assets/signin-image.png"; // Import your background image here
 
 const VerifyPage = () => {
   const navigate = useNavigate(); // Initialize navigation
