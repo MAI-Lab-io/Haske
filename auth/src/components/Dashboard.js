@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography, useTheme } from "@mui/material"; // Import useTheme
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
@@ -7,6 +7,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState({ users: 0, admins: 0, images: 0, institutions: 0 });
   const [modalityStats, setModalityStats] = useState([]);
   const [studyDescriptionStats, setStudyDescriptionStats] = useState([]);
+  const theme = useTheme(); // Get the current theme
 
   useEffect(() => {
     fetch("https://haske.online:8080/api/verification/stats")
@@ -39,7 +40,15 @@ const Dashboard = () => {
     { name: "Institutions", value: stats.institutions },
   ];
 
-  const COLORS = ["#0088FE", "#FFBB28", "#FF8042", "#00C49F", "#FF6384", "#36A2EB"];
+  // Use theme colors for charts
+  const COLORS = [
+    theme.palette.primary.main,
+    theme.palette.secondary.main,
+    theme.palette.error.main,
+    theme.palette.warning.main,
+    theme.palette.info.main,
+    theme.palette.success.main,
+  ];
 
   return (
     <Box>
@@ -47,47 +56,67 @@ const Dashboard = () => {
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6">User Statistics</Typography>
+          <Paper sx={{ p: 3, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+              User Statistics
+            </Typography>
             <PieChart width={300} height={300}>
-              <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill={theme.palette.primary.main}
+                dataKey="value"
+              >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip />
-              <Legend verticalAlign="top" height={36} />
+              <Legend />
             </PieChart>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6">Modality Distribution</Typography>
+          <Paper sx={{ p: 3, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+              Modality Distribution
+            </Typography>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={modalityStats}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" stroke={theme.palette.divider} />
+                <XAxis dataKey="name" stroke={theme.palette.text.primary} />
+                <YAxis stroke={theme.palette.text.primary} />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="count" fill="#0088FE" />
+                <Bar dataKey="count" fill={theme.palette.primary.main} />
               </BarChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6">Study Descriptions</Typography>
+          <Paper sx={{ p: 3, backgroundColor: theme.palette.background.paper }}>
+            <Typography variant="h6" sx={{ color: theme.palette.text.primary }}>
+              Study Descriptions
+            </Typography>
             <PieChart width={300} height={300}>
-              <Pie data={studyDescriptionStats} cx="50%" cy="50%" outerRadius={80} fill="#FF8042" dataKey="count">
+              <Pie
+                data={studyDescriptionStats}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill={theme.palette.secondary.main}
+                dataKey="count"
+              >
                 {studyDescriptionStats.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip />
-              <Legend verticalAlign="top" height={36} />
+              <Legend />
             </PieChart>
           </Paper>
         </Grid>
