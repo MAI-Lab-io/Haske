@@ -49,17 +49,7 @@ const Analytics = () => {
   const chartDataArray = Object.values(aggregatedData);
 
   return (
-  <Paper sx={{ 
-  p: 3, 
-  borderRadius: 3, 
-  boxShadow: 4, 
-  backgroundColor: "#1E1E1E", 
-  color: "#fff",
-  maxWidth: "90vw", // Increase max width
-  width: "90%", // Make it take up more screen space
-  margin: "0 auto" // Center it
-}}>
-
+    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#1E1E1E", color: "#fff" }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
         User Activity Logs
       </Typography>
@@ -73,7 +63,7 @@ const Analytics = () => {
       />
       
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
+        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}> {/* Increased bottom margin */}
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
           <XAxis
             dataKey="week"
@@ -81,7 +71,8 @@ const Analytics = () => {
             angle={-20}
             textAnchor="end"
             interval={0}
-            height={60} // Increased to allow full visibility
+            tick={{ fontSize: 12 }} // Reduced font size for X-axis labels
+            height={60} // Increased height to accommodate labels
           />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
@@ -105,9 +96,7 @@ const Analytics = () => {
               <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
                 <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#4CAF50" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: "#fff", fontSize: "0.8rem" }}>
-                  {new Date(log.timestamp).toLocaleString()}
-                </TableCell>
+                <TableCell sx={{ color: "#fff", fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell> {/* Reduced font size for timestamp */}
               </TableRow>
             ))
           ) : (
