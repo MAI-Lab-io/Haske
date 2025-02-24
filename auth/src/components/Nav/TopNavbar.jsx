@@ -38,7 +38,7 @@ export default function TopNavbar() {
             <BurgerIcon />
           </BurgerWrapper>
           <UlWrapper className="flexNullCenter">
-            {["home", "services", "projects", "blog", "contact"].map((item) => (
+            {["home", "services", "analytics", "blog", "contact"].map((item) => (
               <li key={item} className="semiBold font15 pointer">
                 <Link
                   activeClass="active"
