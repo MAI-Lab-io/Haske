@@ -148,11 +148,11 @@
   }
 
   .logo {
-    width: 150px; /* Restore logo size on larger screens */
+    width: 200px; /* Restore logo size on larger screens */
   }
 
   .form-title {
-    font-size: 2rem; /* Restore font size on larger screens */
+    font-size: 1.5rem; /* Restore font size on larger screens */
   }
 
   .verify-form {
