@@ -51,17 +51,16 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
-     <div
-  className="left-column"
-  style={{
-    backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 138, 0.9)), url(${aiWebBackground})`,
-    backgroundBlendMode: "overlay",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }}
->
-</div>
-
+      <div className="left-column">
+        <div
+          className="background-image-wrapper"
+          style={{
+            backgroundImage: `url(${aiWebBackground})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
+      </div>
       <div className="right-column">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -70,7 +69,7 @@ const SignIn = () => {
           className="form-wrapper"
         >
           <img src={logo} alt="Logo" className="logo" />
-          <h2 className="form-title">Welcome to Haske! </h2>
+          <h2 className="form-title">Welcome to Haske! 👋🏻</h2>
           <p className="form-subtitle">Please sign in to access scans</p>
 
           <form className="signin-form" onSubmit={handleSignIn}>
