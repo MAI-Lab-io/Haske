@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Paper, Typography, Switch, FormControlLabel, Button, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Paper, Typography, Button, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
 import { toast } from "react-toastify";
 
 const Settings = () => {
-  const [darkMode, setDarkMode] = useState(false);
   const [users, setUsers] = useState([]);
-
-  // Load saved dark mode preference
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("darkMode") === "true";
-    setDarkMode(savedTheme);
-  }, []);
-
-  // Apply dark mode class to the body when darkMode changes
-  useEffect(() => {
-    document.body.className = darkMode ? "dark-mode" : "light-mode";
-  }, [darkMode]);
 
   // Fetch users for role management
   useEffect(() => {
@@ -23,11 +11,6 @@ const Settings = () => {
       .then((res) => res.json())
       .then((data) => setUsers(data));
   }, []);
-
-  const handleDarkModeToggle = () => {
-    setDarkMode((prev) => !prev);
-    localStorage.setItem("darkMode", !darkMode);
-  };
 
   const promoteToAdmin = async (userId) => {
     await fetch(`https://haske.online:8080/api/verification/promote-user/${userId}`, { method: "POST" });
@@ -44,12 +27,6 @@ const Settings = () => {
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h5">Admin Settings</Typography>
-
-      {/* Dark Mode Toggle */}
-      <FormControlLabel
-        control={<Switch checked={darkMode} onChange={handleDarkModeToggle} />}
-        label="Enable Dark Mode"
-      />
 
       {/* Role Management Table */}
       <Typography variant="h6" sx={{ mt: 3 }}>Manage User Roles</Typography>
