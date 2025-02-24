@@ -12,14 +12,12 @@ import {
   CssBaseline,
   Box,
   CircularProgress,
-  Button,
   IconButton,
-  useTheme,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
-import Brightness4Icon from "@mui/icons-material/Brightness4"; // Dark mode icon
-import Brightness7Icon from "@mui/icons-material/Brightness7"; // Light mode icon
+import DarkModeIcon from "@mui/icons-material/NightsStay";
+import LightModeIcon from "@mui/icons-material/WbSunny";
 
 // Define menu items for the admin sidebar
 const menuItems = [
@@ -77,11 +75,6 @@ const AdminLayout = () => {
     });
   };
 
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
-
   // Show loader while verifying admin status
   if (isAdmin === null) {
     return (
@@ -94,12 +87,14 @@ const AdminLayout = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* Apply the theme globally */}
-      <Box sx={{ display: "flex", bgcolor: "background.default" }}>
+      <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#fafafa" }}>
         {/* Sidebar */}
-        <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0 }}>
+        <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0, bgcolor: darkMode ? "#333" : "#fff" }}>
           <List>
-            <ListItem button onClick={() => navigate("/patient-details")}>
-              <ListItemText primary="Haske" />
+            <ListItem>
+              <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+                {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
             </ListItem>
             {menuItems.map((item) => (
               <ListItem
@@ -121,15 +116,12 @@ const AdminLayout = () => {
         </Drawer>
 
         {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <AppBar position="static">
+        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#fafafa", color: darkMode ? "#fff" : "#333" }}>
+          <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#1976d2" }}>
             <Toolbar>
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
                 Admin Panel
               </Typography>
-              <IconButton onClick={toggleDarkMode} color="inherit">
-                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-              </IconButton>
             </Toolbar>
           </AppBar>
           <Outlet />
