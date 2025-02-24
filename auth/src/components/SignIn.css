@@ -9,10 +9,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0F172A, #1E3A8A), url('../assets/ai-web-background.png'); /* Deep blue gradient with background image */
-  background-blend-mode: overlay; /* Blend the gradient with the background image */
+  background-image: url('../assets/ai-web-background.png'), linear-gradient(135deg, #0F172A, #1E3A8A);
   background-size: cover;
   background-position: center;
+  background-blend-mode: overlay;
   position: relative;
   overflow: hidden;
   padding: 10px;
