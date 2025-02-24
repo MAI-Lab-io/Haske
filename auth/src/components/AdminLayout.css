@@ -186,6 +186,10 @@
   display: flex;
   flex-direction: column;
 }
+.user-table th {
+  background-color: ${({ theme }) => theme.palette.background.paper};
+  color: ${({ theme }) => theme.palette.text.primary};
+}
 
 
 @media (max-width: 768px) {
