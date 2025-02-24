@@ -92,7 +92,7 @@ const AdminLayout = () => {
       <CssBaseline /> {/* Apply the theme globally */}
       <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#F9FAFB" }}>
         {/* Sidebar */}
-        <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0, bgcolor: darkMode ? "#333" : "#F9FAFB" }}>
+        <Drawer variant="permanent" sx={{ width: 130, flexShrink: 0, bgcolor: darkMode ? "#333" : "#E5E7EB" }}>
           <List>
             <ListItem>
               <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
@@ -118,7 +118,7 @@ const AdminLayout = () => {
         </Drawer>
 
         {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#fafafa", color: darkMode ? "#fff" : "#333" }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#E5E7EB", color: darkMode ? "#E5E7EB" : "#333" }}>
           <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#0F172A" }}>
             <Toolbar>
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
