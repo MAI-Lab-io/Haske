@@ -58,7 +58,7 @@ const Analytics = () => {
         label="Search by Email"
         variant="outlined"
         size="small"
-        sx={{ backgroundColor: "#fff", borderRadius: 1, mb: 2 }}
+        sx={{ backgroundColor: "#000", borderRadius: 1, mb: 2 }}
         onChange={(e) => setSearch(e.target.value)}
       />
       
