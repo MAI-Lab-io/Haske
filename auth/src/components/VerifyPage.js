@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
 import "./VerifyPage.css"; // Import CSS file for styles
 import logo from "../assets/haske.png"; // Import your logo here
-import backgroundImage from "../assets/signin-image.png"; // Import your background image here
+import aiWebBackground from "../assets/ai-web-background.png"; // Import your background image here
 
 const VerifyPage = () => {
   const navigate = useNavigate(); // Initialize navigation
@@ -85,11 +85,18 @@ const VerifyPage = () => {
 
   return (
     <div className="verify-container">
-      <div className="left-column">
-        <div className="image-container">
-          <img src={backgroundImage} alt="Background" className="background-image" />
-        </div>
+   <div
+        className="left-column"
+        style={{
+          backgroundImage: `linear-gradient(135deg, #0F172A, #1E3A8A), url(${aiWebBackground})`,
+          backgroundBlendMode: "overlay",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Background image is applied via inline styles */}
       </div>
+    
       <div className="right-column">
         <div className="form-wrapper">
           <img src={logo} alt="Logo" className="logo" />
