@@ -1,8 +1,8 @@
 .signin-container {
   display: flex;
-  height: 100vh;
-  background-color: #E5E7EB; /* Lighter background */
   flex-direction: column; /* Stack columns vertically on mobile */
+  min-height: 100vh;
+  background-color: #E5E7EB; /* Lighter background */
 }
 
 .left-column {
@@ -25,8 +25,8 @@
 }
 
 .background-image {
-  max-width: 80%; /* Adjust the size of the image */
-  max-height: 80%; /* Adjust the size of the image */
+  max-width: 100%; /* Adjust the size of the image */
+  max-height: 100%; /* Adjust the size of the image */
   object-fit: contain; /* Ensures the image is fully visible and centered */
   border-radius: 12px; /* Optional: Adds rounded corners to the image */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow */
@@ -46,7 +46,7 @@
   padding: 20px; /* Reduced padding for mobile */
   border-radius: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  width: 90%; /* Adjusted width for mobile */
+  width: 100%; /* Adjusted width for mobile */
   max-width: 400px; /* Ensure it doesn't get too wide on larger screens */
   text-align: center;
 }
