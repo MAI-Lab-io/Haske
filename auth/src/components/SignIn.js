@@ -10,7 +10,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "./SignIn.css";
 import logo from "../assets/haske.png"; // Import your logo here
-import backgroundImage from "../assets/signin-image.png"; // Import your background image here
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -52,9 +51,7 @@ const SignIn = () => {
   return (
     <div className="signin-container">
       <div className="left-column">
-        <div className="image-container">
-          <img src={backgroundImage} alt="Background" className="background-image" />
-        </div>
+        {/* Background image will be applied via CSS */}
       </div>
       <div className="right-column">
         <motion.div
