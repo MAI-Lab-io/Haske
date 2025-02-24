@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "../firebaseConfig"; // Ensure correct Firebase setup
 import {
   Drawer,
@@ -29,7 +29,7 @@ const menuItems = [
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState(menuItems[0].path);
+  const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(null); // Null means loading
   const [darkMode, setDarkMode] = useState(false); // Dark mode state
 
@@ -55,7 +55,9 @@ const AdminLayout = () => {
         const data = await response.json();
         if (data.isAdmin) {
           setIsAdmin(true);
-          navigate("/admin/dashboard");
+          if (location.pathname === "/admin") {
+            navigate("/admin/dashboard");
+          }
         } else {
           navigate("/");
         }
@@ -66,7 +68,7 @@ const AdminLayout = () => {
     };
 
     checkAdminStatus();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const handleSignOut = () => {
     auth.signOut().then(() => {
@@ -101,9 +103,8 @@ const AdminLayout = () => {
               <ListItem
                 button
                 key={item.name}
-                selected={selected === item.path}
+                selected={location.pathname === item.path}
                 onClick={() => {
-                  setSelected(item.path);
                   navigate(item.path);
                 }}
               >
@@ -117,7 +118,7 @@ const AdminLayout = () => {
         </Drawer>
 
         {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#F9FAFB", color: darkMode ? "#fff" : "#333" }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#fafafa", color: darkMode ? "#fff" : "#333" }}>
           <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#0F172A" }}>
             <Toolbar>
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
