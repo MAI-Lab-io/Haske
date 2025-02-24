@@ -65,7 +65,7 @@ const SignIn = () => {
         >
           <img src={logo} alt="Logo" className="logo" />
           <h2 className="form-title">Welcome to Haske! 👋🏻</h2>
-          <p className="form-subtitle">Please sign in to access patients medical images</p>
+          <p className="form-subtitle">Please sign in to access scans</p>
 
           <form className="signin-form" onSubmit={handleSignIn}>
             <input
