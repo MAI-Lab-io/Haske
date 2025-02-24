@@ -1,14 +1,14 @@
 .admin-container {
   display: flex;
   height: 100vh;
-  background-color: #e8e9ed; /* Light cool-gray */
-  font-family: "Roboto", sans-serif; /* Modern font */
+  background-color: #E5E7EB; /* Light cool-gray */
+  font-family: "Montserrat", sans-serif; /* Modern font */
 }
 
 .admin-sidebar {
   width: 240px;
   background-color: #2d2d2d; /* Dark theme for sidebar */
-  color: #f4f4f4;
+  color: #E5E7EB;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -19,7 +19,7 @@
   text-align: center;
   font-size: 22px;
   font-weight: bold;
-  color: #ffffff;
+  color: #E5E7EB;
   margin-bottom: 30px;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -66,8 +66,8 @@
 }
 
 .notification {
-  background-color: #ff5722; /* Dark orange-red for notifications */
-  color: #ffffff;
+  background-color: #FF4433; /* Dark orange-red for notifications */
+  color: #E5E7EB;
   padding: 12px;
   border-radius: 5px;
   margin-bottom: 20px;
@@ -90,7 +90,7 @@
   padding: 10px;
   border: 2px solid #0073e6;
   border-radius: 4px;
-  background-color: #fff;
+  background-color: #E5E7EB;
   font-size: 16px;
   font-weight: 500;
 }
