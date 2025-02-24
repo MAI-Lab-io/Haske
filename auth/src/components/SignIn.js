@@ -10,6 +10,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "./SignIn.css";
 import logo from "../assets/haske.png"; // Import your logo here
+import aiWebBackground from "../assets/ai-web-background.png"; // Import your new background image here
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -50,8 +51,16 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
-      <div className="left-column">
-        {/* Background image will be applied via CSS */}
+      <div
+        className="left-column"
+        style={{
+          backgroundImage: `linear-gradient(135deg, #0F172A, #1E3A8A), url(${aiWebBackground})`,
+          backgroundBlendMode: "overlay",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Background image is applied via inline styles */}
       </div>
       <div className="right-column">
         <motion.div
