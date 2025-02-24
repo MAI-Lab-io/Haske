@@ -49,7 +49,17 @@ const Analytics = () => {
   const chartDataArray = Object.values(aggregatedData);
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#1E1E1E", color: "#fff" }}>
+  <Paper sx={{ 
+  p: 3, 
+  borderRadius: 3, 
+  boxShadow: 4, 
+  backgroundColor: "#1E1E1E", 
+  color: "#fff",
+  maxWidth: "90vw", // Increase max width
+  width: "90%", // Make it take up more screen space
+  margin: "0 auto" // Center it
+}}>
+
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
         User Activity Logs
       </Typography>
@@ -63,9 +73,16 @@ const Analytics = () => {
       />
       
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
+        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="week" stroke="#ccc" angle={-20} textAnchor="end" interval={0} />
+          <XAxis
+            dataKey="week"
+            stroke="#ccc"
+            angle={-20}
+            textAnchor="end"
+            interval={0}
+            height={60} // Increased to allow full visibility
+          />
           <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
           <Legend verticalAlign="top" height={36} />
           {Object.keys(userColors).map((email) => (
@@ -88,7 +105,9 @@ const Analytics = () => {
               <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
                 <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#4CAF50" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: "#fff" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                <TableCell sx={{ color: "#fff", fontSize: "0.8rem" }}>
+                  {new Date(log.timestamp).toLocaleString()}
+                </TableCell>
               </TableRow>
             ))
           ) : (
