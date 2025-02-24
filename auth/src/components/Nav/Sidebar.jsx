@@ -23,7 +23,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
       </SidebarHeader>
 
       <NavLinks>
-        {["home", "services", "projects", "blog", "pricing", "contact"].map((item) => (
+        {["home", "services", "analytics", "blog", "contact"].map((item) => (
           <li key={item}>
             <Link
               onClick={() => toggleSidebar(!sidebarOpen)}
