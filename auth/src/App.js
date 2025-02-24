@@ -77,8 +77,8 @@ const App = () => {
       
       <Router>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/landing" element={<Landing />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="/signin" element={user ? <Navigate to="/patient-details" replace /> : <SignIn />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verification" element={<VerifyPage />} />
