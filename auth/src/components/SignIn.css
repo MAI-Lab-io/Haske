@@ -9,10 +9,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url('../assets/ai-web-background.png'), linear-gradient(135deg, #0F172A, #1E3A8A);
-  background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
   position: relative;
   overflow: hidden;
   padding: 10px;
