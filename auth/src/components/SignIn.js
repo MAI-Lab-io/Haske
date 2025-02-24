@@ -51,17 +51,17 @@ const SignIn = () => {
 
   return (
     <div className="signin-container">
-      <div
-        className="left-column"
-        style={{
-          backgroundImage: `linear-gradient(135deg, #0F172A, #1E3A8A), url(${aiWebBackground})`,
-          backgroundBlendMode: "overlay",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Background image is applied via inline styles */}
-      </div>
+     <div
+  className="left-column"
+  style={{
+    backgroundImage: `linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 138, 0.9)), url(${aiWebBackground})`,
+    backgroundBlendMode: "overlay",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }}
+>
+</div>
+
       <div className="right-column">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
