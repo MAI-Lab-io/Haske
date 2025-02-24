@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import "./Register.css"; // Import CSS file for styles
 import logo from "../assets/haske.png"; // Import your logo here
-import backgroundImage from "../assets/signin-image.png"; // Import your background image here
+import aiWebBackground from "../assets/ai-web-background.png";  // Import your background image here
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -62,10 +62,16 @@ function Register() {
   
   return (
     <div className="register-container">
-      <div className="left-column">
-        <div className="image-container">
-          <img src={backgroundImage} alt="Background" className="background-image" />
-        </div>
+      <div
+        className="left-column"
+        style={{
+          backgroundImage: `linear-gradient(135deg, #0F172A, #1E3A8A), url(${aiWebBackground})`,
+          backgroundBlendMode: "overlay",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        {/* Background image is applied via inline styles */}
       </div>
       <div className="right-column">
         <motion.div
