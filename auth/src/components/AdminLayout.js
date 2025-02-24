@@ -55,6 +55,7 @@ const AdminLayout = () => {
         const data = await response.json();
         if (data.isAdmin) {
           setIsAdmin(true);
+          navigate("/admin/dashboard");
         } else {
           navigate("/");
         }
@@ -87,9 +88,9 @@ const AdminLayout = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* Apply the theme globally */}
-      <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#fafafa" }}>
+      <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#F9FAFB" }}>
         {/* Sidebar */}
-        <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0, bgcolor: darkMode ? "#333" : "#fff" }}>
+        <Drawer variant="permanent" sx={{ width: 240, flexShrink: 0, bgcolor: darkMode ? "#333" : "#F9FAFB" }}>
           <List>
             <ListItem>
               <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
@@ -116,8 +117,8 @@ const AdminLayout = () => {
         </Drawer>
 
         {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#fafafa", color: darkMode ? "#fff" : "#333" }}>
-          <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#1976d2" }}>
+        <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#F9FAFB", color: darkMode ? "#fff" : "#333" }}>
+          <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#0F172A" }}>
             <Toolbar>
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
                 Admin Panel
