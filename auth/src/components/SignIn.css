@@ -1,6 +1,5 @@
 .signin-container {
   display: flex;
-  flex-direction: column; /* Stack columns vertically on mobile */
   min-height: 100vh;
   background-color: #E5E7EB; /* Lighter background */
 }
@@ -10,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0F172A, #ffff 0%); /* Deep blue gradient */
+  background: linear-gradient(135deg, #0F172A, #1E3A8A); /* Deep blue gradient */
   position: relative;
   overflow: hidden;
   padding: 10px;
@@ -25,8 +24,8 @@
 }
 
 .background-image {
-  max-width: 100%; /* Adjust the size of the image */
-  max-height: 100%; /* Adjust the size of the image */
+  max-width: 80%; /* Adjust the size of the image */
+  max-height: 80%; /* Adjust the size of the image */
   object-fit: contain; /* Ensures the image is fully visible and centered */
   border-radius: 12px; /* Optional: Adds rounded corners to the image */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); /* Optional: Adds a subtle shadow */
