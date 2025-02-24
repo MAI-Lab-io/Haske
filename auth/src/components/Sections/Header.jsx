@@ -103,7 +103,7 @@ const Img = styled.img`
   animation: ${float} 6s ease-in-out infinite;
   position: relative;
   top: 0;
-  right: 0;
+  right: 90;
   z-index: 1;
   @media (max-width: 960px) {
     width: 80%;
