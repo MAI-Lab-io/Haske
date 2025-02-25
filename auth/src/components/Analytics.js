@@ -70,6 +70,15 @@ const Analytics = ({ darkMode }) => {
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // Get the date 2 weeks ago
 
+  // Initialize all dates in the last 2 weeks
+  for (let i = 0; i < 14; i++) {
+    const date = new Date(twoWeeksAgo);
+    date.setDate(twoWeeksAgo.getDate() + i);
+    const dateKey = date.toISOString().split("T")[0];
+    aggregatedData[dateKey] = { date: dateKey };
+  }
+
+  // Populate active time for each user
   Object.keys(userSessions).forEach((email) => {
     const sessions = userSessions[email];
     sessions.sort((a, b) => a.timestamp - b.timestamp); // Sort sessions by timestamp
@@ -84,14 +93,14 @@ const Analytics = ({ darkMode }) => {
 
         // Only include logs from the last 2 weeks
         if (signIn.timestamp >= twoWeeksAgo) {
-          if (!aggregatedData[dateKey]) {
-            aggregatedData[dateKey] = { date: dateKey };
+          if (!aggregatedData[dateKey][email]) {
+            aggregatedData[dateKey][email] = 0;
           }
           if (!userColors[email]) {
             userColors[email] = colors[colorIndex % colors.length];
             colorIndex++;
           }
-          aggregatedData[dateKey][email] = (aggregatedData[dateKey][email] || 0) + duration;
+          aggregatedData[dateKey][email] += duration;
         }
       }
     }
