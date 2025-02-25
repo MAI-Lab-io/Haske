@@ -25,8 +25,8 @@ const Settings = () => {
   };
 
   return (
-    <Paper sx={{ p: 3, backgroundColor: "#0F172A", color: "#E5E7EB" }}>
-      <Typography variant="h5" sx={{ color: "#dd841a" }}>
+    <Paper sx={{ p: 3, backgroundColor: #E5E7EB", color: "#E5E7EB" }}>
+      <Typography variant="h5" sx={{ color: "#0F172A" }}>
         Admin Settings
       </Typography>
 
@@ -34,7 +34,7 @@ const Settings = () => {
       <Typography variant="h6" sx={{ mt: 3, color: "#dd841a" }}>
         Manage User Roles
       </Typography>
-      <Table sx={{ backgroundColor: "#E5E7EB", color: "#E5E7EB" }}>
+      <Table sx={{ backgroundColor: "#0F172A", color: "#E5E7EB" }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ color: "#dd841a" }}>Email</TableCell>
