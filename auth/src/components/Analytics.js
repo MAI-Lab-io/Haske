@@ -54,7 +54,7 @@ const Analytics = () => {
 
   const userColors = {};
   let colorIndex = 0;
-  const colors = ["#4CAF50", "#FF5252", "#FF9800", "#dd841a", "#9C27B0", "#00BCD4", "#8BC34A"];
+  const colors = ["#0F172A", "#E5E7EB", "#dd841a"]; // Updated color palette
 
   const aggregatedData = {};
   filteredLogs.forEach((log) => {
@@ -75,21 +75,21 @@ const Analytics = () => {
   const chartDataArray = Object.values(aggregatedData);
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#E5E7EB", color: "#fff" }}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center" }}>
+    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#0F172A", color: "#E5E7EB" }}> {/* Updated background and text color */}
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#dd841a" }}> {/* Updated title color */}
         User Activity Logs
       </Typography>
 
-      <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold" }}>Filter by Email</Typography>
+      <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold", color: "#dd841a" }}>Filter by Email</Typography> {/* Updated subtitle color */}
       <TextField
         label="Search by Email"
         variant="outlined"
         size="small"
-        sx={{ backgroundColor: "#fff", borderRadius: 1, mb: 2 }}
+        sx={{ backgroundColor: "#E5E7EB", borderRadius: 1, mb: 2, input: { color: "#0F172A" } }} {/* Updated input background and text color */}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={(e) => setAnchorEl(e.currentTarget)}>
+      <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ backgroundColor: "#dd841a", color: "#0F172A" }}> {/* Updated button color */}
         Export Data
       </Button>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
@@ -100,45 +100,53 @@ const Analytics = () => {
       {/* Chart Display */}
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" /> {/* Updated grid color */}
           <XAxis
             dataKey="week"
-            stroke="#ccc"
+            stroke="#E5E7EB" // Updated axis color
             angle={-20}
             textAnchor="end"
             interval={0}
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: "#E5E7EB" }} // Updated tick color
             height={60}
           />
-          <Tooltip contentStyle={{ backgroundColor: "#1E1E1E", color: "#fff" }} />
-          <Legend verticalAlign="top" height={36} />
+          <Tooltip contentStyle={{ backgroundColor: "#0F172A", color: "#E5E7EB", border: "1px solid #dd841a" }} /> {/* Updated tooltip color */}
+          <Legend verticalAlign="top" height={36} wrapperStyle={{ color: "#E5E7EB" }} /> {/* Updated legend color */}
           {Object.keys(userColors).map((email) => (
-            <Area key={email} type="monotone" dataKey={email} name={email} stroke={userColors[email]} fillOpacity={0.3} fill={userColors[email]} />
+            <Area
+              key={email}
+              type="monotone"
+              dataKey={email}
+              name={email}
+              stroke={userColors[email]}
+              fillOpacity={0.3}
+              fill={userColors[email]}
+            />
           ))}
         </AreaChart>
       </ResponsiveContainer>
 
       {/* Table Display */}
-      <Table sx={{ mt: 3, backgroundColor: "#282828", color: "#fff", borderRadius: 2 }}>
+      <Table sx={{ mt: 3, backgroundColor: "#0F172A", color: "#E5E7EB", borderRadius: 2 }}> {/* Updated table background and text color */}
         <TableHead>
-          <TableRow sx={{ backgroundColor: "#333" }}>
-            <TableCell sx={{ color: "#dd841a" }}>User Email</TableCell>
-            <TableCell sx={{ color: "#dd841a" }}>Action</TableCell>
-            <TableCell sx={{ color: "#dd841a" }}>Timestamp</TableCell>
+          <TableRow sx={{ backgroundColor: "#dd841a" }}> {/* Updated header background color */}
+            <TableCell sx={{ color: "#0F172A" }}>User Email</TableCell> {/* Updated header text color */}
+            <TableCell sx={{ color: "#0F172A" }}>Action</TableCell>
+            <TableCell sx={{ color: "#0F172A" }}>Timestamp</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {filteredLogs.length > 0 ? (
             filteredLogs.map((log, index) => (
-              <TableRow key={index} sx={{ borderBottom: "1px solid #444" }}>
-                <TableCell sx={{ color: "#fff" }}>{log.email}</TableCell>
+              <TableRow key={index} sx={{ borderBottom: "1px solid #E5E7EB" }}> {/* Updated border color */}
+                <TableCell sx={{ color: "#E5E7EB" }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: "#fff", fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                <TableCell sx={{ color: "#E5E7EB", fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={3} sx={{ textAlign: "center", color: "#aaa" }}>No logs available</TableCell>
+              <TableCell colSpan={3} sx={{ textAlign: "center", color: "#E5E7EB" }}>No logs available</TableCell> {/* Updated no-data text color */}
             </TableRow>
           )}
         </TableBody>
