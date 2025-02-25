@@ -34,7 +34,7 @@ const Settings = () => {
       <Typography variant="h6" sx={{ mt: 3, color: "#dd841a" }}>
         Manage User Roles
       </Typography>
-      <Table sx={{ backgroundColor: "#0F172A", color: "#E5E7EB" }}>
+      <Table sx={{ backgroundColor: "#333", color: "#E5E7EB" }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ color: "#dd841a" }}>Email</TableCell>
@@ -45,8 +45,8 @@ const Settings = () => {
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
-              <TableCell sx={{ color: "#000" }}>{user.email}</TableCell>
-              <TableCell sx={{ color: "#000" }}>{user.role}</TableCell>
+              <TableCell sx={{ color: "#E5E7EB" }}>{user.email}</TableCell>
+              <TableCell sx={{ color: "#E5E7EB" }}>{user.role}</TableCell>
               <TableCell>
                 {user.role === "user" ? (
                   <Button
