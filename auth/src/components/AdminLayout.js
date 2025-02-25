@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/NightsStay";
 import LightModeIcon from "@mui/icons-material/WbSunny";
+import logo from "../assets/haske.png"; // Import the logo properly
 
 // Define menu items for the admin sidebar
 const menuItems = [
@@ -45,6 +46,7 @@ const AdminLayout = () => {
     const checkAdminStatus = async () => {
       const user = auth.currentUser;
       if (!user) {
+        setIsAdmin(false);
         navigate("/");
         return;
       }
@@ -60,10 +62,12 @@ const AdminLayout = () => {
             navigate("/admin/dashboard");
           }
         } else {
+          setIsAdmin(false);
           navigate("/");
         }
       } catch (error) {
         console.error("Error checking admin status:", error);
+        setIsAdmin(false);
         navigate("/");
       }
     };
@@ -72,11 +76,14 @@ const AdminLayout = () => {
   }, [navigate, location.pathname]);
 
   const handleSignOut = () => {
-    auth.signOut().then(() => {
-      navigate("/", { state: { message: "Signed out successfully!" } });
-    }).catch((error) => {
-      console.error("Error signing out:", error);
-    });
+    auth
+      .signOut()
+      .then(() => {
+        navigate("/", { state: { message: "Signed out successfully!" } });
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
   };
 
   // Show loader while verifying admin status
@@ -93,13 +100,21 @@ const AdminLayout = () => {
       <CssBaseline /> {/* Apply the theme globally */}
       <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#F9FAFB" }}>
         {/* Sidebar */}
-        <Drawer variant="permanent" sx={{ width: 130, flexShrink: 0, bgcolor: darkMode ? "#333" : "#E5E7EB" }}>
+        <Drawer
+          variant="permanent"
+          sx={{
+            width: 240,
+            flexShrink: 0,
+            bgcolor: darkMode ? "#333" : "#E5E7EB",
+            "& .MuiDrawer-paper": { width: 240, bgcolor: darkMode ? "#333" : "#E5E7EB" },
+          }}
+        >
           <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 2 }}>
-            <img src="../assets/haske.png" alt="Logo" style={{ width: "100%", height: "auto" }} />
+            <img src={logo} alt="Logo" style={{ width: "80%", height: "auto" }} />
           </Box>
           <List>
             <ListItem>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <LightModeIcon />
                 <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
                 <DarkModeIcon />
@@ -107,17 +122,19 @@ const AdminLayout = () => {
             </ListItem>
             {menuItems.map((item) => (
               <ListItem
-                button
                 key={item.name}
+                component="button"
                 selected={location.pathname === item.path}
-                onClick={() => {
-                  navigate(item.path);
+                onClick={() => navigate(item.path)}
+                sx={{
+                  bgcolor: location.pathname === item.path ? (darkMode ? "#555" : "#D1D5DB") : "inherit",
+                  "&:hover": { bgcolor: darkMode ? "#444" : "#E5E7EB" },
                 }}
               >
                 <ListItemText primary={item.name} />
               </ListItem>
             ))}
-            <ListItem button onClick={handleSignOut}>
+            <ListItem component="button" onClick={handleSignOut} sx={{ "&:hover": { bgcolor: "#F87171" } }}>
               <ListItemText primary="Sign Out" />
             </ListItem>
           </List>
