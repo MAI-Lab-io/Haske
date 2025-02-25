@@ -62,16 +62,15 @@ function Register() {
   
   return (
     <div className="register-container">
-      <div
-        className="left-column"
-        style={{
-          backgroundImage: `linear-gradient(135deg, #0F172A, #1E3A8A), url(${aiWebBackground})`,
-          backgroundBlendMode: "overlay",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Background image is applied via inline styles */}
+     <div className="left-column">
+        <div
+          className="background-image-wrapper"
+          style={{
+            backgroundImage: `url(${aiWebBackground})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
       </div>
       <div className="right-column">
         <motion.div
