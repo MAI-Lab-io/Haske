@@ -65,7 +65,7 @@ const Analytics = ({ darkMode }) => {
     userSessions[log.email].push({ action: log.action, timestamp: new Date(log.timestamp) });
   });
 
-  // Calculate total active time per user per day
+  // Calculate total active time per user per day (in minutes)
   const aggregatedData = {};
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // Get the date 2 weeks ago
@@ -79,7 +79,7 @@ const Analytics = ({ darkMode }) => {
       const signOut = sessions[i + 1];
 
       if (signIn.action.toLowerCase() === "user signed in" && signOut.action.toLowerCase() === "user signed out") {
-        const duration = (signOut.timestamp - signIn.timestamp) / 1000; // Duration in seconds
+        const duration = (signOut.timestamp - signIn.timestamp) / 1000 / 60; // Duration in minutes
         const dateKey = signIn.timestamp.toISOString().split("T")[0]; // Format as YYYY-MM-DD
 
         // Only include logs from the last 2 weeks
@@ -150,13 +150,18 @@ const Analytics = ({ darkMode }) => {
             tick={{ fontSize: 12, fill: textColor }}
             height={60}
           />
-          <YAxis stroke={textColor} tick={{ fill: textColor }} />
+          <YAxis
+            stroke={textColor}
+            tick={{ fill: textColor }}
+            label={{ value: "Active Time (minutes)", angle: -90, position: "insideLeft", fill: textColor }}
+          />
           <Tooltip
             contentStyle={{
               backgroundColor: tooltipBackgroundColor,
               color: tooltipTextColor,
               border: `1px solid ${darkMode ? "#dd841a" : "#0F172A"}`,
             }}
+            formatter={(value) => `${value.toFixed(2)} minutes`} // Format tooltip to show minutes
           />
           <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
           {Object.keys(userColors).map((email) => (
