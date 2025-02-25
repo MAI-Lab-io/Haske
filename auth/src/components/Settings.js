@@ -25,7 +25,7 @@ const Settings = () => {
   };
 
   return (
-    <Paper sx={{ p: 3, backgroundColor: #E5E7EB", color: "#E5E7EB" }}>
+    <Paper sx={{ p: 3, backgroundColor: "#E5E7EB", color: "#E5E7EB" }}>
       <Typography variant="h5" sx={{ color: "#0F172A" }}>
         Admin Settings
       </Typography>
