@@ -39,18 +39,27 @@ const Dashboard = () => {
     { name: "Institutions", value: stats.institutions },
   ];
 
-  const COLORS = ["#0088FE", "#FFBB28", "#FF8042", "#00C49F", "#FF6384", "#36A2EB"];
+  // Updated color palette with a shade of #0F172A
+  const COLORS = ["#0F172A", "#1E2A4A", "#E5E7EB", "#dd841a"];
 
   return (
     <Box>
       <Typography variant="h4" sx={{ marginBottom: 3 }}>Admin Dashboard</Typography>
 
       <Grid container spacing={3}>
+        {/* User Statistics Pie Chart */}
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6">User Statistics</Typography>
             <PieChart width={300} height={300}>
-              <Pie data={pieData} cx="50%" cy="50%" outerRadius={80} fill="#8884d8" dataKey="value">
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#0F172A" // Default fill color
+                dataKey="value"
+              >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -61,6 +70,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
 
+        {/* Modality Distribution Bar Chart */}
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6">Modality Distribution</Typography>
@@ -71,17 +81,25 @@ const Dashboard = () => {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="count" fill="#0088FE" />
+                <Bar dataKey="count" fill="#1E2A4A" /> {/* Updated fill color */}
               </BarChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
 
+        {/* Body Part Pie Chart */}
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 3 }}>
-            <Typography variant="h6">Study Descriptions</Typography>
+            <Typography variant="h6">Body Part</Typography>
             <PieChart width={300} height={300}>
-              <Pie data={studyDescriptionStats} cx="50%" cy="50%" outerRadius={80} fill="#FF8042" dataKey="count">
+              <Pie
+                data={studyDescriptionStats}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#E5E7EB" // Default fill color
+                dataKey="count"
+              >
                 {studyDescriptionStats.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
