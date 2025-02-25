@@ -76,6 +76,11 @@ const Analytics = ({ darkMode }) => {
     date.setDate(twoWeeksAgo.getDate() + i);
     const dateKey = date.toISOString().split("T")[0];
     aggregatedData[dateKey] = { date: dateKey };
+
+    // Initialize all users for this date with 0 active time
+    Object.keys(userSessions).forEach((email) => {
+      aggregatedData[dateKey][email] = 0;
+    });
   }
 
   // Populate active time for each user
@@ -93,9 +98,6 @@ const Analytics = ({ darkMode }) => {
 
         // Only include logs from the last 2 weeks
         if (signIn.timestamp >= twoWeeksAgo) {
-          if (!aggregatedData[dateKey][email]) {
-            aggregatedData[dateKey][email] = 0;
-          }
           if (!userColors[email]) {
             userColors[email] = colors[colorIndex % colors.length];
             colorIndex++;
