@@ -113,11 +113,11 @@ const AdminLayout = () => {
             <ListItem>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Typography variant="body1" sx={{ color: darkMode ? "#E5E7EB" : "#333" }}>
-                  Light Mode
+                  Light
                 </Typography>
                 <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
                 <Typography variant="body1" sx={{ color: darkMode ? "#E5E7EB" : "#333" }}>
-                  Dark Mode
+                  Dark
                 </Typography>
               </Box>
             </ListItem>
