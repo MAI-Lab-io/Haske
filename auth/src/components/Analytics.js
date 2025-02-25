@@ -102,8 +102,8 @@ const Analytics = () => {
   });
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#0F172A", color: "#E5E7EB" }}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#dd841a" }}>
+    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#333", color: "#E5E7EB" }}>
+      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#0F172A" }}>
         User Login Activity Per Day
       </Typography>
 
@@ -111,7 +111,7 @@ const Analytics = () => {
         label="Search by Email"
         variant="outlined"
         size="small"
-        sx={{ backgroundColor: "#E5E7EB", borderRadius: 1, mb: 2, input: { color: "#0F172A" } }}
+        sx={{ backgroundColor: "#E5E7EB", borderRadius: 1, mb: 2, input: { color: "#333" } }}
         onChange={(e) => setSearch(e.target.value)}
       />
 
