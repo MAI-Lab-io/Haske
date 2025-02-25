@@ -15,6 +15,7 @@ import {
   IconButton,
   ThemeProvider,
   createTheme,
+  Switch,
 } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/NightsStay";
 import LightModeIcon from "@mui/icons-material/WbSunny";
@@ -93,11 +94,16 @@ const AdminLayout = () => {
       <Box sx={{ display: "flex", backgroundColor: darkMode ? "#121212" : "#F9FAFB" }}>
         {/* Sidebar */}
         <Drawer variant="permanent" sx={{ width: 130, flexShrink: 0, bgcolor: darkMode ? "#333" : "#E5E7EB" }}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 2 }}>
+            <img src="../assets/haske.png" alt="Logo" style={{ width: "100%", height: "auto" }} />
+          </Box>
           <List>
             <ListItem>
-              <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
-                {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
-              </IconButton>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <LightModeIcon />
+                <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+                <DarkModeIcon />
+              </Box>
             </ListItem>
             {menuItems.map((item) => (
               <ListItem
