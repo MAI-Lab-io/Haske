@@ -121,14 +121,12 @@ const AdminLayout = () => {
               </Box>
             </ListItem>
             {menuItems.map((item) => (
-              <ListItem
+             <ListItem
+                button
                 key={item.name}
-                component="button"
                 selected={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                sx={{
-                  bgcolor: location.pathname === item.path ? (darkMode ? "#555" : "#D1D5DB") : "inherit",
-                  "&:hover": { bgcolor: darkMode ? "#444" : "#E5E7EB" },
+                onClick={() => {
+                  navigate(item.path);
                 }}
               >
                 <ListItemText primary={item.name} />
