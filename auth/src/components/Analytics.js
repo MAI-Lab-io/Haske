@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, Te
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
-const Analytics = () => {
+const Analytics = ({ darkMode }) => {
   const [logs, setLogs] = useState([]);
   const [search, setSearch] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
@@ -54,7 +54,7 @@ const Analytics = () => {
 
   const userColors = {};
   let colorIndex = 0;
-  const colors = ["#0F172A", "#E5E7EB", "#dd841a"]; // Updated color palette
+  const colors = darkMode ? ["#0F172A", "#E5E7EB", "#dd841a"] : ["#0F172A", "#E5E7EB", "#dd841a"]; // Adjust colors for dark/light mode
 
   // Track user sessions and calculate active time
   const userSessions = {};
@@ -100,8 +100,17 @@ const Analytics = () => {
   // Convert aggregated data to an array and sort by date
   const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
 
+  // Dynamic colors for dark/light mode
+  const backgroundColor = darkMode ? "#0F172A" : "#E5E7EB";
+  const textColor = darkMode ? "#E5E7EB" : "#0F172A";
+  const gridColor = darkMode ? "#444" : "#ddd";
+  const tooltipBackgroundColor = darkMode ? "#1E1E1E" : "#fff";
+  const tooltipTextColor = darkMode ? "#E5E7EB" : "#0F172A";
+  const buttonBackgroundColor = darkMode ? "#dd841a" : "#0F172A";
+  const buttonTextColor = darkMode ? "#0F172A" : "#E5E7EB";
+
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor: "#0F172A", color: "#E5E7EB" }}>
+    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor, color: textColor }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#dd841a" }}>
         User Activity Logs (Last 2 Weeks)
       </Typography>
@@ -111,11 +120,16 @@ const Analytics = () => {
         label="Search by Email"
         variant="outlined"
         size="small"
-        sx={{ backgroundColor: "#E5E7EB", borderRadius: 1, mb: 2, input: { color: "#0F172A" } }}
+        sx={{ backgroundColor: textColor, borderRadius: 1, mb: 2, input: { color: backgroundColor } }}
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      <Button variant="contained" startIcon={<FileDownloadIcon />} onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ backgroundColor: "#dd841a", color: "#0F172A" }}>
+      <Button
+        variant="contained"
+        startIcon={<FileDownloadIcon />}
+        onClick={(e) => setAnchorEl(e.currentTarget)}
+        sx={{ backgroundColor: buttonBackgroundColor, color: buttonTextColor }}
+      >
         Export Data
       </Button>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
@@ -126,19 +140,25 @@ const Analytics = () => {
       {/* Chart Display */}
       <ResponsiveContainer width="100%" height={400}>
         <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="date"
-            stroke="#E5E7EB"
+            stroke={textColor}
             angle={-20}
             textAnchor="end"
             interval={0}
-            tick={{ fontSize: 12, fill: "#E5E7EB" }}
+            tick={{ fontSize: 12, fill: textColor }}
             height={60}
           />
-          <YAxis stroke="#E5E7EB" tick={{ fill: "#E5E7EB" }} />
-          <Tooltip contentStyle={{ backgroundColor: "#0F172A", color: "#E5E7EB", border: "1px solid #dd841a" }} />
-          <Legend verticalAlign="top" height={36} wrapperStyle={{ color: "#E5E7EB" }} />
+          <YAxis stroke={textColor} tick={{ fill: textColor }} />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: tooltipBackgroundColor,
+              color: tooltipTextColor,
+              border: `1px solid ${darkMode ? "#dd841a" : "#0F172A"}`,
+            }}
+          />
+          <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
           {Object.keys(userColors).map((email) => (
             <Area
               key={email}
@@ -154,26 +174,26 @@ const Analytics = () => {
       </ResponsiveContainer>
 
       {/* Table Display */}
-      <Table sx={{ mt: 3, backgroundColor: "#0F172A", color: "#E5E7EB", borderRadius: 2 }}>
+      <Table sx={{ mt: 3, backgroundColor, color: textColor, borderRadius: 2 }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#dd841a" }}>
-            <TableCell sx={{ color: "#0F172A" }}>User Email</TableCell>
-            <TableCell sx={{ color: "#0F172A" }}>Action</TableCell>
-            <TableCell sx={{ color: "#0F172A" }}>Timestamp</TableCell>
+            <TableCell sx={{ color: buttonTextColor }}>User Email</TableCell>
+            <TableCell sx={{ color: buttonTextColor }}>Action</TableCell>
+            <TableCell sx={{ color: buttonTextColor }}>Timestamp</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {filteredLogs.length > 0 ? (
             filteredLogs.map((log, index) => (
-              <TableRow key={index} sx={{ borderBottom: "1px solid #E5E7EB" }}>
-                <TableCell sx={{ color: "#E5E7EB" }}>{log.email}</TableCell>
+              <TableRow key={index} sx={{ borderBottom: `1px solid ${gridColor}` }}>
+                <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: "#E5E7EB", fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                <TableCell sx={{ color: textColor, fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={3} sx={{ textAlign: "center", color: "#E5E7EB" }}>No logs available</TableCell>
+              <TableCell colSpan={3} sx={{ textAlign: "center", color: textColor }}>No logs available</TableCell>
             </TableRow>
           )}
         </TableBody>
