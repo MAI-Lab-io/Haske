@@ -12,13 +12,10 @@ import {
   CssBaseline,
   Box,
   CircularProgress,
-  IconButton,
+  Switch,
   ThemeProvider,
   createTheme,
-  Switch,
 } from "@mui/material";
-import DarkModeIcon from "@mui/icons-material/NightsStay";
-import LightModeIcon from "@mui/icons-material/WbSunny";
 import logo from "../assets/haske.png"; // Import the logo properly
 
 // Define menu items for the admin sidebar
@@ -115,13 +112,17 @@ const AdminLayout = () => {
           <List>
             <ListItem>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <LightModeIcon />
+                <Typography variant="body1" sx={{ color: darkMode ? "#E5E7EB" : "#333" }}>
+                  Light Mode
+                </Typography>
                 <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
-                <DarkModeIcon />
+                <Typography variant="body1" sx={{ color: darkMode ? "#E5E7EB" : "#333" }}>
+                  Dark Mode
+                </Typography>
               </Box>
             </ListItem>
             {menuItems.map((item) => (
-             <ListItem
+              <ListItem
                 button
                 key={item.name}
                 selected={location.pathname === item.path}
