@@ -25,31 +25,43 @@ const Settings = () => {
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h5">Admin Settings</Typography>
+    <Paper sx={{ p: 3, backgroundColor: "#0F172A", color: "#E5E7EB" }}>
+      <Typography variant="h5" sx={{ color: "#dd841a" }}>
+        Admin Settings
+      </Typography>
 
       {/* Role Management Table */}
-      <Typography variant="h6" sx={{ mt: 3 }}>Manage User Roles</Typography>
-      <Table>
+      <Typography variant="h6" sx={{ mt: 3, color: "#dd841a" }}>
+        Manage User Roles
+      </Typography>
+      <Table sx={{ backgroundColor: "#0F172A", color: "#E5E7EB" }}>
         <TableHead>
           <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell sx={{ color: "#dd841a" }}>Email</TableCell>
+            <TableCell sx={{ color: "#dd841a" }}>Role</TableCell>
+            <TableCell sx={{ color: "#dd841a" }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {users.map((user) => (
             <TableRow key={user.id}>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
+              <TableCell sx={{ color: "#E5E7EB" }}>{user.email}</TableCell>
+              <TableCell sx={{ color: "#E5E7EB" }}>{user.role}</TableCell>
               <TableCell>
                 {user.role === "user" ? (
-                  <Button variant="contained" color="primary" onClick={() => promoteToAdmin(user.id)}>
+                  <Button
+                    variant="contained"
+                    sx={{ backgroundColor: "#dd841a", color: "#0F172A", "&:hover": { backgroundColor: "#E5E7EB", color: "#0F172A" } }}
+                    onClick={() => promoteToAdmin(user.id)}
+                  >
                     Promote to Admin
                   </Button>
                 ) : (
-                  <Button variant="outlined" color="secondary" onClick={() => demoteToUser(user.id)}>
+                  <Button
+                    variant="outlined"
+                    sx={{ borderColor: "#dd841a", color: "#dd841a", "&:hover": { borderColor: "#E5E7EB", color: "#E5E7EB" } }}
+                    onClick={() => demoteToUser(user.id)}
+                  >
                     Demote to User
                   </Button>
                 )}
