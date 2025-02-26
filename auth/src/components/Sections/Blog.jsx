@@ -107,7 +107,7 @@ const Wrapper = styled.section`
 
 const HeaderInfo = styled.div`
   margin-bottom: 30px;
-  color: white; /* Ensures text inside HeaderInfo is white */
+  color: #0F172A; /* Ensures text inside HeaderInfo is white */
   
   @media (max-width: 860px) {
     text-align: center;
