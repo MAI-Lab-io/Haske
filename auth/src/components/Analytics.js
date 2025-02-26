@@ -91,16 +91,20 @@ const Analytics = ({ darkMode }) => {
     const sessions = userSessions[email];
     sessions.sort((a, b) => a.timestamp - b.timestamp); // Sort sessions by timestamp
 
-    for (let i = 0; i < sessions.length - 1; i += 2) {
-      const signIn = sessions[i];
-      const signOut = sessions[i + 1];
+    let activeSessions = []; // Stack to track active sessions
 
-      if (signIn.action.toLowerCase() === "user signed in" && signOut.action.toLowerCase() === "user signed out") {
-        const duration = (signOut.timestamp - signIn.timestamp) / 1000 / 60; // Duration in minutes
-        const dateKey = signIn.timestamp.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+    sessions.forEach((session) => {
+      if (session.action.toLowerCase() === "user signed in") {
+        // Push the sign-in timestamp to the stack
+        activeSessions.push(session.timestamp);
+      } else if (session.action.toLowerCase() === "user signed out" && activeSessions.length > 0) {
+        // Pop the last sign-in timestamp from the stack
+        const signInTimestamp = activeSessions.pop();
+        const duration = (session.timestamp - signInTimestamp) / 1000 / 60; // Duration in minutes
+        const dateKey = signInTimestamp.toISOString().split("T")[0]; // Format as YYYY-MM-DD
 
         // Only include logs from the last 2 weeks
-        if (signIn.timestamp >= twoWeeksAgo) {
+        if (signInTimestamp >= twoWeeksAgo) {
           if (!userColors[email]) {
             userColors[email] = colors[colorIndex % colors.length];
             colorIndex++;
@@ -108,14 +112,25 @@ const Analytics = ({ darkMode }) => {
           aggregatedData[dateKey][email] += duration;
         }
       }
-    }
+    });
+
+    // Handle any remaining active sessions (sign-ins without sign-outs)
+    activeSessions.forEach((signInTimestamp) => {
+      const dateKey = signInTimestamp.toISOString().split("T")[0];
+      if (signInTimestamp >= twoWeeksAgo) {
+        // Optionally, you can add a default duration for incomplete sessions
+        aggregatedData[dateKey][email] += 0; // Default duration of 0 minutes
+      }
+    });
   });
 
   // Convert aggregated data to an array and sort by date
   const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
 
   // Debug: Log the chart data
-  console.log("Chart Data:", chartDataArray);
+  console.log("Aggregated Data:", aggregatedData);
+  console.log("Chart Data Array:", chartDataArray);
+  console.log("User Colors:", userColors);
 
   // Dynamic colors for dark/light mode
   const backgroundColor = darkMode ? "#0F172A" : "#E5E7EB";
