@@ -28,17 +28,20 @@ const Analytics = ({ darkMode }) => {
       (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
   );
 
+  // Sort logs in descending order of timestamp
+  const sortedLogs = [...filteredLogs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
   const handleExport = (format) => {
     let dataString = "";
 
     if (format === "csv") {
       dataString += "Email,Action,Timestamp\n";
-      filteredLogs.forEach((log) => {
+      sortedLogs.forEach((log) => {
         dataString += `${log.email},${log.action},${new Date(log.timestamp).toLocaleString()}\n`;
       });
     } else if (format === "txt") {
       dataString += "User Activity Logs\n\n";
-      filteredLogs.forEach((log) => {
+      sortedLogs.forEach((log) => {
         dataString += `Email: ${log.email} | Action: ${log.action} | Timestamp: ${new Date(log.timestamp).toLocaleString()}\n`;
       });
     }
@@ -68,7 +71,7 @@ const Analytics = ({ darkMode }) => {
   // Calculate total active time per user per day (in minutes)
   const aggregatedData = {};
   const twoWeeksAgo = new Date();
-  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14); // Get the date 2 weeks ago
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13); // Get the date 13 days ago to include the current day
 
   // Initialize all dates in the last 2 weeks
   for (let i = 0; i < 14; i++) {
@@ -199,8 +202,8 @@ const Analytics = ({ darkMode }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filteredLogs.length > 0 ? (
-            filteredLogs.map((log, index) => (
+          {sortedLogs.length > 0 ? (
+            sortedLogs.map((log, index) => (
               <TableRow key={index} sx={{ borderBottom: `1px solid ${gridColor}` }}>
                 <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
