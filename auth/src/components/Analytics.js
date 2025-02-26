@@ -40,7 +40,7 @@ const Analytics = ({ darkMode }) => {
         dataString += `${log.email},${log.action},${new Date(log.timestamp).toLocaleString()}\n`;
       });
     } else if (format === "txt") {
-      dataString += "User Activity Logs\n\n";
+      dataString += "Analytics\n\n";
       sortedLogs.forEach((log) => {
         dataString += `Email: ${log.email} | Action: ${log.action} | Timestamp: ${new Date(log.timestamp).toLocaleString()}\n`;
       });
@@ -114,6 +114,9 @@ const Analytics = ({ darkMode }) => {
   // Convert aggregated data to an array and sort by date
   const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
 
+  // Debug: Log the chart data
+  console.log("Chart Data:", chartDataArray);
+
   // Dynamic colors for dark/light mode
   const backgroundColor = darkMode ? "#0F172A" : "#E5E7EB";
   const textColor = darkMode ? "#E5E7EB" : "#0F172A";
@@ -126,7 +129,7 @@ const Analytics = ({ darkMode }) => {
   return (
     <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor, color: textColor }}>
       <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#dd841a" }}>
-        User Activity Logs (Last 2 Weeks)
+        Analytics
       </Typography>
 
       <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold", color: "#dd841a" }}>Filter by Email</Typography>
