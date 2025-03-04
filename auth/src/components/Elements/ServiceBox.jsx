@@ -38,16 +38,18 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const IconStyle = styled.div`
-  @media (max-width: 860px) {
-    margin: 0 auto;
-  }
+const IconImage = styled.img`
+  width: 100px;
+  height: 100px;
+  object-fit: cover; /* Ensures uniform scaling */
 `;
 
-const IconImage = styled.img`
-  width: 100px; /* Adjust the size as needed */
+const IconStyle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
   height: 100px;
-  object-fit: contain;
 `;
 
 const TitleStyle = styled.h2`
