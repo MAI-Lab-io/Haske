@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField, Button, Menu, MenuItem } from "@mui/material";
-import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 const Analytics = ({ darkMode }) => {
@@ -171,7 +171,7 @@ const Analytics = ({ darkMode }) => {
 
       {/* Chart Display */}
       <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
+        <BarChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="date"
@@ -197,17 +197,14 @@ const Analytics = ({ darkMode }) => {
           />
           <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
           {Object.keys(userColors).map((email) => (
-            <Area
+            <Bar
               key={email}
-              type="monotone"
               dataKey={email}
               name={email}
-              stroke={userColors[email]}
-              fillOpacity={0.3}
               fill={userColors[email]}
             />
           ))}
-        </AreaChart>
+        </BarChart>
       </ResponsiveContainer>
 
       {/* Table Display */}
