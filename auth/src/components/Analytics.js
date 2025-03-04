@@ -68,7 +68,7 @@ const Analytics = ({ darkMode }) => {
     userSessions[log.email].push({ action: log.action, timestamp: new Date(log.timestamp) });
   });
 
-  // Calculate total active time per user per day (in minutes)
+  // Calculate total active time per user per day (in hours)
   const aggregatedData = {};
   const twoWeeksAgo = new Date();
   twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13); // Get the date 13 days ago to include the current day
@@ -100,7 +100,7 @@ const Analytics = ({ darkMode }) => {
       } else if (session.action.toLowerCase() === "user signed out" && activeSessions.length > 0) {
         // Pop the last sign-in timestamp from the stack
         const signInTimestamp = activeSessions.pop();
-        const duration = (session.timestamp - signInTimestamp) / 1000 / 60; // Duration in minutes
+        const duration = (session.timestamp - signInTimestamp) / 1000 / 60 / 60; // Duration in hours
         const dateKey = signInTimestamp.toISOString().split("T")[0]; // Format as YYYY-MM-DD
 
         // Only include logs from the last 2 weeks
@@ -119,7 +119,7 @@ const Analytics = ({ darkMode }) => {
       const dateKey = signInTimestamp.toISOString().split("T")[0];
       if (signInTimestamp >= twoWeeksAgo) {
         // Optionally, you can add a default duration for incomplete sessions
-        aggregatedData[dateKey][email] += 0; // Default duration of 0 minutes
+        aggregatedData[dateKey][email] += 0; // Default duration of 0 hours
       }
     });
   });
@@ -185,7 +185,7 @@ const Analytics = ({ darkMode }) => {
           <YAxis
             stroke={textColor}
             tick={{ fill: textColor }}
-            label={{ value: "Active Time (minutes)", angle: -90, position: "insideLeft", fill: textColor }}
+            label={{ value: "Active Time (hours)", angle: -90, position: "insideLeft", fill: textColor }}
           />
           <Tooltip
             contentStyle={{
@@ -193,7 +193,7 @@ const Analytics = ({ darkMode }) => {
               color: tooltipTextColor,
               border: `1px solid ${darkMode ? "#dd841a" : "#0F172A"}`,
             }}
-            formatter={(value) => `${value.toFixed(2)} minutes`} // Format tooltip to show minutes
+            formatter={(value) => `${value.toFixed(2)} hours`} // Format tooltip to show hours
           />
           <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
           {Object.keys(userColors).map((email) => (
