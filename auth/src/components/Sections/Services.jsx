@@ -37,7 +37,7 @@ export default function Services() {
             <ServiceBoxWrapper>
               <ServiceBox
                 icon="diagnosis"
-                title="AI-Aided Diagnosis"
+                title="AI-Powered Diagnosis"
                 subtitle="Haske integrates AI tools to assist in diagnosis, providing timely insights that enhance clinical decision-making."
               />
             </ServiceBoxWrapper>
