@@ -48,10 +48,11 @@ const IconStyle = styled.div`
 `;
 
 const IconImage = styled.img`
-  width: 120px; /* Fixed width to match height */
-  height: 120px; /* Fixed height */
-  object-fit: cover; /* Force the image to fill the container, cropping if necessary */
-  border-radius: 10px; /* Optional: Add rounded corners */
+  width: auto; /* Allow width to adjust based on height */
+  height: 100%; /* Stretch to match the container height */
+  max-width: 100%; /* Ensure the icon doesn't overflow */
+  object-fit: cover; /* Stretch the icon to fill the container */
+  aspect-ratio: 1 / 1; /* Force a square aspect ratio */
 `;
 
 const TitleStyle = styled.h2`
