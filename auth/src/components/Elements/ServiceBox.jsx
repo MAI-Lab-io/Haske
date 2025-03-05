@@ -52,7 +52,7 @@ const IconImage = styled.img`
   height: 100%; /* Stretch to match the container height */
   max-width: 100%; /* Ensure the icon doesn't overflow */
   object-fit: cover; /* Stretch the icon to fill the container */
-  aspect-ratio: 1 / 1; /* Force a square aspect ratio */
+  aspect-ratio: 16 / 9; /* Force a square aspect ratio */
 `;
 
 const TitleStyle = styled.h2`
