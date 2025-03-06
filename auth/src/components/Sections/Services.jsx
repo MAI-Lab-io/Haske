@@ -49,7 +49,7 @@ export default function Services() {
               />
             </ServiceBoxWrapper>
             <ServiceBoxWrapper>
-              <ServiceBox icon="cost_effective" title="Affordable Solutions" subtitle="Haske is designed to be cost-effective, offering a solution that reduces the financial burden on healthcare centers in Nigeria." />
+              <ServiceBox icon="cost_effective" title="Affordable Smart Solutions" subtitle="Haske is designed to be cost-effective, offering a solution that reduces the financial burden on healthcare centers in Nigeria." />
             </ServiceBoxWrapper>
           </ServiceBoxRow>
         </div>
