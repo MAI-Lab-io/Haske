@@ -138,11 +138,10 @@ const LogoContainer = styled.div`
 `;
 
 const Logo = styled.img`
-  max-height: 80px;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
+  width: 120px; /* Fixed width */
+  height: 120px; /* Fixed height */
+  object-fit: cover; /* Stretch the logo to fill the container */
+  aspect-ratio: 1 / 1; /* Force a square aspect ratio */
   transition: transform 0.3s ease, filter 0.3s ease;
 
   &:hover {
