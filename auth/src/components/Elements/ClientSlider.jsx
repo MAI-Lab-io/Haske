@@ -16,7 +16,7 @@ export default function ClientSlider() {
     slidesToScroll: 1,
     arrows: false,
     centerMode: true,
-    centerPadding: "20px",
+    centerPadding: "60px", // Increased center padding for more space
     focusOnSelect: true,
     autoplay: true,
     autoplaySpeed: 1, // Minimal delay to maintain smooth motion
@@ -29,6 +29,7 @@ export default function ClientSlider() {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 2,
+          centerPadding: "40px", // Adjusted for smaller screens
         },
       },
       {
@@ -36,6 +37,7 @@ export default function ClientSlider() {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
+          centerPadding: "30px", // Adjusted for smaller screens
         },
       },
       {
@@ -43,6 +45,7 @@ export default function ClientSlider() {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
+          centerPadding: "20px", // Adjusted for smaller screens
         },
       },
     ],
@@ -124,6 +127,7 @@ const LogoContainer = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 15px;
+  margin: 0 10px; /* Added margin to create space between logos */
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease;
 
@@ -134,14 +138,15 @@ const LogoContainer = styled.div`
 
   @media (max-width: 768px) {
     padding: 10px;
+    margin: 0 5px; /* Adjusted margin for smaller screens */
   }
 `;
 
 const Logo = styled.img`
-  width: 120px; /* Fixed width */
-  height: 120px; /* Fixed height */
-  object-fit: cover; /* Stretch the logo to fill the container */
-  aspect-ratio: 3 / 2; /* Force a square aspect ratio */
+  width: 180px; /* Fixed width */
+  height: 100px; /* Fixed height */
+  object-fit: contain; /* Ensures the logo fits within the container */
+  aspect-ratio: 3 / 2; /* Force a 3:2 aspect ratio */
   transition: transform 0.3s ease, filter 0.3s ease;
 
   &:hover {
