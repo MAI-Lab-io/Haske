@@ -127,7 +127,7 @@ const LogoContainer = styled.div`
   align-items: center;
   cursor: pointer;
   padding: 15px;
-  margin: 0 10px; /* Added margin to create space between logos */
+  margin: 0 20px; /* Added margin to create space between logos */
   opacity: 0.8;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease;
 
@@ -138,7 +138,7 @@ const LogoContainer = styled.div`
 
   @media (max-width: 768px) {
     padding: 10px;
-    margin: 0 5px; /* Adjusted margin for smaller screens */
+    margin: 0 10px; /* Adjusted margin for smaller screens */
   }
 `;
 
