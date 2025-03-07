@@ -1,11 +1,14 @@
 import React from "react";
 import styled from "styled-components";
+import CountUp from "react-countup"; // Import CountUp for number animation
 
 export default function ProjectBox({ metric, title, text, action }) {
   return (
     <Wrapper>
       <MetricCard className="animate pointer" onClick={action ? () => action() : null}>
-        <MetricValue className="font40 extraBold">{metric}</MetricValue>
+        <MetricValue className="font40 extraBold">
+          <CountUp end={metric} duration={2.5} separator="," /> {/* Animate the number */}
+        </MetricValue>
         <h3 className="font20 extraBold">{title}</h3>
         <p className="font13">{text}</p>
       </MetricCard>
@@ -23,12 +26,12 @@ const MetricCard = styled.div`
   background: #fff;
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
   }
 `;
 
