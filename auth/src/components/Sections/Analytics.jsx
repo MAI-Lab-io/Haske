@@ -95,19 +95,26 @@ export default function Analytics() {
             </AddLeft>
             <AddRight>
               <h4 className="font15 semiBold">A few words about company</h4>
-              <h2 className="font40 extraBold">Our Mission and Vision</h2>
+              <h2 className="font40 extraBold">Medical Artificial Intelligence Laboratory (MAI Lab) </h2>
               <p className="font12">
-                We are committed to providing world-class solutions for healthcare imaging and analytics. 
-                Our platform is designed to enhance the efficiency and accuracy of healthcare professionals in their daily tasks.
+                MAI Lab aims to enable the rapid adoption of AI solutions in resource-limited clinics in Africa by addressing gaps in AI infrastructure, capacity, and policy to improve health outcomes.
+                Our holistic approach tackles complex AI challenges in healthcare by strengthening the entire AI ecosystem in Africa.
               </p>
+             
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
-                <div style={{ width: "190px" }}>
-                  <FullButton title="Get Started" action={() => alert("clicked")} />
-                </div>
-                <div style={{ width: "190px", marginLeft: "15px" }}>
-                  <FullButton title="Contact Us" action={() => alert("clicked")} border />
-                </div>
-              </ButtonsRow>
+      <div style={{ width: "190px" }}>
+        {/* External link to the "Get Started" page */}
+        <a href="https://mailab.io/" style={{ textDecoration: "none" }}>
+          <FullButton title="Learn More" />
+        </a>
+      </div>
+      <div style={{ width: "190px", marginLeft: "15px" }}>
+        {/* External link to the "Contact Us" page */}
+        <a href="https://mailab.io/contact-us/" style={{ textDecoration: "none" }}>
+          <FullButton title="Contact Us" border />
+        </a>
+      </div>
+    </ButtonsRow>
             </AddRight>
           </Advertising>
         </div>
