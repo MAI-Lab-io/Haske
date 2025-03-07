@@ -2,12 +2,13 @@ import React from "react";
 import styled from "styled-components";
 import CountUp from "react-countup"; // Import CountUp for number animation
 
-export default function ProjectBox({ metric, title, text, action }) {
+export default function ProjectBox({ metric, title, text, action, suffix, prefix }) {
   return (
     <Wrapper>
       <MetricCard className="animate pointer" onClick={action ? () => action() : null}>
         <MetricValue className="font40 extraBold">
-          <CountUp end={metric} duration={2.5} separator="," /> {/* Animate the number */}
+          {prefix} {/* Add prefix (e.g., "$") */}
+          <CountUp end={metric} duration={2.5} separator="," suffix={suffix} /> {/* Add suffix (e.g., "+", "%") */}
         </MetricValue>
         <h3 className="font20 extraBold">{title}</h3>
         <p className="font13">{text}</p>
