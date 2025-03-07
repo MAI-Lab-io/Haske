@@ -1,15 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 // Components
-import InfoBox from "../Elements/ProjectBox";
+import ProjectBox from "../Elements/ProjectBox";
 import FullButton from "../Buttons/FullButton";
 // Assets
-import InfoImg1 from "../../assets/img/analytics/1.jpg";
-import InfoImg2 from "../../assets/img/analytics/2.jpg";
-import InfoImg3 from "../../assets/img/analytics/3.jpg";
-import InfoImg4 from "../../assets/img/analytics/4.jpg";
-import InfoImg5 from "../../assets/img/analytics/5.jpg";
-import InfoImg6 from "../../assets/img/analytics/6.jpg";
 import AddImage2 from "../../assets/img/add/add2.png";
 
 export default function Analytics() {
@@ -26,24 +20,24 @@ export default function Analytics() {
           </HeaderInfo>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg1}
+              <ProjectBox
+                metric="150+"
                 title="Institutions Deployed"
                 text="Currently deployed in over 150 institutions globally."
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg2}
+              <ProjectBox
+                metric="2M+"
                 title="Total Images Processed"
                 text="We've processed over 2 million images across various platforms."
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg3}
+              <ProjectBox
+                metric="10"
                 title="Total Active Regions"
                 text="Currently operational in 10 active regions worldwide."
                 action={() => alert("clicked")}
@@ -52,24 +46,24 @@ export default function Analytics() {
           </div>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg4}
+              <ProjectBox
+                metric="30K+"
                 title="Users Engaged"
                 text="Over 30,000 active users engaging daily with our platform."
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg5}
+              <ProjectBox
+                metric="500K+"
                 title="Images Uploaded Monthly"
                 text="On average, over 500,000 images are uploaded monthly."
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <InfoBox
-                img={InfoImg6}
+              <ProjectBox
+                metric="99.9%"
                 title="Platform Uptime"
                 text="Our platform boasts 99.9% uptime, ensuring seamless access."
                 action={() => alert("clicked")}
@@ -100,21 +94,18 @@ export default function Analytics() {
                 MAI Lab aims to enable the rapid adoption of AI solutions in resource-limited clinics in Africa by addressing gaps in AI infrastructure, capacity, and policy to improve health outcomes.
                 Our holistic approach tackles complex AI challenges in healthcare by strengthening the entire AI ecosystem in Africa.
               </p>
-             
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
-      <div style={{ width: "190px" }}>
-        {/* External link to the "Get Started" page */}
-        <a href="https://mailab.io/" style={{ textDecoration: "none" }}>
-          <FullButton title="Learn More" />
-        </a>
-      </div>
-      <div style={{ width: "190px", marginLeft: "15px" }}>
-        {/* External link to the "Contact Us" page */}
-        <a href="https://mailab.io/contact-us/" style={{ textDecoration: "none" }}>
-          <FullButton title="Contact Us" border />
-        </a>
-      </div>
-    </ButtonsRow>
+                <div style={{ width: "190px" }}>
+                  <a href="https://mailab.io/" style={{ textDecoration: "none" }}>
+                    <FullButton title="Learn More" />
+                  </a>
+                </div>
+                <div style={{ width: "190px", marginLeft: "15px" }}>
+                  <a href="https://mailab.io/contact-us/" style={{ textDecoration: "none" }}>
+                    <FullButton title="Contact Us" border />
+                  </a>
+                </div>
+              </ButtonsRow>
             </AddRight>
           </Advertising>
         </div>
