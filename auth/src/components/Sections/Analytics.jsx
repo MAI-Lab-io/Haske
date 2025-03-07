@@ -76,11 +76,7 @@ export default function Analytics() {
               />
             </div>
           </div>
-          <div className="row flexCenter">
-            <div style={{ margin: "50px 0", width: "200px" }}>
-              <FullButton title="View More Insights" action={() => alert("clicked")} />
-            </div>
-          </div>
+          
         </div>
       </div>
       <div className="lightBg">
