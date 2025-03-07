@@ -25,14 +25,16 @@ export default function Analytics() {
                 title="Institutions Deployed"
                 text="Currently deployed in over 150 institutions globally."
                 action={() => alert("clicked")}
+                suffix="+" // Add "+" suffix
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric={2000000} // Pass a number
+                metric={2} // Pass a number
                 title="Total Images Processed"
                 text="We've processed over 2 million images across various platforms."
                 action={() => alert("clicked")}
+                suffix="M+" // Add "M+" suffix
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -41,24 +43,27 @@ export default function Analytics() {
                 title="Total Active Regions"
                 text="Currently operational in 10 active regions worldwide."
                 action={() => alert("clicked")}
+                suffix="+" // Add "+" suffix
               />
             </div>
           </div>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric={30000} // Pass a number
+                metric={30} // Pass a number
                 title="Users Engaged"
                 text="Over 30,000 active users engaging daily with our platform."
                 action={() => alert("clicked")}
+                suffix="K+" // Add "K+" suffix
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric={500000} // Pass a number
+                metric={500} // Pass a number
                 title="Images Uploaded Monthly"
                 text="On average, over 500,000 images are uploaded monthly."
                 action={() => alert("clicked")}
+                suffix="K+" // Add "K+" suffix
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -67,6 +72,7 @@ export default function Analytics() {
                 title="Platform Uptime"
                 text="Our platform boasts 99.9% uptime, ensuring seamless access."
                 action={() => alert("clicked")}
+                suffix="%" // Add "%" suffix
               />
             </div>
           </div>
