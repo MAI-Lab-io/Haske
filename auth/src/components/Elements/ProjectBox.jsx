@@ -1,19 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import CountUp from "react-countup"; // Import CountUp for number animation
+import CountUp from "react-countup";
+import { InView } from "react-intersection-observer"; // Import InView
 
 export default function ProjectBox({ metric, title, text, action, suffix, prefix }) {
+  const [isInView, setIsInView] = useState(false); // State to track if the component is in view
+
   return (
-    <Wrapper>
-      <MetricCard className="animate pointer" onClick={action ? () => action() : null}>
-        <MetricValue className="font40 extraBold">
-          {prefix} {/* Add prefix (e.g., "$") */}
-          <CountUp end={metric} duration={2.5} separator="," suffix={suffix} /> {/* Add suffix (e.g., "+", "%") */}
-        </MetricValue>
-        <h3 className="font20 extraBold">{title}</h3>
-        <p className="font13">{text}</p>
-      </MetricCard>
-    </Wrapper>
+    <InView triggerOnce={true} onChange={(inView) => setIsInView(inView)}>
+      {({ ref }) => (
+        <Wrapper ref={ref}>
+          <MetricCard className="animate pointer" onClick={action ? () => action() : null}>
+            <MetricValue className="font40 extraBold">
+              {prefix} {/* Add prefix (e.g., "$") */}
+              {isInView ? ( // Only animate when in view
+                <CountUp end={metric} duration={2.5} separator="," suffix={suffix} />
+              ) : (
+                <span>0{suffix}</span> // Default value before animation
+              )}
+            </MetricValue>
+            <h3 className="font20 extraBold">{title}</h3>
+            <p className="font13">{text}</p>
+          </MetricCard>
+        </Wrapper>
+      )}
+    </InView>
   );
 }
 
