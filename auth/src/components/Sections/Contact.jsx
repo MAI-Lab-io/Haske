@@ -37,11 +37,7 @@ export default function Contact() {
             </div>
             <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 flex">
             
-              <div style={{ width: "50%" }}>
-                <div style={{ marginTop: "100px" }}>
-<img src={ContactImg3} alt="office" className="radius6" style={{ width: "500px", height: "300px" }} />
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>
