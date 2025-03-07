@@ -91,17 +91,27 @@ export default function Analytics() {
                 Our holistic approach tackles complex AI challenges in healthcare by strengthening the entire AI ecosystem in Africa.
               </p>
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
-                <div style={{ width: "190px" }}>
-                  <a href="https://mailab.io/" style={{ textDecoration: "none" }}>
-                    <FullButton title="Learn More" />
-                  </a>
-                </div>
-                <div style={{ width: "190px", marginLeft: "15px" }}>
-                  <a href="https://mailab.io/contact-us/" style={{ textDecoration: "none" }}>
-                    <FullButton title="Contact Us" border />
-                  </a>
-                </div>
-              </ButtonsRow>
+              <div style={{ width: "190px" }}>
+                <a 
+                  href="https://mailab.io/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ textDecoration: "none" }}
+                >
+                  <FullButton title="Learn More" />
+                </a>
+              </div>
+              <div style={{ width: "190px", marginLeft: "15px" }}>
+                <a 
+                  href="https://mailab.io/contact-us/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  style={{ textDecoration: "none" }}
+                >
+                  <FullButton title="Contact Us" border />
+                </a>
+              </div>
+            </ButtonsRow>
             </AddRight>
           </Advertising>
         </div>
