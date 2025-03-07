@@ -21,7 +21,7 @@ export default function Analytics() {
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="150+"
+                metric={150} // Pass a number
                 title="Institutions Deployed"
                 text="Currently deployed in over 150 institutions globally."
                 action={() => alert("clicked")}
@@ -29,7 +29,7 @@ export default function Analytics() {
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="2M+"
+                metric={2000000} // Pass a number
                 title="Total Images Processed"
                 text="We've processed over 2 million images across various platforms."
                 action={() => alert("clicked")}
@@ -37,7 +37,7 @@ export default function Analytics() {
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="10"
+                metric={10} // Pass a number
                 title="Total Active Regions"
                 text="Currently operational in 10 active regions worldwide."
                 action={() => alert("clicked")}
@@ -47,7 +47,7 @@ export default function Analytics() {
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="30K+"
+                metric={30000} // Pass a number
                 title="Users Engaged"
                 text="Over 30,000 active users engaging daily with our platform."
                 action={() => alert("clicked")}
@@ -55,7 +55,7 @@ export default function Analytics() {
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="500K+"
+                metric={500000} // Pass a number
                 title="Images Uploaded Monthly"
                 text="On average, over 500,000 images are uploaded monthly."
                 action={() => alert("clicked")}
@@ -63,14 +63,18 @@ export default function Analytics() {
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <ProjectBox
-                metric="99.9%"
+                metric={99.9} // Pass a number
                 title="Platform Uptime"
                 text="Our platform boasts 99.9% uptime, ensuring seamless access."
                 action={() => alert("clicked")}
               />
             </div>
           </div>
-        
+          <div className="row flexCenter">
+            <div style={{ margin: "50px 0", width: "200px" }}>
+              <FullButton title="View More Insights" action={() => alert("clicked")} />
+            </div>
+          </div>
         </div>
       </div>
       <div className="lightBg">
@@ -91,27 +95,17 @@ export default function Analytics() {
                 Our holistic approach tackles complex AI challenges in healthcare by strengthening the entire AI ecosystem in Africa.
               </p>
               <ButtonsRow className="flexNullCenter" style={{ margin: "30px 0" }}>
-              <div style={{ width: "190px" }}>
-                <a 
-                  href="https://mailab.io/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ textDecoration: "none" }}
-                >
-                  <FullButton title="Learn More" />
-                </a>
-              </div>
-              <div style={{ width: "190px", marginLeft: "15px" }}>
-                <a 
-                  href="https://mailab.io/contact-us/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ textDecoration: "none" }}
-                >
-                  <FullButton title="Contact Us" border />
-                </a>
-              </div>
-            </ButtonsRow>
+                <div style={{ width: "190px" }}>
+                  <a href="https://mailab.io/" style={{ textDecoration: "none" }}>
+                    <FullButton title="Learn More" />
+                  </a>
+                </div>
+                <div style={{ width: "190px", marginLeft: "15px" }}>
+                  <a href="https://mailab.io/contact-us/" style={{ textDecoration: "none" }}>
+                    <FullButton title="Contact Us" border />
+                  </a>
+                </div>
+              </ButtonsRow>
             </AddRight>
           </Advertising>
         </div>
