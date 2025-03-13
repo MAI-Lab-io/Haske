@@ -14,7 +14,7 @@ function ProtectedContent() {
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
-            fetch(`https://haske.online:8080/api/verification/check-verification?email=${user.email}`)
+            fetch(`https://haske.online:8090/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.isVerified) {
@@ -36,7 +36,7 @@ function ProtectedContent() {
 
     useEffect(() => {
         if (isVerified !== null && isAdmin) {
-            fetch("https://haske.online:8080/api/institutions")
+            fetch("https://haske.online:8090/api/institutions")
                 .then((response) => response.json())
                 .then((data) => {
                     if (Array.isArray(data)) {
@@ -52,7 +52,7 @@ function ProtectedContent() {
     const handleSignOut = () => {
         const user = auth.currentUser;
         if (user) {
-            fetch('https://haske.online:8080/api/verification/log-action', {
+            fetch('https://haske.online:8090/api/verification/log-action', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
