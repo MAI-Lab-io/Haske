@@ -50,7 +50,7 @@ const AdminLayout = () => {
 
       try {
         const response = await fetch(
-          `https://haske.online:8080/api/verification/check-verification?email=${user.email}`
+          `https://haske.online:8090/api/verification/check-verification?email=${user.email}`
         );
         const data = await response.json();
         if (data.isAdmin) {
