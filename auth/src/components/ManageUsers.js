@@ -11,7 +11,7 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("https://haske.online:8080/api/verification/get-users");
+      const response = await fetch("https://haske.online:8090/api/verification/get-users");
       const data = await response.json();
       setUsers(data);
       setFilteredUsers(data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
@@ -29,7 +29,7 @@ const ManageUsers = () => {
 
   const handleApprove = async (userId, approved) => {
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/approve-user/${userId}`, {
+      const response = await fetch(`https://haske.online:8090/api/verification/approve-user/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ approved }),
@@ -46,7 +46,7 @@ const ManageUsers = () => {
 
   const handleDeactivate = async (userId, deactivated) => {
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/deactivate-user/${userId}`, {
+      const response = await fetch(`https://haske.online:8090/api/verification/deactivate-user/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ deactivated }),
@@ -68,7 +68,7 @@ const ManageUsers = () => {
 
     const user = auth.currentUser;
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/update-role/${userId}`, {
+      const response = await fetch(`https://haske.online:8090/api/verification/update-role/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ role: "admin", requesterEmail: user.email }),
@@ -87,7 +87,7 @@ const ManageUsers = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
-      const response = await fetch(`https://haske.online:8080/api/verification/delete-user/${userId}`, { method: "DELETE" });
+      const response = await fetch(`https://haske.online:8090/api/verification/delete-user/${userId}`, { method: "DELETE" });
 
       response.ok ? setNotification("User deleted successfully!") : setNotification("Failed to delete user.");
       fetchUsers();
@@ -117,7 +117,7 @@ const ManageUsers = () => {
 const logUserAction = async (userId, action) => {
   try {
     const user = auth.currentUser;
-    const response = await fetch("https://haske.online:8080/api/verification/log-action", {
+    const response = await fetch("https://haske.online:8090/api/verification/log-action", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
