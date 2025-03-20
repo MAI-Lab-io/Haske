@@ -87,6 +87,13 @@ function ProtectedContent() {
 
     const handleFilterClick = () => {
         setInstitutionName(selectedInstitution || "");
+        const iframe = document.querySelector(".protected-iframe");
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(
+                { type: "filter", institution: selectedInstitution },
+                "https://haske.online:5000"
+            );
+        }
     };
 
     if (isVerified === null) return <div>Loading...</div>;
