@@ -39,8 +39,8 @@ export default function TestimonialSlider() {
         </LogoWrapper>
         <LogoWrapper className="flexCenter">
           <TestimonialBox
-            text="Friends, such as we desire, are dreams and fables. Friendship demands the ability to do without it."
-            author="Ralph Waldo Emerson"
+            text="I just started using Haske, and it is a game-changer Super fast, easy to use, and makes managing imaging so much smoother. It's definitely a big step forward."
+            author="James Ajigbotosho"
           />
         </LogoWrapper>
         <LogoWrapper className="flexCenter">
