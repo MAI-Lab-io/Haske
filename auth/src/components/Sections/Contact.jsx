@@ -108,17 +108,17 @@ const SumbitWrapper = styled.div`
 `;
 const LogoWrapper = styled.div`
   display: flex;
-  justify-content: flex-end; /* Align logo to the right */
-  align-items: flex-start; /* Align logo to the top */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   height: 100%; /* Fill the height of the column */
-  padding-top: 70px; /* Match the form's top padding */
+  width: 100%; /* Fill the width of the column */
 
   .logo {
-    max-width: 100%; /* Ensure the logo fits within the column */
+    max-width: 80%; /* Make the logo larger */
     height: auto; /* Maintain aspect ratio */
-    max-height: 100%; /* Fill the height of the column */
+    max-height: 80%; /* Ensure the logo doesn't overflow */
     @media (max-width: 768px) {
-      max-width: 80%; /* Adjust logo size for smaller screens */
+      max-width: 60%; /* Adjust logo size for smaller screens */
     }
   }
 `;
