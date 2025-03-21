@@ -2,6 +2,12 @@ import React from "react";
 import styled from "styled-components";
 
 export default function BlogBox({ tag, title, text, action, author }) {
+  // Function to handle tag click
+  const handleTagClick = (e) => {
+    e.stopPropagation(); // Prevent the main action from being triggered
+    window.open("https://crestviewradiology.org/", "_blank"); // Open the URL in a new tab
+  };
+
   return (
     <WrapperBtn className="animate pointer" onClick={action ? () => action() : null}>
       <Wrapper className="whiteBg radius8 shadow">
@@ -11,7 +17,13 @@ export default function BlogBox({ tag, title, text, action, author }) {
         </p>
         <p className="font13 extraBold">{author}</p>
         <div className="flex">
-          <p className="tag coralBg radius6 font13 extraBold">{tag}</p>
+          <p
+            className="tag coralBg radius6 font13 extraBold"
+            onClick={handleTagClick} // Add click handler for the tag
+            style={{ cursor: "pointer" }} // Make the tag look clickable
+          >
+            {tag}
+          </p>
         </div>
       </Wrapper>
     </WrapperBtn>
@@ -24,6 +36,7 @@ const Wrapper = styled.div`
   padding: 20px 30px;
   margin-top: 30px;
 `;
+
 const WrapperBtn = styled.button`
   border: 0px;
   outline: none;
