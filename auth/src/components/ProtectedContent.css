@@ -75,7 +75,7 @@
 }
 
 .signout-button {
-    padding: 14px 75px;
+    padding: 14px 85px;
     background-color: transparent; /* No background color */
     color: white; /* White text color */
     border-radius: 4px;
@@ -84,7 +84,7 @@
     transition: background-color 0.3s, color 0.3s;
 }
 .admin-button {
-    padding: 14px 75px;
+    padding: 14px 76px;
     background-color: transparent; /* No background color */
     color: white; /* White text color */
     border-radius: 4px;
