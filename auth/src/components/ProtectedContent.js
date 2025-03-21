@@ -102,41 +102,39 @@ function ProtectedContent() {
         ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
         : `https://haske.online:5000/ui/app/#${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : ""}`;
 
-    return (
-        <div className="protected-container">
-            <iframe src={iframeSrc} title="Haske" className="protected-iframe"></iframe>
-            <div className="overlay-container">
-                <div className="sidebar">
-                    {isAdmin && (
-                        <div className="filter-section">
-                            <label htmlFor="institutionFilter">Select Institution:</label>
-                            <select id="institutionFilter" value={selectedInstitution} onChange={handleInstitutionChange}>
-                                <option value="">All Institutions</option>
-                                {institutionsList.map((institution) => (
-                                    <option key={institution.id} value={institution.name}>
-                                        {institution.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <button onClick={handleFilterClick} className="filter-button">
-                                Apply Filter
-                            </button>
-                        </div>
-                    )}
-                    <div className="button-container">
-                        {isAdmin && (
-                            <button onClick={() => navigate("/admin")} className="admin-button">
-                                Admin Panel
-                            </button>
-                        )}
-                        <button onClick={handleSignOut} className="signout-button">
-                            Sign Out
-                        </button>
-                    </div>
+return (
+    <div className="protected-container">
+        <iframe src={iframeSrc} title="Haske" className="protected-iframe"></iframe>
+        <div className="overlay-container">
+            {isAdmin && (
+                <div className="filter-section">
+                    <label htmlFor="institutionFilter">Select Institution:</label>
+                    <select id="institutionFilter" value={selectedInstitution} onChange={handleInstitutionChange}>
+                        <option value="">All Institutions</option>
+                        {institutionsList.map((institution) => (
+                            <option key={institution.id} value={institution.name}>
+                                {institution.name}
+                            </option>
+                        ))}
+                    </select>
+                    <button onClick={handleFilterClick} className="filter-button">
+                        Apply Filter
+                    </button>
                 </div>
+            )}
+            <div className="signout-container">
+                {isAdmin && (
+                    <button onClick={() => navigate("/admin")} className="admin-button">
+                        Admin Panel
+                    </button>
+                )}
+                <button onClick={handleSignOut} className="signout-button">
+                    Sign Out
+                </button>
             </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default ProtectedContent;
