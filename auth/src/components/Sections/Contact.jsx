@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ContactImg1 from "../../assets/img/contact-1.png";
 import ContactImg2 from "../../assets/img/contact-2.png";
 import ContactImg3 from "../../assets/img/contact-3.png";
+import Logo from "../../assets/haske.png"; // Import the logo
 
 export default function Contact() {
   return (
@@ -16,7 +17,6 @@ export default function Contact() {
               Is your institution looking to integrate innovative digital imaging and diagnostic tools?
               <br />
               At Haske, we are committed to enhancing operational efficiency and advancing medical diagnostics. If your institution is interested in exploring a partnership or implementing Haske in your operations, we would be delighted to discuss how we can support your goals.
-              
             </p>
           </HeaderInfo>
           <div className="row" style={{ paddingBottom: "30px" }}>
@@ -29,15 +29,24 @@ export default function Contact() {
                 <label className="font13">Email Address:</label>
                 <input type="email" id="email" name="email" className="font20 extraBold" />
                 <label className="font13">What is your Inquiry:</label>
-                <textarea rows="4" cols="50" type="text" id="message" name="message" className="font20 extraBold" placeholder="Feel free to ask any specific questions or provide additional information." />
+                <textarea
+                  rows="4"
+                  cols="50"
+                  type="text"
+                  id="message"
+                  name="message"
+                  className="font20 extraBold"
+                  placeholder="Feel free to ask any specific questions or provide additional information."
+                />
               </Form>
               <SumbitWrapper className="flex">
                 <ButtonInput type="submit" value="Submit Inquiry" className="pointer animate radius8" style={{ maxWidth: "220px" }} />
               </SumbitWrapper>
             </div>
             <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 flex">
-            
-              
+              <LogoWrapper>
+                <img src={Logo} alt="Haske Logo" className="logo" />
+              </LogoWrapper>
             </div>
           </div>
         </div>
@@ -77,30 +86,39 @@ const Form = styled.form`
 `;
 const ButtonInput = styled.input`
   border: 1px solid #dd841a;
-  background-color: #0F172A;
+  background-color: #0f172a;
   width: 100%;
   padding: 15px;
   outline: none;
   color: #fff;
   :hover {
     background-color: #dd841a;
-    border: 1px solid #0F172A;
+    border: 1px solid #0f172a;
     color: #fff;
   }
   @media (max-width: 991px) {
     margin: 0 auto;
   }
 `;
-
-
-const ContactImgBox = styled.div`
-  max-width: 180px; 
-  align-self: flex-end; 
-  margin: 10px 30px 10px 0;
-`;
 const SumbitWrapper = styled.div`
   @media (max-width: 991px) {
     width: 100%;
     margin-bottom: 50px;
+  }
+`;
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end; /* Align logo to the right */
+  align-items: flex-start; /* Align logo to the top */
+  height: 100%; /* Fill the height of the column */
+  padding-top: 70px; /* Match the form's top padding */
+
+  .logo {
+    max-width: 100%; /* Ensure the logo fits within the column */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 100%; /* Fill the height of the column */
+    @media (max-width: 768px) {
+      max-width: 80%; /* Adjust logo size for smaller screens */
+    }
   }
 `;
