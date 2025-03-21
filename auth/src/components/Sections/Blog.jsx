@@ -19,16 +19,14 @@ export default function Blog() {
           </HeaderInfo>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-              <BlogBox
-                title="Crestview Radiology, Igbogbi"
-                text="National Orthopaedic Hospital Crestview Place 120/124 Ikorodu Road,
-                  Onipanu Igbobi,
-                  Lagos, Nigeria."
-                tag="company"
-                author="Deployed 2 months ago"
-                action={() => alert("clicked")}
-              />
-            </div>
+    <BlogBox
+        title="Crestview Radiology, Igbogbi"
+        text="National Orthopaedic Hospital Crestview Place 120/124 Ikorodu Road, Onipanu Igbobi, Lagos, Nigeria."
+        tag="company"
+        author="Deployed 2 months ago"
+        action={() => window.open("https://crestviewradiology.org/", "_blank")} // Open URL in a new tab
+    />
+</div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <BlogBox
                 title="Crestview Radiology, VI"
