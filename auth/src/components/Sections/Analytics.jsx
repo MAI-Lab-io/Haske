@@ -90,7 +90,7 @@ export default function Analytics() {
               </AddLeftInner>
             </AddLeft>
             <AddRight>
-              <h4 className="font15 semiBold">A few words about company</h4>
+              <h4 className="font15 semiBold">A few words about us</h4>
               <h2 className="font40 extraBold">Medical Artificial Intelligence Laboratory (MAI Lab) </h2>
               <p className="font12">
                 MAI Lab aims to enable the rapid adoption of AI solutions in resource-limited clinics in Africa by addressing gaps in AI infrastructure, capacity, and policy to improve health outcomes.
