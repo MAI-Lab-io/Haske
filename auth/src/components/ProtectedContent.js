@@ -108,7 +108,6 @@ return (
         <div className="overlay-container">
             {isAdmin && (
                 <div className="filter-section">
-                    <label htmlFor="institutionFilter">Select Institution:</label>
                     <select id="institutionFilter" value={selectedInstitution} onChange={handleInstitutionChange}>
                         <option value="">All Institutions</option>
                         {institutionsList.map((institution) => (
