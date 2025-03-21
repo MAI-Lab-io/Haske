@@ -3,97 +3,83 @@
 .protected-container {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100vh; /* Full viewport height */
+    background-color: #f0f4f8; /* Light background color */
 }
 
 .protected-iframe {
     width: 100%;
-    height: 100%;
-    border: none;
+    height: 100%; /* Full height for iframe */
+    border: none; /* No border for iframe */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for iframe */
+    border-radius: 8px; /* Rounded corners */
 }
 
 .overlay-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    bottom: 20px; /* Position at the bottom */
+    left: 20px; /* Position at the left */
+    z-index: 1000; /* Ensure it's above the iframe */
     pointer-events: none; /* Allow clicks to pass through to the iframe */
 }
 
-/* Sidebar styling */
-.sidebar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 250px; /* Width of the sidebar */
-    height: 100%;
-    background-color: #2c3e50; /* Dark background for sidebar */
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    pointer-events: auto; /* Enable clicks on sidebar elements */
-    z-index: 1000; /* Ensure it's above the iframe */
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Space between elements */
+.filter-section, .signout-container {
+    pointer-events: auto; /* Enable clicks on these elements */
 }
 
-/* Filter section styling */
 .filter-section {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column; /* Arrange filter elements vertically */
+    gap: 10px; /* Space between elements */
+    margin-bottom: 20px; /* Space between filter and buttons */
 }
 
 .filter-section label {
-    color: #ecf0f1; /* Light text color */
-    font-size: 14px;
+    font-size: 1rem;
+    color: #333; /* Dark text color */
 }
 
 .filter-section select {
     padding: 8px;
     border-radius: 4px;
-    border: none;
-    background-color: #34495e; /* Darker background for select */
-    color: #ecf0f1; /* Light text color */
+    border: 1px solid #ccc;
+    font-size: 1rem;
 }
 
 .filter-button {
-    padding: 8px 12px;
-    background-color: #3498db; /* Blue button color */
+    padding: 10px 20px;
+    background-color: #5d455f; /* Primary button color */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 1rem;
     transition: background-color 0.3s;
 }
 
 .filter-button:hover {
-    background-color: #2980b9; /* Darker blue on hover */
+    background-color: #4a364b; /* Darker color on hover */
 }
 
-/* Button container styling */
-.button-container {
+.signout-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Arrange buttons vertically */
     gap: 10px; /* Space between buttons */
 }
 
-/* Admin and Sign Out button styling */
-.admin-button,
-.signout-button {
-    padding: 10px 15px;
-    background-color: #5d455f; /* Purple button color */
+.signout-button,
+.admin-button {
+    padding: 12px 20px;
+    background-color: #5d455f; /* Primary button color */
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 1rem;
     transition: background-color 0.3s;
-    text-align: left; /* Align text to the left */
 }
 
-.admin-button:hover,
-.signout-button:hover {
-    background-color: #4a354b; /* Darker purple on hover */
+.signout-button:hover,
+.admin-button:hover {
+    background-color: #4a364b; /* Darker color on hover */
 }
