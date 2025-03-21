@@ -74,9 +74,17 @@
     align-items: flex-start; /* Align buttons to the left */
 }
 
-.signout-button,
+.signout-button {
+    padding: 14px 79px;
+    background-color: transparent; /* No background color */
+    color: white; /* White text color */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.3s, color 0.3s;
+}
 .admin-button {
-    padding: 14px 12px;
+    padding: 14px 79px;
     background-color: transparent; /* No background color */
     color: white; /* White text color */
     border-radius: 4px;
