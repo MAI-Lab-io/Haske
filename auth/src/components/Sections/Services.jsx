@@ -57,7 +57,7 @@ export default function Services() {
           <div className="container">
             <Advertising className="flexSpaceCenter">
               <AddLeft>
-                <h4 className="font15 semiBold">A few words about Haske</h4>
+                <h4 className="font15 semiBold">A few words about us</h4>
                 <h2 className="font40 extraBold">Transforming Healthcare Access in Nigeria</h2>
                 <p className="font12">
                   Haske was developed to overcome the financial and accessibility challenges faced by Nigerian radiology centers. By implementing a cloud-based PACS system with AI-powered diagnostics, Haske offers a transformative solution for improving healthcare delivery in low-resource environments. With ongoing clinical validation, Haske is already showing promise in reducing costs and improving medical image management efficiency.
