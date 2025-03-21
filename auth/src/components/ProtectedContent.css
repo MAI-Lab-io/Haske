@@ -1,49 +1,6 @@
 /* src/components/ProtectedContent.css */
 
 .protected-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; /* Full viewport height */
-    background-color: #f0f4f8; /* Light background color */
-    padding: 20px; /* Padding around the content */
-}
-
-.protected-iframe {
-    width: 100%;
-    height: 90vh; /* Iframe height */
-    border: none; /* No border for iframe */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Soft shadow for iframe */
-    border-radius: 8px; /* Rounded corners */
-}
-
-.signout-container {
-    margin-top: 20px; /* Space above the buttons */
-    text-align: center; /* Center the buttons */
-    display: flex; /* Flexbox for horizontal alignment */
-    justify-content: center; /* Align buttons horizontally */
-    gap: 10px; /* Space between the buttons */
-}
-
-.signout-button,
-.admin-button {
-    padding: 12px 20px; /* Padding for button */
-    background-color: #5d455f; /* Primary button color */
-    color: white; /* Button text color */
-    border: none; /* Remove default border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer on hover */
-    font-size: 1rem; /* Font size */
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-.signout-button:hover,
-.admin-button:hover {
-    background-color: #5d455f; /* Darker color on hover */
-}
-
-.protected-container {
     position: relative;
     width: 100%;
     height: 100vh;
@@ -64,33 +21,79 @@
     pointer-events: none; /* Allow clicks to pass through to the iframe */
 }
 
-.filter-section, .signout-container {
-    pointer-events: auto; /* Enable clicks on these elements */
-}
-
-.signout-container {
+/* Sidebar styling */
+.sidebar {
     position: absolute;
-    top: 20px;
-    right: 20px;
+    top: 0;
+    left: 0;
+    width: 250px; /* Width of the sidebar */
+    height: 100%;
+    background-color: #2c3e50; /* Dark background for sidebar */
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    pointer-events: auto; /* Enable clicks on sidebar elements */
     z-index: 1000; /* Ensure it's above the iframe */
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between elements */
 }
 
+/* Filter section styling */
 .filter-section {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 1000; /* Ensure it's above the iframe */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.filter-button, .admin-button, .signout-button {
-    padding: 10px 20px;
-    background-color: #007bff;
+.filter-section label {
+    color: #ecf0f1; /* Light text color */
+    font-size: 14px;
+}
+
+.filter-section select {
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: #34495e; /* Darker background for select */
+    color: #ecf0f1; /* Light text color */
+}
+
+.filter-button {
+    padding: 8px 12px;
+    background-color: #3498db; /* Blue button color */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.filter-button:hover, .admin-button:hover, .signout-button:hover {
-    background-color: #0056b3;
+.filter-button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Button container styling */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between buttons */
+}
+
+/* Admin and Sign Out button styling */
+.admin-button,
+.signout-button {
+    padding: 10px 15px;
+    background-color: #5d455f; /* Purple button color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    text-align: left; /* Align text to the left */
+}
+
+.admin-button:hover,
+.signout-button:hover {
+    background-color: #4a354b; /* Darker purple on hover */
 }
