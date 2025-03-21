@@ -11,38 +11,42 @@ export default function Blog() {
       <div className="whiteBg">
         <div className="container">
           <HeaderInfo>
-            <h1 className="font40 extraBold">Our Blog Stories</h1>
+            <h1 className="font40 extraBold">Our Impacts</h1>
             <p className="font13">
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+              Our Current and Proposed sites of deployments.
               <br />
-              labore et dolore magna aliquyam erat, sed diam voluptua.
             </p>
           </HeaderInfo>
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <BlogBox
-                title="New Office!"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
+                title="Crestview Radiology, Igbogbi"
+                text="National Orthopaedic Hospital Crestview Place 120/124 Ikorodu Road,
+                  Onipanu Igbobi,
+                  Lagos, Nigeria."
                 tag="company"
-                author="Luke Skywalker, 2 days ago"
+                author="Deployed 2 months ago"
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <BlogBox
-                title="New Office!"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
+                title="Crestview Radiology, VI"
+                text="302A, Jide Oki Street, Off Ligali Ayorinde Street, Victoria Island, Lagos Nigeria"
                 tag="company"
-                author="Luke Skywalker, 2 days ago"
+                author="Proposed Site"
                 action={() => alert("clicked")}
               />
             </div>
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <BlogBox
-                title="New Office!"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
+                title="Crestview Radiology, Ikeja"
+                text="Ground Floor, Aviation Plaza,
+Opposite LASUTH
+Ikeja,
+Lagos, Nigeria."
                 tag="company"
-                author="Luke Skywalker, 2 days ago"
+                author="Proposed Site"
                 action={() => alert("clicked")}
               />
             </div>
@@ -50,8 +54,13 @@ export default function Blog() {
           <div className="row textCenter">
             <div className="col-xs-12 col-sm-4 col-md-4 col-lg-4">
               <BlogBox
-                title="New Office!"
-                text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
+                title="Crestview Radiology, Ilorin"
+                text="University of Ilorin Teaching Hospital
+Crestview Place
+Old Jebba Road,
+Oke – Ose,
+Ilorin,
+Kwara, Nigeria."
                 tag="company"
                 author="Luke Skywalker, 2 days ago"
                 action={() => alert("clicked")}
@@ -62,7 +71,7 @@ export default function Blog() {
                 title="New Office!"
                 text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
                 tag="company"
-                author="Luke Skywalker, 2 days ago"
+                author="Proposed Site"
                 action={() => alert("clicked")}
               />
             </div>
@@ -71,7 +80,7 @@ export default function Blog() {
                 title="New Office!"
                 text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor."
                 tag="company"
-                author="Luke Skywalker, 2 days ago"
+                author="Proposed Site"
                 action={() => alert("clicked")}
               />
             </div>
