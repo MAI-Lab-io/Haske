@@ -110,15 +110,15 @@ const LogoWrapper = styled.div`
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100%; /* Fill the height of the column */
-  width: 100%; /* Fill the width of the column */
+  height: 500%; /* Fill the height of the column */
+  width: 500%; /* Fill the width of the column */
 
   .logo {
-    max-width: 80%; /* Make the logo larger */
+    max-width: 200%; /* Make the logo larger */
     height: auto; /* Maintain aspect ratio */
-    max-height: 80%; /* Ensure the logo doesn't overflow */
+    max-height: 200%; /* Ensure the logo doesn't overflow */
     @media (max-width: 768px) {
-      max-width: 60%; /* Adjust logo size for smaller screens */
+      max-width: 100%; /* Adjust logo size for smaller screens */
     }
   }
 `;
