@@ -32,11 +32,12 @@
     flex-direction: column; /* Arrange filter elements vertically */
     gap: 10px; /* Space between elements */
     margin-bottom: 20px; /* Space between filter and buttons */
+    align-items: flex-start; /* Align items to the left */
 }
 
 .filter-section label {
     font-size: 1rem;
-    color: #333; /* Dark text color */
+    color: white; /* White text color */
 }
 
 .filter-section select {
@@ -44,42 +45,47 @@
     border-radius: 4px;
     border: 1px solid #ccc;
     font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+    color: #333; /* Dark text color for better readability */
 }
 
 .filter-button {
     padding: 10px 20px;
-    background-color: #5d455f; /* Primary button color */
-    color: white;
-    border: none;
+    background-color: transparent; /* No background color */
+    color: white; /* White text color */
+    border: 1px solid white; /* White border */
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .filter-button:hover {
-    background-color: #4a364b; /* Darker color on hover */
+    background-color: white; /* White background on hover */
+    color: #5d455f; /* Dark text color on hover */
 }
 
 .signout-container {
     display: flex;
     flex-direction: column; /* Arrange buttons vertically */
     gap: 10px; /* Space between buttons */
+    align-items: flex-start; /* Align buttons to the left */
 }
 
 .signout-button,
 .admin-button {
     padding: 12px 20px;
-    background-color: #5d455f; /* Primary button color */
-    color: white;
-    border: none;
+    background-color: transparent; /* No background color */
+    color: white; /* White text color */
+    border: 1px solid white; /* White border */
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .signout-button:hover,
 .admin-button:hover {
-    background-color: #4a364b; /* Darker color on hover */
+    background-color: white; /* White background on hover */
+    color: #5d455f; /* Dark text color on hover */
 }
