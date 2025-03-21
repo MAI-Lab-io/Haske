@@ -87,13 +87,6 @@ function ProtectedContent() {
 
     const handleFilterClick = () => {
         setInstitutionName(selectedInstitution || "");
-        const iframe = document.querySelector(".protected-iframe");
-        if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage(
-                { type: "filter", institution: selectedInstitution },
-                "https://haske.online:5000"
-            );
-        }
     };
 
     if (isVerified === null) return <div>Loading...</div>;
@@ -112,7 +105,7 @@ function ProtectedContent() {
     return (
         <div className="protected-container">
             <iframe src={iframeSrc} title="Haske" className="protected-iframe"></iframe>
-            <div className="filter-container">
+            <div className="overlay-container">
                 {isAdmin && (
                     <div className="filter-section">
                         <label htmlFor="institutionFilter">Select Institution:</label>
@@ -129,16 +122,16 @@ function ProtectedContent() {
                         </button>
                     </div>
                 )}
-            </div>
-            <div className="signout-container">
-                {isAdmin && (
-                    <button onClick={() => navigate("/admin")} className="admin-button">
-                        Admin Panel
+                <div className="signout-container">
+                    {isAdmin && (
+                        <button onClick={() => navigate("/admin")} className="admin-button">
+                            Admin Panel
+                        </button>
+                    )}
+                    <button onClick={handleSignOut} className="signout-button">
+                        Sign Out
                     </button>
-                )}
-                <button onClick={handleSignOut} className="signout-button">
-                    Sign Out
-                </button>
+                </div>
             </div>
         </div>
     );
