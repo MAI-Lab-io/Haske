@@ -9,7 +9,7 @@ const Analytics = ({ darkMode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
-    fetch("https://haske.online:8080/api/verification/logs")
+    fetch("https://haske.online:8090/api/verification/logs")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data.logs)) {
