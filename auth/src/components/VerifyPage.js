@@ -48,7 +48,7 @@ const VerifyPage = () => {
 
     try {
       const response = await fetch(
-        "https://haske.online:8080/api/verification/submit-verification",
+        "https://haske.online:8090/api/verification/submit-verification",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
