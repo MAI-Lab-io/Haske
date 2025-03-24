@@ -4,7 +4,7 @@ import styled from "styled-components";
 import ContactImg1 from "../../assets/img/contact-1.png";
 import ContactImg2 from "../../assets/img/contact-2.png";
 import ContactImg3 from "../../assets/img/contact-3.png";
-import Logo from "../../assets/haske.png"; // Import the logo
+import Logo from "../../assets/haske.png";
 
 export default function Contact() {
   return (
@@ -58,12 +58,14 @@ export default function Contact() {
 const Wrapper = styled.section`
   width: 100%;
 `;
+
 const HeaderInfo = styled.div`
   padding: 70px 0 30px 0;
   @media (max-width: 860px) {
     text-align: center;
   }
 `;
+
 const Form = styled.form`
   padding: 70px 0 30px 0;
   input,
@@ -84,6 +86,7 @@ const Form = styled.form`
     padding: 30px 0;
   }
 `;
+
 const ButtonInput = styled.input`
   border: 1px solid #dd841a;
   background-color: #0f172a;
@@ -100,25 +103,28 @@ const ButtonInput = styled.input`
     margin: 0 auto;
   }
 `;
+
 const SumbitWrapper = styled.div`
   @media (max-width: 991px) {
     width: 100%;
     margin-bottom: 50px;
   }
 `;
+
 const LogoWrapper = styled.div`
   display: flex;
-  justify-content: flex-end; /* Align logo to the right */
-  align-items: flex-start; /* Align logo to the top */
-  height: 100%; /* Fill the height of the column */
-  padding-top: 70px; /* Match the form's top padding */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%;
+  width: 100%;
+  padding: 20px;
 
   .logo {
-    max-width: 100%; /* Ensure the logo fits within the column */
-    height: auto; /* Maintain aspect ratio */
-    max-height: 100%; /* Fill the height of the column */
+    max-width: 80%; /* Make logo bigger */
+    max-height: 80%; /* Maintain aspect ratio */
+    object-fit: contain;
     @media (max-width: 768px) {
-      max-width: 80%; /* Adjust logo size for smaller screens */
+      max-width: 60%; /* Adjust for mobile */
     }
   }
 `;
