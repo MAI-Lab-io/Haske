@@ -115,13 +115,13 @@ const LogoWrapper = styled.div`
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 400%;
-  width: 400%;
+  height: 400px;
+  width: 400px;
   padding: 20px;
 
   .logo {
-    max-width: 380%; /* Make logo bigger */
-    max-height: 380%; /* Maintain aspect ratio */
+    max-width: 80%; /* Make logo bigger */
+    max-height: 80%; /* Maintain aspect ratio */
     object-fit: contain;
     @media (max-width: 768px) {
       max-width: 360%; /* Adjust for mobile */
