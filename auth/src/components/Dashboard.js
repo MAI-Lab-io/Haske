@@ -9,12 +9,12 @@ const Dashboard = () => {
   const [studyDescriptionStats, setStudyDescriptionStats] = useState([]);
 
   useEffect(() => {
-    fetch("https://haske.online:8080/api/verification/stats")
+    fetch("https://haske.online:8090/api/verification/stats")
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((error) => console.error("Error fetching verification stats:", error));
 
-    fetch("https://haske.online:8080/api/dicom-stats")
+    fetch("https://haske.online:8090/api/dicom-stats")
       .then((res) => res.json())
       .then((data) => {
         setModalityStats(
