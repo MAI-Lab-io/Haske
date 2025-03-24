@@ -7,7 +7,7 @@ const Settings = () => {
 
   // Fetch users for role management
   useEffect(() => {
-    fetch("https://haske.online:8080/api/verification/get-users")
+    fetch("https://haske.online:8090/api/verification/get-users")
       .then((res) => res.json())
       .then((data) => setUsers(data));
   }, []);
