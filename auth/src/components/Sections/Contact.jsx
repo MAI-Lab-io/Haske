@@ -124,8 +124,9 @@ const LogoWrapper = styled.div`
     max-height: 580%; /* Maintain aspect ratio */
     object-fit: contain;
     margin-left: 520px;
-    @media (max-width: 768px) {
+    @media (max-width: 68px) {
       max-width: 160%; /* Adjust for mobile */
+      margin-left: 0px;
     }
   }
 `;
