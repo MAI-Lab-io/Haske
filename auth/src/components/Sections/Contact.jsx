@@ -45,7 +45,7 @@ export default function Contact() {
             </div>
             <div className="col-xs-12 col-sm-12 col-md-6 col-lg-6 flex">
               <LogoWrapper>
-                <img src={Logo} alt="Haske Logo" className="logo" />
+                <img src={Logo} alt="Haske Logo" className="logo1" />
               </LogoWrapper>
             </div>
           </div>
@@ -119,9 +119,9 @@ const LogoWrapper = styled.div`
   width: 400px;
   padding: 20px;
 
-  .logo {
-    max-width: 80%; /* Make logo bigger */
-    max-height: 80%; /* Maintain aspect ratio */
+  .logo1 {
+    max-width: 180%; /* Make logo bigger */
+    max-height: 180%; /* Maintain aspect ratio */
     object-fit: contain;
     @media (max-width: 768px) {
       max-width: 360%; /* Adjust for mobile */
