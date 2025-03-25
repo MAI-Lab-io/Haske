@@ -120,19 +120,14 @@ const LogoWrapper = styled.div`
   padding: 20px;
 
   .logo1 {
-    max-width: 100%; /* Ensure it scales within the wrapper */
-    max-height: 100%; /* Maintain aspect ratio */
+    max-width: 500%; /* Ensure it scales within the wrapper */
+    max-height: 500%; /* Maintain aspect ratio */
     object-fit: contain;
     margin-left: 150px; /* Offset for larger screens */
 
-    @media (max-width: 768px) { /* Adjust for tablets and mobile */
-      max-width: 80%; /* Scale down for smaller screens */
-      margin-left: 0px; /* Center it on mobile */
-    }
-
-    @media (max-width: 480px) { /* Adjust for smaller mobile screens */
-      max-width: 60%; /* Reduce size further */
-      margin-left: 0px;
+    @media (max-width: 768px) { /* Hide on tablets and smaller screens */
+      display: none;
     }
   }
 `;
+
