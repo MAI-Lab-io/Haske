@@ -118,14 +118,20 @@ const LogoWrapper = styled.div`
   height: 500px;
   width: 500px;
   padding: 20px;
-  
+
   .logo1 {
-    max-width: 580%; /* Make logo bigger */
-    max-height: 580%; /* Maintain aspect ratio */
+    max-width: 100%; /* Ensure it scales within the wrapper */
+    max-height: 100%; /* Maintain aspect ratio */
     object-fit: contain;
-    margin-left: 520px;
-    @media (max-width: 68px) {
-      max-width: 680%; /* Adjust for mobile */
+    margin-left: 150px; /* Offset for larger screens */
+
+    @media (max-width: 768px) { /* Adjust for tablets and mobile */
+      max-width: 80%; /* Scale down for smaller screens */
+      margin-left: 0px; /* Center it on mobile */
+    }
+
+    @media (max-width: 480px) { /* Adjust for smaller mobile screens */
+      max-width: 60%; /* Reduce size further */
       margin-left: 0px;
     }
   }
