@@ -115,7 +115,7 @@ const LogoWrapper = styled.div`
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100vh;
+  height: 500px;
   width: 500px;
   padding: 20px;
 
