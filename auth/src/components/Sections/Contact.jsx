@@ -125,7 +125,7 @@ const LogoWrapper = styled.div`
     object-fit: contain;
     margin-left: 520px;
     @media (max-width: 68px) {
-      max-width: 160%; /* Adjust for mobile */
+      max-width: 680%; /* Adjust for mobile */
       margin-left: 0px;
     }
   }
