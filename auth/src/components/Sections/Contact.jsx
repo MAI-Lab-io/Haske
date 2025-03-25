@@ -115,16 +115,17 @@ const LogoWrapper = styled.div`
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 400px;
-  width: 400px;
+  height: 500px;
+  width: 500px;
   padding: 20px;
-
+  
   .logo1 {
-    max-width: 180%; /* Make logo bigger */
-    max-height: 180%; /* Maintain aspect ratio */
+    max-width: 580%; /* Make logo bigger */
+    max-height: 580%; /* Maintain aspect ratio */
     object-fit: contain;
+    margin-left: 520px;
     @media (max-width: 768px) {
-      max-width: 360%; /* Adjust for mobile */
+      max-width: 160%; /* Adjust for mobile */
     }
   }
 `;
