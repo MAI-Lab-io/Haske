@@ -123,7 +123,7 @@ const LogoWrapper = styled.div`
     max-width: 500%; /* Ensure it scales within the wrapper */
     max-height: 500%; /* Maintain aspect ratio */
     object-fit: contain;
-    margin-left: 150px; /* Offset for larger screens */
+    margin-left: 450px; /* Offset for larger screens */
 
     @media (max-width: 768px) { /* Hide on tablets and smaller screens */
       display: none;
