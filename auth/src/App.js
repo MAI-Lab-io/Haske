@@ -14,10 +14,12 @@ import AboutUs from "./components/AboutUs";
 import Publications from "./components/Publications";
 import Dashboard from "./components/Dashboard";
 import ManageUsers from "./components/ManageUsers";
+import Models from "./components/Models";
 import Analytics from "./components/Analytics";
 import Settings from "./components/Settings";
 import VerifyWaiting from "./components/VerifyWaiting";
 import Landing from "./screens/Landing.jsx";
+import AIAnalysis from "./components/AIAnalysis";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -86,11 +88,13 @@ const App = () => {
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/publications" element={<Publications />} />
           <Route path="/patient-details" element={user ? <ProtectedContent /> : <Navigate to="/" replace />} />
+          <Route path="/haske-ai" element={user ? <AIAnalysis /> : <Navigate to="/" replace />} />
 
           {/* Admin Routes */}
           <Route path="/admin/*" element={user ? <AdminLayout /> : <Navigate to="/" replace />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="users" element={<ManageUsers />} />
+            <Route path="models" element={<Models />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>
