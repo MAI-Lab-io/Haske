@@ -33,14 +33,25 @@ const Institutions = () => {
   }, []);
 
   const fetchInstitutions = async () => {
-    try {
-      const response = await fetch('https://haske.online:8090/api/institutions');
-      const data = await response.json();
-      setInstitutions(data);
-    } catch (error) {
-      console.error('Error fetching institutions:', error);
+  try {
+    const response = await fetch('https://haske.online:8090/api/institutions');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+    const data = await response.json();
+    
+    // Ensure data is an array
+    if (!Array.isArray(data)) {
+      throw new Error('Unexpected response format');
+    }
+    
+    setInstitutions(data);
+  } catch (error) {
+    console.error('Error fetching institutions:', error);
+    // Fallback to empty array if API fails
+    setInstitutions([]);
+  }
+};
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
