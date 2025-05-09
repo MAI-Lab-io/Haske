@@ -18,7 +18,7 @@ const AIAnalysis = () => {
     const startAnalysis = async () => {
       try {
         // 1. Start analysis
-        const { data } = await axios.post('https://your-backend.com/api/ai/analyze', {
+        const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
           orthancId,
           modality,
           bodyPart
@@ -26,7 +26,7 @@ const AIAnalysis = () => {
         
         // 2. Poll for results
         const checkStatus = async (jobId) => {
-          const { data: jobData } = await axios.get(`https://your-backend.com/api/ai/job/${jobId}`);
+          const { data: jobData } = await axios.get(`https://haske.online:8090/api/ai/job/${jobId}`);
           
           if (jobData.status === 'completed') {
             setJob(jobData);
