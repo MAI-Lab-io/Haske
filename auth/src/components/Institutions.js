@@ -1,4 +1,3 @@
-// src/admin/Institutions.js
 import React, { useState, useEffect } from 'react';
 import { 
   Box, 
@@ -15,12 +14,25 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  CircularProgress,
+  Pagination,
+  Alert,
+  Snackbar
 } from '@mui/material';
 
 const Institutions = () => {
   const [institutions, setInstitutions] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: 10,
+    totalCount: 0
+  });
+  const [searchTerm, setSearchTerm] = useState('');
   const [newInstitution, setNewInstitution] = useState({
     name: '',
     address: '',
@@ -30,28 +42,43 @@ const Institutions = () => {
 
   useEffect(() => {
     fetchInstitutions();
-  }, []);
+  }, [pagination.page, searchTerm]);
 
   const fetchInstitutions = async () => {
-  try {
-    const response = await fetch('https://haske.online:8090/api/institutions');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}`
+      );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setInstitutions(data.institutions);
+      setPagination(prev => ({
+        ...prev,
+        totalCount: data.totalCount,
+        totalPages: Math.ceil(data.totalCount / prev.pageSize)
+      }));
+    } catch (error) {
+      console.error('Failed to fetch institutions:', error);
+      setError('Failed to load institutions. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    
-    // Ensure data is an array
-    if (!Array.isArray(data)) {
-      throw new Error('Unexpected response format');
-    }
-    
-    setInstitutions(data);
-  } catch (error) {
-    console.error('Error fetching institutions:', error);
-    // Fallback to empty array if API fails
-    setInstitutions([]);
-  }
-};
+  };
+
+  const handlePageChange = (event, newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }));
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    // Reset to first page when searching
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,19 +93,28 @@ const Institutions = () => {
         body: JSON.stringify(newInstitution)
       });
       
-      if (response.ok) {
-        setOpen(false);
-        setNewInstitution({
-          name: '',
-          address: '',
-          contactEmail: '',
-          contactPhone: ''
-        });
-        fetchInstitutions();
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      setSuccess('Institution added successfully!');
+      setOpen(false);
+      setNewInstitution({
+        name: '',
+        address: '',
+        contactEmail: '',
+        contactPhone: ''
+      });
+      fetchInstitutions(); // Refresh the list
     } catch (error) {
       console.error('Error adding institution:', error);
+      setError('Failed to add institution. Please try again.');
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setError(null);
+    setSuccess(null);
   };
 
   return (
@@ -86,41 +122,81 @@ const Institutions = () => {
       <Typography variant="h4" gutterBottom>
         Manage Institutions
       </Typography>
-      
-      <Button 
-        variant="contained" 
-        onClick={() => setOpen(true)}
-        sx={{ mb: 3 }}
-      >
-        Add New Institution
-      </Button>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Contact Email</TableCell>
-              <TableCell>Contact Phone</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {institutions.map((institution) => (
-              <TableRow key={institution.id}>
-                <TableCell>{institution.id}</TableCell>
-                <TableCell>{institution.name}</TableCell>
-                <TableCell>{institution.address}</TableCell>
-                <TableCell>{institution.contactEmail}</TableCell>
-                <TableCell>{institution.contactPhone}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+        <TextField
+          label="Search Institutions"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ width: 300 }}
+        />
+        <Button 
+          variant="contained" 
+          onClick={() => setOpen(true)}
+        >
+          Add New Institution
+        </Button>
+      </Box>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      ) : (
+        <>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Address</TableCell>
+                  <TableCell>Contact Email</TableCell>
+                  <TableCell>Contact Phone</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {institutions.length > 0 ? (
+                  institutions.map((institution) => (
+                    <TableRow key={institution.id}>
+                      <TableCell>{institution.id}</TableCell>
+                      <TableCell>{institution.name}</TableCell>
+                      <TableCell>{institution.address}</TableCell>
+                      <TableCell>{institution.contactEmail}</TableCell>
+                      <TableCell>{institution.contactPhone}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      No institutions found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {pagination.totalCount > 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+              <Pagination
+                count={Math.ceil(pagination.totalCount / pagination.pageSize)}
+                page={pagination.page}
+                onChange={handlePageChange}
+                color="primary"
+              />
+            </Box>
+          )}
+        </>
+      )}
+
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>Add New Institution</DialogTitle>
         <DialogContent>
           <TextField
@@ -132,6 +208,7 @@ const Institutions = () => {
             value={newInstitution.name}
             onChange={handleInputChange}
             required
+            sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
@@ -140,6 +217,7 @@ const Institutions = () => {
             fullWidth
             value={newInstitution.address}
             onChange={handleInputChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
@@ -148,6 +226,7 @@ const Institutions = () => {
             fullWidth
             value={newInstitution.contactEmail}
             onChange={handleInputChange}
+            sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
@@ -160,9 +239,29 @@ const Institutions = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained">Add</Button>
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained"
+            disabled={!newInstitution.name} // Require at least a name
+          >
+            Add
+          </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar
+        open={!!error || !!success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={error ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {error || success}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
