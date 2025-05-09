@@ -14,7 +14,7 @@ import AboutUs from "./components/AboutUs";
 import Publications from "./components/Publications";
 import Dashboard from "./components/Dashboard";
 import ManageUsers from "./components/ManageUsers";
-import Institution from "./components/Institutions";
+import Institutions from "./components/Institutions";
 import Models from "./components/Models";
 import Analytics from "./components/Analytics";
 import Settings from "./components/Settings";
@@ -97,7 +97,7 @@ const App = () => {
             <Route path="users" element={<ManageUsers />} />
             <Route path="models" element={<Models />} />
             <Route path="analytics" element={<Analytics />} />
-            <Route path="institution" element={<Institution />} />
+            <Route path="institutions" element={<Institutions />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
