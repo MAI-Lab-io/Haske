@@ -42,7 +42,7 @@ export default function Sidebar({ sidebarOpen, toggleSidebar }) {
 
       <AuthLinks>
         <li>
-          <a href="/siginin" className="whiteColor">Log in</a>
+          <a href="/signin" className="whiteColor">Log in</a>
         </li>
         <li>
           <a href="/register" className="radius8 darkBg">Get Started</a>
