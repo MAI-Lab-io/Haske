@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Import location and navigate
-import "./VerifyPage.css"; // Import CSS file for styles
-import logo from "../assets/haske.png"; // Import your logo here
-import aiWebBackground from "../assets/ai-web-background.png"; // Import your background image here
+import { useNavigate, useLocation } from "react-router-dom";
+import "./VerifyPage.css";
+import logo from "../assets/haske.png";
+import aiWebBackground from "../assets/ai-web-background.png";
 
 const VerifyPage = () => {
-  const navigate = useNavigate(); // Initialize navigation
-  const location = useLocation(); // Access state passed from registration page
+  const navigate = useNavigate();
+  const location = useLocation();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -14,19 +14,44 @@ const VerifyPage = () => {
     institution_address: "",
     role: "",
     email: "",
-    phone_number: "", // New phone number field
+    phone_number: "",
   });
 
-  const [notification, setNotification] = useState(""); // State to hold the notification message
+  const [notification, setNotification] = useState("");
+  const [institutions, setInstitutions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const roles = ["Radiologist", "Radiographer", "Front Desk", "IT Specialist"];
-  const institutions = [
-    "CRESTVIEW RADIOLOGY LTD",
-    "National Library of Medicine",
-    "BTHDC LASUTH",
-    "GEM DIAGNOSTIC CENTER",
-    "OOUTH",
-  ];
+
+  // Fetch institutions from backend
+  useEffect(() => {
+    const fetchInstitutions = async () => {
+      try {
+        const response = await fetch("https://haske.online:8090/api/institutions");
+        if (!response.ok) {
+          throw new Error("Failed to fetch institutions");
+        }
+        const data = await response.json();
+        setInstitutions(data.map(inst => inst.name));
+      } catch (err) {
+        console.error("Error fetching institutions:", err);
+        setError(err.message);
+        // Fallback to default institutions if API fails
+        setInstitutions([
+          "CRESTVIEW RADIOLOGY LTD",
+          "National Library of Medicine",
+          "BTHDC LASUTH",
+          "GEM DIAGNOSTIC CENTER",
+          "OOUTH",
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchInstitutions();
+  }, []);
 
   // Pre-fill email from registration page
   useEffect(() => {
@@ -44,7 +69,7 @@ const VerifyPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setNotification(""); // Reset notification on new submission
+    setNotification("");
 
     try {
       const response = await fetch(
@@ -71,7 +96,7 @@ const VerifyPage = () => {
           email: "",
           phone_number: "",
         });
-        navigate("/verify-waiting"); // Navigate to verify-waiting page
+        navigate("/verify-waiting");
       } else {
         setNotification(
           "Error: " + (result.message || "An error occurred. Please try again.")
@@ -85,7 +110,7 @@ const VerifyPage = () => {
 
   return (
     <div className="verify-container">
-   <div className="left-column">
+      <div className="left-column">
         <div
           className="background-image-wrapper"
           style={{
@@ -99,6 +124,13 @@ const VerifyPage = () => {
         <div className="form-wrapper">
           <img src={logo} alt="Logo" className="logo" />
           <h2 className="form-title">Profile Setup</h2>
+          
+          {error && (
+            <div className="verify-notification error">
+              Warning: Couldn't fetch institutions. Using default list.
+            </div>
+          )}
+
           <form className="verify-form" onSubmit={handleSubmit}>
             <input
               type="text"
@@ -118,20 +150,35 @@ const VerifyPage = () => {
               required
               className="verify-input"
             />
-            <select
-              name="institution_name"
-              value={formData.institution_name}
-              onChange={handleChange}
-              required
-              className="verify-select"
-            >
-              <option value="">Select Institution Name</option>
-              {institutions.map((inst, index) => (
-                <option key={index} value={inst}>
-                  {inst}
-                </option>
-              ))}
-            </select>
+            
+            {isLoading ? (
+              <select
+                name="institution_name"
+                value={formData.institution_name}
+                onChange={handleChange}
+                required
+                className="verify-select"
+                disabled
+              >
+                <option value="">Loading institutions...</option>
+              </select>
+            ) : (
+              <select
+                name="institution_name"
+                value={formData.institution_name}
+                onChange={handleChange}
+                required
+                className="verify-select"
+              >
+                <option value="">Select Institution Name</option>
+                {institutions.map((inst, index) => (
+                  <option key={index} value={inst}>
+                    {inst}
+                  </option>
+                ))}
+              </select>
+            )}
+
             <textarea
               name="institution_address"
               placeholder="Institution Address"
@@ -140,6 +187,7 @@ const VerifyPage = () => {
               required
               className="verify-textarea"
             ></textarea>
+            
             <select
               name="role"
               value={formData.role}
@@ -154,6 +202,7 @@ const VerifyPage = () => {
                 </option>
               ))}
             </select>
+            
             <input
               type="email"
               name="email"
@@ -161,9 +210,10 @@ const VerifyPage = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              readOnly // Make email field read-only since it's pre-filled
+              readOnly
               className="verify-input"
             />
+            
             <input
               type="text"
               name="phone_number"
@@ -173,12 +223,12 @@ const VerifyPage = () => {
               required
               className="verify-input"
             />
+            
             <button type="submit" className="verify-button">
               Finish setting up my account
             </button>
           </form>
 
-          {/* Display Notification */}
           {notification && <p className="verify-notification">{notification}</p>}
         </div>
       </div>
