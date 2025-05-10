@@ -44,10 +44,10 @@ function ProtectedContent() {
             fetch("https://haske.online:8090/api/institutions")
                 .then((response) => response.json())
                 .then((data) => {
-                    if (data.success && Array.isArray(data.institutions)) {
-                        setInstitutionsList(data.institutions);
+                    if (data.success && Array.isArray(data.data?.institutions)) {
+                        setInstitutionsList(data.data.institutions);
                     } else {
-                        throw new Error(data.error || "Invalid response format");
+                        throw new Error(data.error?.message || "Invalid response format");
                     }
                 })
                 .catch((error) => {
@@ -97,7 +97,7 @@ function ProtectedContent() {
         setInstitutionName(selectedInstitution);
     };
 
-    if (isVerified === null) return <div>Loading...</div>;
+    if (isVerified === null) return <div className="loading-container">Loading...</div>;
     if (isVerified === false) {
         navigate("/register");
         return null;
@@ -108,7 +108,7 @@ function ProtectedContent() {
     const iframeSrc = isAdmin
         ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
         : `https://haske.online:5000/ui/app/#${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : ""}`;
-
+    
     return (
         <div className="protected-container">
             <iframe src={iframeSrc} title="Haske" className="protected-iframe"></iframe>
