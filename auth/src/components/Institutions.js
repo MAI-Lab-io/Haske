@@ -34,8 +34,7 @@ const Institutions = () => {
   const [pagination, setPagination] = useState({
     page: 1,
     pageSize: 10,
-    totalCount: 0,
-    totalPages: 1
+    totalCount: 0
   });
   const [searchTerm, setSearchTerm] = useState('');
   const [newInstitution, setNewInstitution] = useState({
@@ -44,43 +43,37 @@ const Institutions = () => {
     contactEmail: '',
     contactPhone: ''
   });
-  const [cacheStatus, setCacheStatus] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('all'); // 'all', 'manual', 'dicom'
+
+  useEffect(() => {
+    fetchInstitutions();
+  }, [pagination.page, searchTerm, sourceFilter]);
 
   const fetchInstitutions = async () => {
     try {
       setLoading(true);
-      setError(null);
-      
       const response = await fetch(
-        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}`
+        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}&source=${sourceFilter}`
       );
       
-      const result = await response.json();
-      
-      if (!response.ok || !result.success) {
-        throw new Error(result.error?.message || 'Failed to fetch institutions');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      setInstitutions(result.data.institutions);
+      const data = await response.json();
+      setInstitutions(data.institutions);
       setPagination(prev => ({
         ...prev,
-        totalCount: result.data.pagination.totalCount,
-        totalPages: result.data.pagination.totalPages
+        totalCount: data.totalCount,
+        totalPages: Math.ceil(data.totalCount / prev.pageSize)
       }));
-      setCacheStatus(result.data.meta.cacheStatus);
-      
     } catch (error) {
       console.error('Failed to fetch institutions:', error);
-      setError(error.message);
-      setInstitutions([]);
+      setError('Failed to load institutions. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchInstitutions();
-  }, [pagination.page, searchTerm]);
 
   const handlePageChange = (event, newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
@@ -88,6 +81,11 @@ const Institutions = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  const handleSourceFilterChange = (event) => {
+    setSourceFilter(event.target.value);
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
@@ -104,10 +102,8 @@ const Institutions = () => {
         body: JSON.stringify(newInstitution)
       });
       
-      const result = await response.json();
-      
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to add institution');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       setSuccess('Institution added successfully!');
@@ -121,26 +117,33 @@ const Institutions = () => {
       fetchInstitutions();
     } catch (error) {
       console.error('Error adding institution:', error);
-      setError(error.message);
+      setError('Failed to add institution. Please try again.');
     }
   };
 
   const handleScanInstitutions = async () => {
     try {
+      setLoading(true);
       const response = await fetch('https://haske.online:8090/api/institutions/scan', {
         method: 'POST'
       });
       
-      const result = await response.json();
-      
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to start scan');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      setSuccess('Institution scan started successfully!');
+      const data = await response.json();
+      if (data.status === 'scan_already_in_progress') {
+        setSuccess('Scan is already in progress. Please wait.');
+      } else {
+        setSuccess('Institution scan initiated. Data will update shortly.');
+      }
+      setTimeout(fetchInstitutions, 5000); // Refresh after delay
     } catch (error) {
       console.error('Error scanning institutions:', error);
-      setError(error.message);
+      setError('Failed to initiate institution scan.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,36 +159,44 @@ const Institutions = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, gap: 2 }}>
-        <TextField
-          label="Search Institutions"
-          variant="outlined"
-          size="small"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          sx={{ flexGrow: 1 }}
-        />
-        <Button 
-          variant="contained" 
-          onClick={() => setOpen(true)}
-        >
-          Add New Institution
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={handleScanInstitutions}
-          disabled={cacheStatus === 'initializing'}
-        >
-          Scan DICOM Institutions
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <TextField
+            label="Search Institutions"
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            sx={{ width: 300 }}
+          />
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Source</InputLabel>
+            <Select
+              value={sourceFilter}
+              label="Source"
+              onChange={handleSourceFilterChange}
+            >
+              <MenuItem value="all">All Sources</MenuItem>
+              <MenuItem value="manual">Manual Entries</MenuItem>
+              <MenuItem value="dicom">DICOM Sources</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button 
+            variant="outlined" 
+            onClick={handleScanInstitutions}
+            disabled={loading}
+          >
+            Scan DICOM
+          </Button>
+          <Button 
+            variant="contained" 
+            onClick={() => setOpen(true)}
+          >
+            Add New Institution
+          </Button>
+        </Box>
       </Box>
-
-      {cacheStatus && (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          {cacheStatus === 'current' 
-            ? `Institutions up to date (last scanned: ${new Date(INSTITUTIONS_CACHE.lastUpdated).toLocaleString()})`
-            : 'Initializing institution data...'}
-        </Alert>
-      )}
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -203,10 +214,10 @@ const Institutions = () => {
                 <TableRow>
                   <TableCell>ID</TableCell>
                   <TableCell>Name</TableCell>
-                  <TableCell>Source</TableCell>
                   <TableCell>Address</TableCell>
                   <TableCell>Contact Email</TableCell>
                   <TableCell>Contact Phone</TableCell>
+                  <TableCell>Source</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -215,10 +226,12 @@ const Institutions = () => {
                     <TableRow key={institution.id}>
                       <TableCell>{institution.id}</TableCell>
                       <TableCell>{institution.name}</TableCell>
-                      <TableCell>{institution.source || 'manual'}</TableCell>
                       <TableCell>{institution.address}</TableCell>
                       <TableCell>{institution.contactEmail}</TableCell>
                       <TableCell>{institution.contactPhone}</TableCell>
+                      <TableCell>
+                        {institution.id >= 10000 ? 'DICOM' : 'Manual'}
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -235,7 +248,7 @@ const Institutions = () => {
           {pagination.totalCount > 0 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
               <Pagination
-                count={pagination.totalPages}
+                count={Math.ceil(pagination.totalCount / pagination.pageSize)}
                 page={pagination.page}
                 onChange={handlePageChange}
                 color="primary"
@@ -293,7 +306,7 @@ const Institutions = () => {
             variant="contained"
             disabled={!newInstitution.name}
           >
-            Add Institution
+            Add
           </Button>
         </DialogActions>
       </Dialog>
