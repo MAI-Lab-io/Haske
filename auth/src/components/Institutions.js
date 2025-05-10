@@ -18,11 +18,7 @@ import {
   CircularProgress,
   Pagination,
   Alert,
-  Snackbar,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
+  Snackbar
 } from '@mui/material';
 
 const Institutions = () => {
@@ -43,17 +39,16 @@ const Institutions = () => {
     contactEmail: '',
     contactPhone: ''
   });
-  const [sourceFilter, setSourceFilter] = useState('all'); // 'all', 'manual', 'dicom'
 
   useEffect(() => {
     fetchInstitutions();
-  }, [pagination.page, searchTerm, sourceFilter]);
+  }, [pagination.page, searchTerm]);
 
   const fetchInstitutions = async () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}&source=${sourceFilter}`
+        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}`
       );
       
       if (!response.ok) {
@@ -81,11 +76,7 @@ const Institutions = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setPagination(prev => ({ ...prev, page: 1 }));
-  };
-
-  const handleSourceFilterChange = (event) => {
-    setSourceFilter(event.target.value);
+    // Reset to first page when searching
     setPagination(prev => ({ ...prev, page: 1 }));
   };
 
@@ -114,36 +105,10 @@ const Institutions = () => {
         contactEmail: '',
         contactPhone: ''
       });
-      fetchInstitutions();
+      fetchInstitutions(); // Refresh the list
     } catch (error) {
       console.error('Error adding institution:', error);
       setError('Failed to add institution. Please try again.');
-    }
-  };
-
-  const handleScanInstitutions = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('https://haske.online:8090/api/institutions/scan', {
-        method: 'POST'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (data.status === 'scan_already_in_progress') {
-        setSuccess('Scan is already in progress. Please wait.');
-      } else {
-        setSuccess('Institution scan initiated. Data will update shortly.');
-      }
-      setTimeout(fetchInstitutions, 5000); // Refresh after delay
-    } catch (error) {
-      console.error('Error scanning institutions:', error);
-      setError('Failed to initiate institution scan.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -158,44 +123,21 @@ const Institutions = () => {
         Manage Institutions
       </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, gap: 2 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <TextField
-            label="Search Institutions"
-            variant="outlined"
-            size="small"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            sx={{ width: 300 }}
-          />
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel>Source</InputLabel>
-            <Select
-              value={sourceFilter}
-              label="Source"
-              onChange={handleSourceFilterChange}
-            >
-              <MenuItem value="all">All Sources</MenuItem>
-              <MenuItem value="manual">Manual Entries</MenuItem>
-              <MenuItem value="dicom">DICOM Sources</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button 
-            variant="outlined" 
-            onClick={handleScanInstitutions}
-            disabled={loading}
-          >
-            Scan DICOM
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={() => setOpen(true)}
-          >
-            Add New Institution
-          </Button>
-        </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+        <TextField
+          label="Search Institutions"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ width: 300 }}
+        />
+        <Button 
+          variant="contained" 
+          onClick={() => setOpen(true)}
+        >
+          Add New Institution
+        </Button>
       </Box>
 
       {loading ? (
@@ -217,7 +159,6 @@ const Institutions = () => {
                   <TableCell>Address</TableCell>
                   <TableCell>Contact Email</TableCell>
                   <TableCell>Contact Phone</TableCell>
-                  <TableCell>Source</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -229,14 +170,11 @@ const Institutions = () => {
                       <TableCell>{institution.address}</TableCell>
                       <TableCell>{institution.contactEmail}</TableCell>
                       <TableCell>{institution.contactPhone}</TableCell>
-                      <TableCell>
-                        {institution.id >= 10000 ? 'DICOM' : 'Manual'}
-                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={5} align="center">
                       No institutions found
                     </TableCell>
                   </TableRow>
@@ -304,7 +242,7 @@ const Institutions = () => {
           <Button 
             onClick={handleSubmit} 
             variant="contained"
-            disabled={!newInstitution.name}
+            disabled={!newInstitution.name} // Require at least a name
           >
             Add
           </Button>
