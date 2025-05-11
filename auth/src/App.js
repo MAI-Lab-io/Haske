@@ -88,8 +88,8 @@ const App = () => {
           <Route path="/verify-waiting" element={<VerifyWaiting />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/publications" element={<Publications />} />
+          <Route path="/haske-ai" element={<AIAnalysis />} />
           <Route path="/patient-details" element={user ? <ProtectedContent /> : <Navigate to="/" replace />} />
-          <Route path="/haske-ai" element={user ? <AIAnalysis /> : <Navigate to="/" replace />} />
 
           {/* Admin Routes */}
           <Route path="/admin/*" element={user ? <AdminLayout /> : <Navigate to="/" replace />}>
