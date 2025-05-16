@@ -23,34 +23,38 @@ const AIAnalysis = () => {
       bodyPart
     });
     
-    if (data.error) {
-      setError(data.error);
+    // Handle case where no model was found
+    if (data.status === 'no_model') {
+      setError(data.message);
       setLoading(false);
       return;
     }
+    
+    // Handle queued job case
+    if (data.status === 'queued') {
+      const checkStatus = async (jobId) => {
+        const { data: jobData } = await axios.get(
+          `https://haske.online:8090/api/ai/job/${jobId}`
+        );
         
-        // 2. Poll for results
-        const checkStatus = async (jobId) => {
-          const { data: jobData } = await axios.get(`https://haske.online:8090/api/ai/job/${jobId}`);
-          
-          if (jobData.status === 'completed') {
-            setJob(jobData);
-            setLoading(false);
-          } else if (jobData.status === 'failed') {
-            setError(jobData.results.error);
-            setLoading(false);
-          } else {
-            setTimeout(() => checkStatus(jobId), 2000);
-          }
-        };
-        
-        checkStatus(data.jobId);
-        
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
+        if (jobData.status === 'completed') {
+          setJob(jobData);
+          setLoading(false);
+        } else if (jobData.status === 'failed') {
+          setError(jobData.results.error);
+          setLoading(false);
+        } else {
+          setTimeout(() => checkStatus(jobId), 2000);
+        }
+      };
+      
+      checkStatus(data.jobId);
+    }
+  } catch (err) {
+    setError(err.response?.data?.error || err.message);
+    setLoading(false);
+  }
+};
     
     startAnalysis();
   }, [orthancId, modality, bodyPart]);
