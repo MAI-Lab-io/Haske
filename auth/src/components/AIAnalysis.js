@@ -16,13 +16,18 @@ const AIAnalysis = () => {
   
   useEffect(() => {
     const startAnalysis = async () => {
-      try {
-        // 1. Start analysis
-        const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
-          orthancId,
-          modality,
-          bodyPart
-        });
+  try {
+    const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
+      orthancId,
+      modality,
+      bodyPart
+    });
+    
+    if (data.error) {
+      setError(data.error);
+      setLoading(false);
+      return;
+    }
         
         // 2. Poll for results
         const checkStatus = async (jobId) => {
