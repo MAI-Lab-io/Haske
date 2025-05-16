@@ -78,7 +78,7 @@ const AIAnalysis = () => {
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6">Original Image</Typography>
             <img 
-              src={`https://your-orthanc.com/instances/${orthancId}/preview`} 
+              src={`https://haske.online:8090/instances/${orthancId}/preview`} 
               alt="Original DICOM"
               style={{ width: '100%', height: 'auto' }}
             />
