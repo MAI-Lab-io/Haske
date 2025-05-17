@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField, Button, Menu, MenuItem } from "@mui/material";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import FileDownloadIcon from "@mui/icons-material/GitHub";
 
 const Analytics = ({ darkMode }) => {
   const [logs, setLogs] = useState([]);
   const [search, setSearch] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
 
+  // Define colors and userColors at the component level
+  const colors = darkMode ? ["#0F172A", "#E5E7EB", "#dd841a"] : ["#0F172A", "#E5E7EB", "#dd841a"];
+  const [userColors, setUserColors] = useState({});
+  let colorIndex = 0;
+
   useEffect(() => {
     fetch("https://haske.online:8090/api/verification/logs")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data?.logs)) {
-          // Filter out any invalid log entries
           const validLogs = data.logs.filter(log => 
             log?.action && typeof log.action === 'string' && 
             log?.email && typeof log.email === 'string' &&
@@ -34,10 +38,36 @@ const Analytics = ({ darkMode }) => {
       (search ? log.email?.toLowerCase().includes(search.toLowerCase()) : true)
   );
 
-  // Rest of your component remains the same...
-  const sortedLogs = [...filteredLogs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const sortedLogs = [...filteredLogs].sort((a, b) => {
+    const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
+    const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
+    return dateB - dateA;
+  });
 
-  // Add null checks in your userSessions calculation
+  const handleExport = (format) => {
+    let dataString = "";
+
+    if (format === "csv") {
+      dataString += "Email,Action,Timestamp\n";
+      sortedLogs.forEach((log) => {
+        dataString += `${log.email},${log.action},${new Date(log.timestamp).toLocaleString()}\n`;
+      });
+    } else if (format === "txt") {
+      dataString += "Analytics\n\n";
+      sortedLogs.forEach((log) => {
+        dataString += `Email: ${log.email} | Action: ${log.action} | Timestamp: ${new Date(log.timestamp).toLocaleString()}\n`;
+      });
+    }
+
+    const blob = new Blob([dataString], { type: format === "csv" ? "text/csv" : "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `user_logs.${format}`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   const userSessions = {};
   filteredLogs.forEach((log) => {
     if (!log?.email) return;
@@ -51,11 +81,10 @@ const Analytics = ({ darkMode }) => {
     });
   });
 
-
   // Calculate total active time per user per day (in hours)
   const aggregatedData = {};
   const twoWeeksAgo = new Date();
-  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13); // Get the date 13 days ago to include the current day
+  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13);
 
   // Initialize all dates in the last 2 weeks
   for (let i = 0; i < 14; i++) {
@@ -64,33 +93,31 @@ const Analytics = ({ darkMode }) => {
     const dateKey = date.toISOString().split("T")[0];
     aggregatedData[dateKey] = { date: dateKey };
 
-    // Initialize all users for this date with 0 active time
     Object.keys(userSessions).forEach((email) => {
       aggregatedData[dateKey][email] = 0;
     });
   }
 
-  // Populate active time for each user
+  // Temporary object to track colors during this calculation
+  const tempUserColors = {...userColors};
+
   Object.keys(userSessions).forEach((email) => {
     const sessions = userSessions[email];
-    sessions.sort((a, b) => a.timestamp - b.timestamp); // Sort sessions by timestamp
+    sessions.sort((a, b) => a.timestamp - b.timestamp);
 
-    let activeSessions = []; // Stack to track active sessions
+    let activeSessions = [];
 
     sessions.forEach((session) => {
-      if (session.action.toLowerCase() === "user signed in") {
-        // Push the sign-in timestamp to the stack
+      if (session.action?.toLowerCase() === "user signed in") {
         activeSessions.push(session.timestamp);
-      } else if (session.action.toLowerCase() === "user signed out" && activeSessions.length > 0) {
-        // Pop the last sign-in timestamp from the stack
+      } else if (session.action?.toLowerCase() === "user signed out" && activeSessions.length > 0) {
         const signInTimestamp = activeSessions.pop();
-        const duration = (session.timestamp - signInTimestamp) / 1000 / 60 / 60; // Duration in hours
-        const dateKey = signInTimestamp.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+        const duration = (session.timestamp - signInTimestamp) / 1000 / 60 / 60;
+        const dateKey = signInTimestamp.toISOString().split("T")[0];
 
-        // Only include logs from the last 2 weeks
         if (signInTimestamp >= twoWeeksAgo) {
-          if (!userColors[email]) {
-            userColors[email] = colors[colorIndex % colors.length];
+          if (!tempUserColors[email]) {
+            tempUserColors[email] = colors[colorIndex % colors.length];
             colorIndex++;
           }
           aggregatedData[dateKey][email] += duration;
@@ -98,23 +125,20 @@ const Analytics = ({ darkMode }) => {
       }
     });
 
-    // Handle any remaining active sessions (sign-ins without sign-outs)
     activeSessions.forEach((signInTimestamp) => {
       const dateKey = signInTimestamp.toISOString().split("T")[0];
       if (signInTimestamp >= twoWeeksAgo) {
-        // Optionally, you can add a default duration for incomplete sessions
-        aggregatedData[dateKey][email] += 0; // Default duration of 0 hours
+        aggregatedData[dateKey][email] += 0;
       }
     });
   });
 
-  // Convert aggregated data to an array and sort by date
-  const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
+  // Update user colors state if changed
+  if (JSON.stringify(tempUserColors) !== JSON.stringify(userColors)) {
+    setUserColors(tempUserColors);
+  }
 
-  // Debug: Log the chart data
-  console.log("Aggregated Data:", aggregatedData);
-  console.log("Chart Data Array:", chartDataArray);
-  console.log("User Colors:", userColors);
+  const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
 
   // Dynamic colors for dark/light mode
   const backgroundColor = darkMode ? "#0F172A" : "#E5E7EB";
@@ -153,7 +177,6 @@ const Analytics = ({ darkMode }) => {
         <MenuItem onClick={() => handleExport("txt")}>Export as TXT</MenuItem>
       </Menu>
 
-      {/* Chart Display */}
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
@@ -177,7 +200,7 @@ const Analytics = ({ darkMode }) => {
               color: tooltipTextColor,
               border: `1px solid ${darkMode ? "#dd841a" : "#0F172A"}`,
             }}
-            formatter={(value) => `${value.toFixed(2)} hours`} // Format tooltip to show hours
+            formatter={(value) => `${value.toFixed(2)} hours`}
           />
           <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
           {Object.keys(userColors).map((email) => (
@@ -191,7 +214,6 @@ const Analytics = ({ darkMode }) => {
         </BarChart>
       </ResponsiveContainer>
 
-      {/* Table Display */}
       <Table sx={{ mt: 3, backgroundColor, color: textColor, borderRadius: 2 }}>
         <TableHead>
           <TableRow sx={{ backgroundColor: "#dd841a" }}>
@@ -206,7 +228,9 @@ const Analytics = ({ darkMode }) => {
               <TableRow key={index} sx={{ borderBottom: `1px solid ${gridColor}` }}>
                 <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
                 <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: textColor, fontSize: "0.875rem" }}>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                <TableCell sx={{ color: textColor, fontSize: "0.875rem" }}>
+                  {log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}
+                </TableCell>
               </TableRow>
             ))
           ) : (
