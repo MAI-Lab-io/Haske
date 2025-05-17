@@ -60,7 +60,7 @@ const AIAnalysis = () => {
         const configResponse = await axios.get('https://haske.online:8090/api/ai/config');
         if (isMounted) {
           setAvailableModels(configResponse.data.models || []);
-          setGithubRepo(configResponse.data.githubRepo || '');
+          setGithubRepo(configResponse.data.githubRepo || 'https://github.com/MAILABHASKE/mailab-models');
         }
       } catch (err) {
         console.error('Failed to fetch config:', err);
