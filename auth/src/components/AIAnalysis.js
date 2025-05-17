@@ -3,23 +3,26 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Box, Typography, CircularProgress, Grid, Paper, 
   Button, Card, CardContent, CardMedia, Divider,
-  Chip, Stack, IconButton, Modal, Alert
+  Chip, Stack, IconButton, Modal, Alert,
+  Container, Avatar, useTheme
 } from '@mui/material';
 import axios from 'axios';
 import { 
   Info as InfoIcon, GitHub as GitHubIcon, 
   ZoomIn as ZoomInIcon, Download as DownloadIcon,
-  Save as SaveIcon, Refresh as RefreshIcon, Close as CloseIcon 
+  Save as SaveIcon, Refresh as RefreshIcon, 
+  Close as CloseIcon, Science as ScienceIcon
 } from '@mui/icons-material';
 
 const AIAnalysis = () => {
+  const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
   const [loading, setLoading] = useState(true);
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
-  const [studyDetails, setStudyDetails] = useState(null);
+  const [seriesDetails, setSeriesDetails] = useState([]);
   const [patientDetails, setPatientDetails] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
@@ -76,21 +79,30 @@ const AIAnalysis = () => {
         ]);
 
         if (isMounted) {
-          setStudyDetails({
-            ...studyResponse.data.MainDicomTags,
-            Modality: initialModality || studyResponse.data.MainDicomTags?.Modality || 'UNKNOWN',
-            BodyPartExamined: initialBodyPart || seriesResponse.data[0]?.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
-          });
-
           setPatientDetails(studyResponse.data.PatientMainDicomTags || {});
+          
+          // Get details from first series if not provided in URL
+          const firstSeries = seriesResponse.data[0] || {};
+          const seriesData = await Promise.all(
+            seriesResponse.data.map(async (series) => {
+              const seriesDetails = await axios.get(`https://haske.online:5000/series/${series.ID}`);
+              return {
+                ...series,
+                Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
+                BodyPartExamined: seriesDetails.data.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
+              };
+            })
+          );
+
+          setSeriesDetails(seriesData);
         }
       } catch (err) {
         console.error('Failed to fetch study details:', err);
         if (isMounted) {
-          setStudyDetails({
+          setSeriesDetails([{
             Modality: initialModality || 'UNKNOWN',
             BodyPartExamined: initialBodyPart || 'UNKNOWN'
-          });
+          }]);
           setPatientDetails({});
         }
       }
@@ -100,8 +112,8 @@ const AIAnalysis = () => {
       try {
         const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
           orthancId,
-          modality: initialModality || studyDetails?.Modality,
-          bodyPart: initialBodyPart || studyDetails?.BodyPartExamined
+          modality: initialModality || seriesDetails[0]?.Modality,
+          bodyPart: initialBodyPart || seriesDetails[0]?.BodyPartExamined
         });
         
         if (!isMounted) return;
@@ -189,125 +201,198 @@ const AIAnalysis = () => {
     navigate('/');
   };
 
+  const currentModality = initialModality || seriesDetails[0]?.Modality;
+  const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
+
   if (loading) {
     return (
-      <Box sx={{ 
+      <Container maxWidth="xl" sx={{ 
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
-        minHeight: '60vh',
+        minHeight: '80vh',
         flexDirection: 'column',
-        gap: 2
+        gap: 3
       }}>
-        <CircularProgress size={60} />
-        <Typography variant="h5" color="textSecondary">
-          Processing AI analysis...
+        <ScienceIcon sx={{ fontSize: 80, color: theme.palette.primary.main }} />
+        <CircularProgress size={60} thickness={4} />
+        <Typography variant="h4" color="text.primary" fontWeight="medium">
+          Processing AI Analysis...
         </Typography>
-        <Typography variant="body1" color="textSecondary">
-          Analyzing {studyDetails?.Modality || initialModality} scan of {studyDetails?.BodyPartExamined || initialBodyPart}
+        <Typography variant="body1" color="text.secondary">
+          Analyzing {currentModality} scan of {currentBodyPart}
         </Typography>
-      </Box>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ 
-        maxWidth: 1200, 
-        mx: 'auto', 
-        p: 4,
-        backgroundColor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 1
-      }}>
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h4" gutterBottom>
-            Haske AI Analysis
-          </Typography>
-          {githubRepo && (
-            <Button 
-              variant="text" 
-              startIcon={<GitHubIcon />}
-              href={githubRepo}
-              target="_blank"
-              sx={{ mt: 1 }}
-            >
-              View Main Repository
-            </Button>
-          )}
-        </Box>
+      <Container maxWidth="xl" sx={{ py: 6 }}>
+        <Card sx={{ 
+          borderRadius: 4,
+          boxShadow: theme.shadows[10],
+          overflow: 'visible'
+        }}>
+          <Box sx={{ 
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            p: 4,
+            textAlign: 'center',
+            borderTopLeftRadius: 4,
+            borderTopRightRadius: 4
+          }}>
+            <Typography variant="h3" fontWeight="bold">
+              Haske AI Analysis
+            </Typography>
+            {githubRepo && (
+              <Button 
+                variant="contained"
+                color="secondary"
+                startIcon={<GitHubIcon />}
+                href={githubRepo}
+                target="_blank"
+                sx={{ 
+                  mt: 3,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 50,
+                  boxShadow: theme.shadows[4]
+                }}
+              >
+                View Main Repository
+              </Button>
+            )}
+          </Box>
 
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" color="error" gutterBottom>
-              Analysis Not Available
-            </Typography>
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-            <Typography variant="body2" color="textSecondary" paragraph>
-              We couldn't find a suitable AI model for {studyDetails?.Modality || initialModality} scans of the {studyDetails?.BodyPartExamined || initialBodyPart}.
-            </Typography>
+          <CardContent sx={{ p: 4 }}>
+            <Box sx={{ 
+              backgroundColor: theme.palette.error.light,
+              p: 3,
+              borderRadius: 3,
+              mb: 4
+            }}>
+              <Typography variant="h5" color="error" gutterBottom fontWeight="bold">
+                Analysis Not Available
+              </Typography>
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+              <Typography variant="body1" color="text.secondary">
+                We couldn't find a suitable AI model for {currentModality} scans of the {currentBodyPart}.
+              </Typography>
+            </Box>
             
             {availableModels.length > 0 && (
               <>
-                <Divider sx={{ my: 3 }} />
-                <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                  Available Models
+                <Divider sx={{ my: 4 }} />
+                <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ mb: 4 }}>
+                  Available AI Models
                 </Typography>
-                <Grid container spacing={2} sx={{ mt: 2 }}>
-                  {availableModels.map((model) => (
-                    <Grid item xs={12} sm={6} md={4} key={model.id}>
+                
+                <Box sx={{ 
+                  width: '100%',
+                  overflowX: 'auto',
+                  py: 2,
+                  px: 1,
+                  '&::-webkit-scrollbar': {
+                    height: '8px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: theme.palette.primary.main,
+                    borderRadius: '4px',
+                  }
+                }}>
+                  <Stack direction="row" spacing={4} sx={{ width: 'max-content' }}>
+                    {availableModels.map((model) => (
                       <Card 
-                        variant="outlined"
+                        key={model.id}
                         sx={{ 
+                          minWidth: 300,
+                          maxWidth: 350,
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
-                          borderColor: selectedModel?.id === model.id ? 'primary.main' : 'divider',
+                          border: selectedModel?.id === model.id ? 
+                            `2px solid ${theme.palette.primary.main}` : 
+                            `1px solid ${theme.palette.divider}`,
+                          borderRadius: 3,
+                          boxShadow: selectedModel?.id === model.id ? theme.shadows[6] : theme.shadows[2],
+                          transition: 'all 0.3s ease',
                           '&:hover': {
-                            borderColor: 'primary.main',
-                            boxShadow: 1
+                            transform: 'translateY(-5px)',
+                            boxShadow: theme.shadows[8]
                           }
                         }}
                         onClick={() => setSelectedModel(model)}
                       >
-                        <CardContent sx={{ flexGrow: 1 }}>
-                          <Stack direction="row" alignItems="center" spacing={1}>
-                            <Box sx={{ 
-                              width: 40, 
-                              height: 40, 
-                              bgcolor: 'primary.main', 
-                              color: 'white',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              borderRadius: '50%'
+                        <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                            <Avatar sx={{ 
+                              bgcolor: theme.palette.primary.main,
+                              width: 50,
+                              height: 50
                             }}>
-                              <InfoIcon />
-                            </Box>
-                            <Typography variant="h6">{model.name}</Typography>
+                              <ScienceIcon />
+                            </Avatar>
+                            <Typography variant="h5" fontWeight="bold">
+                              {model.name}
+                            </Typography>
                           </Stack>
-                          <Typography variant="body2" sx={{ mt: 1, mb: 2 }}>
+                          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
                             {model.description}
                           </Typography>
-                          <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-                            {model.modality?.map(m => (
-                              <Chip key={m} label={m} size="small" />
-                            ))}
-                          </Stack>
-                          <Stack direction="row" spacing={1}>
-                            {model.body_part?.map(b => (
-                              <Chip key={b} label={b} size="small" color="secondary" />
-                            ))}
-                          </Stack>
+                          
+                          <Box sx={{ mb: 3 }}>
+                            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                              Supported Modalities:
+                            </Typography>
+                            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                              {model.modality?.map(m => (
+                                <Chip 
+                                  key={m} 
+                                  label={m} 
+                                  size="small" 
+                                  sx={{ 
+                                    backgroundColor: theme.palette.primary.light,
+                                    color: theme.palette.primary.contrastText
+                                  }}
+                                />
+                              ))}
+                            </Stack>
+                          </Box>
+                          
+                          <Box sx={{ mb: 3 }}>
+                            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                              Supported Body Parts:
+                            </Typography>
+                            <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                              {model.body_part?.map(b => (
+                                <Chip 
+                                  key={b} 
+                                  label={b} 
+                                  size="small" 
+                                  color="secondary"
+                                />
+                              ))}
+                            </Stack>
+                          </Box>
+                          
                           {model.github_link && (
                             <Button 
-                              size="small" 
+                              fullWidth
+                              variant="outlined"
                               startIcon={<GitHubIcon />}
                               href={model.github_link}
                               target="_blank"
-                              sx={{ mt: 1 }}
+                              sx={{ 
+                                mt: 1,
+                                borderRadius: 2,
+                                borderWidth: 2,
+                                '&:hover': {
+                                  borderWidth: 2
+                                }
+                              }}
                               onClick={(e) => e.stopPropagation()}
                             >
                               View Model Code
@@ -315,182 +400,320 @@ const AIAnalysis = () => {
                           )}
                         </CardContent>
                       </Card>
-                    </Grid>
-                  ))}
-                </Grid>
+                    ))}
+                  </Stack>
+                </Box>
               </>
             )}
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
+        <Card sx={{ 
+          mt: 4,
+          borderRadius: 4,
+          boxShadow: theme.shadows[5]
+        }}>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="h5" gutterBottom fontWeight="bold">
               Study Details
             </Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
-                <Typography variant="body1">
-                  <strong>Patient:</strong> {formatPatientName(patientDetails?.PatientName)}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Study Date:</strong> {formatDate(studyDetails?.StudyDate)}
-                </Typography>
+                <Box sx={{ 
+                  backgroundColor: theme.palette.grey[100],
+                  p: 3,
+                  borderRadius: 3
+                }}>
+                  <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                    PATIENT INFORMATION
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong>Name:</strong> {formatPatientName(patientDetails?.PatientName)}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong>ID:</strong> {patientDetails?.PatientID || 'N/A'}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>DOB:</strong> {formatDate(patientDetails?.PatientBirthDate)}
+                  </Typography>
+                </Box>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="body1">
-                  <strong>Modality:</strong> {studyDetails?.Modality}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Body Part:</strong> {studyDetails?.BodyPartExamined}
-                </Typography>
+                <Box sx={{ 
+                  backgroundColor: theme.palette.grey[100],
+                  p: 3,
+                  borderRadius: 3
+                }}>
+                  <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                    STUDY INFORMATION
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong>Study Date:</strong> {formatDate(seriesDetails[0]?.StudyDate)}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    <strong>Modality:</strong> {currentModality}
+                  </Typography>
+                  <Typography variant="body1">
+                    <strong>Body Part:</strong> {currentBodyPart}
+                  </Typography>
+                </Box>
               </Grid>
             </Grid>
           </CardContent>
         </Card>
-      </Box>
+      </Container>
     );
   }
 
   return (
-    <Box sx={{ 
-      maxWidth: 1200, 
-      mx: 'auto', 
-      p: 4,
-      backgroundColor: 'background.paper',
-      borderRadius: 2,
-      boxShadow: 1
-    }}>
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Haske AI Analysis Results
-        </Typography>
-        {githubRepo && (
-          <Button 
-            variant="text" 
-            startIcon={<GitHubIcon />}
-            href={githubRepo}
-            target="_blank"
-            sx={{ mt: 1 }}
-          >
-            View Main Repository
-          </Button>
-        )}
-      </Box>
-
-      <Card sx={{ mb: 4 }}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Study Information
+    <Container maxWidth="xl" sx={{ py: 6 }}>
+      <Card sx={{ 
+        borderRadius: 4,
+        boxShadow: theme.shadows[10],
+        overflow: 'hidden'
+      }}>
+        <Box sx={{ 
+          backgroundColor: theme.palette.primary.main,
+          color: theme.palette.primary.contrastText,
+          p: 4,
+          textAlign: 'center'
+        }}>
+          <Typography variant="h3" fontWeight="bold">
+            Haske AI Analysis Results
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body1">
-                <strong>Patient:</strong> {formatPatientName(patientDetails?.PatientName)}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Study Date:</strong> {formatDate(studyDetails?.StudyDate)}
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Typography variant="body1">
-                <strong>Modality:</strong> {studyDetails?.Modality}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Body Part:</strong> {studyDetails?.BodyPartExamined}
-              </Typography>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+          {githubRepo && (
+            <Button 
+              variant="contained"
+              color="secondary"
+              startIcon={<GitHubIcon />}
+              href={githubRepo}
+              target="_blank"
+              sx={{ 
+                mt: 3,
+                px: 4,
+                py: 1.5,
+                borderRadius: 50,
+                boxShadow: theme.shadows[4]
+              }}
+            >
+              View Main Repository
+            </Button>
+          )}
+        </Box>
 
-      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-        Analysis Results
-      </Typography>
-      
-      <Grid container spacing={3} sx={{ mt: 2 }}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6">Original Image</Typography>
-                <IconButton onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}>
-                  <ZoomInIcon />
-                </IconButton>
-              </Stack>
-              <CardMedia
-                component="img"
-                image={`https://haske.online:8090/instances/${orthancId}/preview`}
-                alt="Original DICOM"
-                sx={{ 
-                  mt: 2,
-                  borderRadius: 1,
-                  cursor: 'pointer',
-                  '&:hover': {
-                    boxShadow: 4,
-                    transform: 'scale(1.02)',
-                    transition: 'transform 0.3s'
-                  }
-                }}
-                onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
-              />
+        <CardContent sx={{ p: 4 }}>
+          <Card sx={{ 
+            mb: 6,
+            borderRadius: 3,
+            boxShadow: theme.shadows[3]
+          }}>
+            <CardContent sx={{ p: 4 }}>
+              <Typography variant="h5" gutterBottom fontWeight="bold">
+                Study Information
+              </Typography>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ 
+                    backgroundColor: theme.palette.grey[100],
+                    p: 3,
+                    borderRadius: 3
+                  }}>
+                    <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                      PATIENT INFORMATION
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Name:</strong> {formatPatientName(patientDetails?.PatientName)}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>ID:</strong> {patientDetails?.PatientID || 'N/A'}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>DOB:</strong> {formatDate(patientDetails?.PatientBirthDate)}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ 
+                    backgroundColor: theme.palette.grey[100],
+                    p: 3,
+                    borderRadius: 3
+                  }}>
+                    <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                      STUDY INFORMATION
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Study Date:</strong> {formatDate(seriesDetails[0]?.StudyDate)}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mb: 2 }}>
+                      <strong>Modality:</strong> {currentModality}
+                    </Typography>
+                    <Typography variant="body1">
+                      <strong>Body Part:</strong> {currentBodyPart}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
-        </Grid>
-        
-        {job?.results?.outputs?.map((output, index) => (
-          <Grid item xs={12} md={6} key={index}>
-            <Card>
-              <CardContent>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h6">{output.label}</Typography>
-                  <IconButton onClick={() => setZoomedImage(output.url)}>
-                    <ZoomInIcon />
-                  </IconButton>
-                </Stack>
-                <CardMedia
-                  component="img"
-                  image={output.url}
-                  alt={output.label}
-                  sx={{ 
-                    mt: 2,
-                    borderRadius: 1,
-                    cursor: 'pointer',
-                    '&:hover': {
-                      boxShadow: 4,
-                      transform: 'scale(1.02)',
-                      transition: 'transform 0.3s'
-                    }
-                  }}
-                  onClick={() => setZoomedImage(output.url)}
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
 
-      {job?.results && (
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
-          <Button 
-            variant="outlined" 
-            startIcon={<DownloadIcon />}
-            onClick={handleDownloadResults}
-          >
-            Download Results
-          </Button>
-          <Button variant="outlined" startIcon={<SaveIcon />}>
-            Save to Orthanc
-          </Button>
-          <Button 
-            variant="outlined" 
-            startIcon={<RefreshIcon />}
-            onClick={handleProcessAnother}
-          >
-            Process Another
-          </Button>
-        </Box>
-      )}
+          <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ mb: 4 }}>
+            Analysis Results
+          </Typography>
+          
+          <Grid container spacing={4} sx={{ mb: 6 }}>
+            <Grid item xs={12} md={6}>
+              <Card sx={{ 
+                borderRadius: 3,
+                boxShadow: theme.shadows[3],
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: theme.shadows[6]
+                }
+              }}>
+                <CardContent>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" fontWeight="bold">Original Image</Typography>
+                    <IconButton 
+                      onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
+                      sx={{
+                        backgroundColor: theme.palette.primary.light,
+                        color: theme.palette.primary.contrastText,
+                        '&:hover': {
+                          backgroundColor: theme.palette.primary.main
+                        }
+                      }}
+                    >
+                      <ZoomInIcon />
+                    </IconButton>
+                  </Stack>
+                  <CardMedia
+                    component="img"
+                    image={`https://haske.online:8090/instances/${orthancId}/preview`}
+                    alt="Original DICOM"
+                    sx={{ 
+                      mt: 2,
+                      borderRadius: 2,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'scale(1.02)'
+                      }
+                    }}
+                    onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            
+            {job?.results?.outputs?.map((output, index) => (
+              <Grid item xs={12} md={6} key={index}>
+                <Card sx={{ 
+                  borderRadius: 3,
+                  boxShadow: theme.shadows[3],
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    boxShadow: theme.shadows[6]
+                  }
+                }}>
+                  <CardContent>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="h6" fontWeight="bold">{output.label}</Typography>
+                      <IconButton 
+                        onClick={() => setZoomedImage(output.url)}
+                        sx={{
+                          backgroundColor: theme.palette.primary.light,
+                          color: theme.palette.primary.contrastText,
+                          '&:hover': {
+                            backgroundColor: theme.palette.primary.main
+                          }
+                        }}
+                      >
+                        <ZoomInIcon />
+                      </IconButton>
+                    </Stack>
+                    <CardMedia
+                      component="img"
+                      image={output.url}
+                      alt={output.label}
+                      sx={{ 
+                        mt: 2,
+                        borderRadius: 2,
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'scale(1.02)'
+                        }
+                      }}
+                      onClick={() => setZoomedImage(output.url)}
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+
+          {job?.results && (
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              gap: 3,
+              flexWrap: 'wrap'
+            }}>
+              <Button 
+                variant="contained"
+                startIcon={<DownloadIcon />}
+                onClick={handleDownloadResults}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 'bold',
+                  minWidth: 200
+                }}
+              >
+                Download Results
+              </Button>
+              <Button 
+                variant="outlined"
+                color="primary"
+                startIcon={<SaveIcon />}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 'bold',
+                  minWidth: 200,
+                  borderWidth: 2,
+                  '&:hover': {
+                    borderWidth: 2
+                  }
+                }}
+              >
+                Save to Orthanc
+              </Button>
+              <Button 
+                variant="outlined"
+                color="secondary"
+                startIcon={<RefreshIcon />}
+                onClick={handleProcessAnother}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 'bold',
+                  minWidth: 200,
+                  borderWidth: 2,
+                  '&:hover': {
+                    borderWidth: 2
+                  }
+                }}
+              >
+                Process Another
+              </Button>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
 
       <Modal
         open={Boolean(zoomedImage)}
@@ -499,24 +722,30 @@ const AIAnalysis = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backdropFilter: 'blur(4px)'
+          backdropFilter: 'blur(8px)'
         }}
       >
         <Box sx={{ 
           position: 'relative',
           bgcolor: 'background.paper',
-          p: 4,
-          borderRadius: 2,
+          p: 2,
+          borderRadius: 3,
           outline: 'none',
-          maxWidth: '90%',
-          maxHeight: '90%'
+          maxWidth: '95%',
+          maxHeight: '95%',
+          boxShadow: theme.shadows[24]
         }}>
           <IconButton
             sx={{ 
               position: 'absolute',
-              top: 8,
-              right: 8,
-              color: 'text.primary'
+              top: 16,
+              right: 16,
+              zIndex: 1,
+              backgroundColor: theme.palette.error.main,
+              color: theme.palette.error.contrastText,
+              '&:hover': {
+                backgroundColor: theme.palette.error.dark
+              }
             }}
             onClick={() => setZoomedImage(null)}
           >
@@ -527,13 +756,14 @@ const AIAnalysis = () => {
             alt="Zoomed view" 
             style={{ 
               maxWidth: '100%',
-              maxHeight: '80vh',
-              display: 'block'
+              maxHeight: '90vh',
+              display: 'block',
+              borderRadius: '8px'
             }}
           />
         </Box>
       </Modal>
-    </Box>
+    </Container>
   );
 };
 
