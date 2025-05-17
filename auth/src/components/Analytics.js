@@ -12,8 +12,14 @@ const Analytics = ({ darkMode }) => {
     fetch("https://haske.online:8090/api/verification/logs")
       .then((res) => res.json())
       .then((data) => {
-        if (Array.isArray(data.logs)) {
-          setLogs(data.logs);
+        if (Array.isArray(data?.logs)) {
+          // Filter out any invalid log entries
+          const validLogs = data.logs.filter(log => 
+            log?.action && typeof log.action === 'string' && 
+            log?.email && typeof log.email === 'string' &&
+            log?.timestamp
+          );
+          setLogs(validLogs);
         } else {
           console.error("Unexpected API response format:", data);
           setLogs([]);
@@ -24,49 +30,27 @@ const Analytics = ({ darkMode }) => {
 
   const filteredLogs = logs.filter(
     (log) =>
-      (log.action.toLowerCase() === "user signed in" || log.action.toLowerCase() === "user signed out") &&
-      (search ? log.email.toLowerCase().includes(search.toLowerCase()) : true)
+      (log.action?.toLowerCase() === "user signed in" || log.action?.toLowerCase() === "user signed out") &&
+      (search ? log.email?.toLowerCase().includes(search.toLowerCase()) : true)
   );
 
-  // Sort logs in descending order of timestamp
+  // Rest of your component remains the same...
   const sortedLogs = [...filteredLogs].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-  const handleExport = (format) => {
-    let dataString = "";
-
-    if (format === "csv") {
-      dataString += "Email,Action,Timestamp\n";
-      sortedLogs.forEach((log) => {
-        dataString += `${log.email},${log.action},${new Date(log.timestamp).toLocaleString()}\n`;
-      });
-    } else if (format === "txt") {
-      dataString += "Analytics\n\n";
-      sortedLogs.forEach((log) => {
-        dataString += `Email: ${log.email} | Action: ${log.action} | Timestamp: ${new Date(log.timestamp).toLocaleString()}\n`;
-      });
-    }
-
-    const blob = new Blob([dataString], { type: format === "csv" ? "text/csv" : "text/plain" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `user_logs.${format}`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  const userColors = {};
-  let colorIndex = 0;
-  const colors = darkMode ? ["#0F172A", "#E5E7EB", "#dd841a"] : ["#0F172A", "#E5E7EB", "#dd841a"]; // Adjust colors for dark/light mode
-
-  // Track user sessions and calculate active time
+  // Add null checks in your userSessions calculation
   const userSessions = {};
   filteredLogs.forEach((log) => {
+    if (!log?.email) return;
+    
     if (!userSessions[log.email]) {
       userSessions[log.email] = [];
     }
-    userSessions[log.email].push({ action: log.action, timestamp: new Date(log.timestamp) });
+    userSessions[log.email].push({ 
+      action: log.action || '', 
+      timestamp: new Date(log.timestamp) 
+    });
   });
+
 
   // Calculate total active time per user per day (in hours)
   const aggregatedData = {};
