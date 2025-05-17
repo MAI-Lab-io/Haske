@@ -1,51 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Box, Typography, CircularProgress, Grid, Paper, 
   Button, Card, CardContent, CardMedia, Divider,
-  Chip, Stack, IconButton, Modal
+  Chip, Stack, IconButton, Modal, Alert
 } from '@mui/material';
 import axios from 'axios';
-import { Info as InfoIcon, GitHub as GitHubIcon, 
+import { 
+  Info as InfoIcon, GitHub as GitHubIcon, 
   ZoomIn as ZoomInIcon, Download as DownloadIcon,
-  Save as SaveIcon, Refresh as RefreshIcon, Close as CloseIcon } from '@mui/icons-material';
+  Save as SaveIcon, Refresh as RefreshIcon, Close as CloseIcon 
+} from '@mui/icons-material';
 
 const AIAnalysis = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
   const [loading, setLoading] = useState(true);
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const [studyDetails, setStudyDetails] = useState(null);
+  const [patientDetails, setPatientDetails] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
   
   const orthancId = query.get('orthancId');
-  const modality = query.get('modality');
-  const bodyPart = query.get('bodyPart');
+  const initialModality = query.get('modality');
+  const initialBodyPart = query.get('bodyPart');
+
+  // Format patient name consistently
+  const formatPatientName = (name) => {
+    if (!name) return 'N/A';
+    return name.replace(/\\/g, ' ').trim();
+  };
+
+  // Format date consistently
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6);
+      const day = dateString.substring(6, 8);
+      return `${year}-${month}-${day}`;
+    } catch {
+      return dateString;
+    }
+  };
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchConfig = async () => {
       try {
-        // Fetch configuration from server
         const configResponse = await axios.get('https://haske.online:8090/api/ai/config');
-        setAvailableModels(configResponse.data.models || []);
-        setGithubRepo(configResponse.data.githubRepo || '');
+        if (isMounted) {
+          setAvailableModels(configResponse.data.models || []);
+          setGithubRepo(configResponse.data.githubRepo || '');
+        }
       } catch (err) {
         console.error('Failed to fetch config:', err);
-        setAvailableModels([]);
-        setGithubRepo('');
+        if (isMounted) {
+          setAvailableModels([]);
+          setGithubRepo('');
+        }
       }
     };
 
     const fetchStudyDetails = async () => {
       try {
-        const response = await axios.get(`https://haske.online:5000/studies/${orthancId}`);
-        setStudyDetails(response.data.MainDicomTags || {});
+        const [studyResponse, seriesResponse] = await Promise.all([
+          axios.get(`https://haske.online:5000/studies/${orthancId}`),
+          axios.get(`https://haske.online:5000/studies/${orthancId}/series`)
+        ]);
+
+        if (isMounted) {
+          setStudyDetails({
+            ...studyResponse.data.MainDicomTags,
+            Modality: initialModality || studyResponse.data.MainDicomTags?.Modality || 'UNKNOWN',
+            BodyPartExamined: initialBodyPart || seriesResponse.data[0]?.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
+          });
+
+          setPatientDetails(studyResponse.data.PatientMainDicomTags || {});
+        }
       } catch (err) {
         console.error('Failed to fetch study details:', err);
+        if (isMounted) {
+          setStudyDetails({
+            Modality: initialModality || 'UNKNOWN',
+            BodyPartExamined: initialBodyPart || 'UNKNOWN'
+          });
+          setPatientDetails({});
+        }
       }
     };
 
@@ -53,44 +100,94 @@ const AIAnalysis = () => {
       try {
         const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
           orthancId,
-          modality,
-          bodyPart
+          modality: initialModality || studyDetails?.Modality,
+          bodyPart: initialBodyPart || studyDetails?.BodyPartExamined
         });
         
+        if (!isMounted) return;
+
         if (data.status === 'no_model') {
-          setError(data.message);
+          setError(data.message || 'No suitable model found for this study');
           setLoading(false);
           return;
         }
         
         if (data.status === 'queued') {
           const checkStatus = async (jobId) => {
-            const { data: jobData } = await axios.get(
-              `https://haske.online:8090/api/ai/job/${jobId}`
-            );
-            
-            if (jobData.status === 'completed') {
-              setJob(jobData);
-              setLoading(false);
-            } else if (jobData.status === 'failed') {
-              setError(jobData.results.error);
-              setLoading(false);
-            } else {
-              setTimeout(() => checkStatus(jobId), 2000);
+            try {
+              const { data: jobData } = await axios.get(
+                `https://haske.online:8090/api/ai/job/${jobId}`
+              );
+              
+              if (!isMounted) return;
+
+              if (jobData.status === 'completed') {
+                setJob(jobData);
+                setLoading(false);
+              } else if (jobData.status === 'failed') {
+                setError(jobData.results?.error || 'Analysis failed');
+                setLoading(false);
+              } else {
+                setTimeout(() => checkStatus(jobId), 2000);
+              }
+            } catch (err) {
+              if (isMounted) {
+                setError('Failed to check job status');
+                setLoading(false);
+              }
             }
           };
           checkStatus(data.jobId);
         }
       } catch (err) {
-        setError(err.response?.data?.error || err.message);
-        setLoading(false);
+        if (isMounted) {
+          setError(err.response?.data?.error || err.message || 'Failed to start analysis');
+          setLoading(false);
+        }
       }
     };
 
-    fetchConfig();
-    fetchStudyDetails();
-    startAnalysis();
-  }, [orthancId, modality, bodyPart]);
+    const initialize = async () => {
+      try {
+        await Promise.all([fetchConfig(), fetchStudyDetails()]);
+        await startAnalysis();
+      } catch (err) {
+        if (isMounted) {
+          setError('Initialization failed');
+          setLoading(false);
+        }
+      }
+    };
+
+    initialize();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [orthancId, initialModality, initialBodyPart]);
+
+  const handleDownloadResults = async () => {
+    try {
+      const response = await axios.get(`https://haske.online:8090/api/ai/results/${job.jobId}`, {
+        responseType: 'blob'
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `ai_results_${orthancId}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error('Failed to download results:', err);
+      setError('Failed to download results');
+    }
+  };
+
+  const handleProcessAnother = () => {
+    navigate('/');
+  };
 
   if (loading) {
     return (
@@ -107,7 +204,7 @@ const AIAnalysis = () => {
           Processing AI analysis...
         </Typography>
         <Typography variant="body1" color="textSecondary">
-          Analyzing {modality} scan of {bodyPart}
+          Analyzing {studyDetails?.Modality || initialModality} scan of {studyDetails?.BodyPartExamined || initialBodyPart}
         </Typography>
       </Box>
     );
@@ -145,11 +242,11 @@ const AIAnalysis = () => {
             <Typography variant="h6" color="error" gutterBottom>
               Analysis Not Available
             </Typography>
-            <Typography variant="body1" paragraph>
+            <Alert severity="error" sx={{ mb: 2 }}>
               {error}
-            </Typography>
+            </Alert>
             <Typography variant="body2" color="textSecondary" paragraph>
-              We couldn't find a suitable AI model for {modality} scans of the {bodyPart}.
+              We couldn't find a suitable AI model for {studyDetails?.Modality || initialModality} scans of the {studyDetails?.BodyPartExamined || initialBodyPart}.
             </Typography>
             
             {availableModels.length > 0 && (
@@ -226,33 +323,31 @@ const AIAnalysis = () => {
           </CardContent>
         </Card>
 
-        {studyDetails && (
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Study Details
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="body1">
-                    <strong>Patient:</strong> {studyDetails.PatientName || 'N/A'}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Study Date:</strong> {studyDetails.StudyDate || 'N/A'}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="body1">
-                    <strong>Modality:</strong> {modality}
-                  </Typography>
-                  <Typography variant="body1">
-                    <strong>Body Part:</strong> {bodyPart}
-                  </Typography>
-                </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Study Details
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  <strong>Patient:</strong> {formatPatientName(patientDetails?.PatientName)}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Study Date:</strong> {formatDate(studyDetails?.StudyDate)}
+                </Typography>
               </Grid>
-            </CardContent>
-          </Card>
-        )}
+              <Grid item xs={12} md={6}>
+                <Typography variant="body1">
+                  <strong>Modality:</strong> {studyDetails?.Modality}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Body Part:</strong> {studyDetails?.BodyPartExamined}
+                </Typography>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
       </Box>
     );
   }
@@ -283,33 +378,31 @@ const AIAnalysis = () => {
         )}
       </Box>
 
-      {studyDetails && (
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Study Information
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body1">
-                  <strong>Patient:</strong> {studyDetails.PatientName || 'N/A'}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Study Date:</strong> {studyDetails.StudyDate || 'N/A'}
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="body1">
-                  <strong>Modality:</strong> {modality}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Body Part:</strong> {bodyPart}
-                </Typography>
-              </Grid>
+      <Card sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Study Information
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                <strong>Patient:</strong> {formatPatientName(patientDetails?.PatientName)}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Study Date:</strong> {formatDate(studyDetails?.StudyDate)}
+              </Typography>
             </Grid>
-          </CardContent>
-        </Card>
-      )}
+            <Grid item xs={12} md={6}>
+              <Typography variant="body1">
+                <strong>Modality:</strong> {studyDetails?.Modality}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Body Part:</strong> {studyDetails?.BodyPartExamined}
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
 
       <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
         Analysis Results
@@ -379,13 +472,21 @@ const AIAnalysis = () => {
 
       {job?.results && (
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
-          <Button variant="outlined" startIcon={<DownloadIcon />}>
+          <Button 
+            variant="outlined" 
+            startIcon={<DownloadIcon />}
+            onClick={handleDownloadResults}
+          >
             Download Results
           </Button>
           <Button variant="outlined" startIcon={<SaveIcon />}>
             Save to Orthanc
           </Button>
-          <Button variant="outlined" startIcon={<RefreshIcon />}>
+          <Button 
+            variant="outlined" 
+            startIcon={<RefreshIcon />}
+            onClick={handleProcessAnother}
+          >
             Process Another
           </Button>
         </Box>
