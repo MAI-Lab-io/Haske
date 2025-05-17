@@ -1,338 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { 
+  Box, Typography, CircularProgress, Grid, Paper, 
+  Button, Card, CardContent, CardMedia, Divider,
+  Chip, Stack, IconButton, Modal, Alert,
+  Container, Avatar, useTheme
+} from '@mui/material';
 import axios from 'axios';
+import { 
+  Info as InfoIcon, GitHub as GitHubIcon, 
+  ZoomIn as ZoomInIcon, Download as DownloadIcon,
+  Save as SaveIcon, Refresh as RefreshIcon, 
+  Close as CloseIcon, Science as ScienceIcon
+} from '@mui/icons-material';
 
-// Custom Tesla-inspired UI components
-const TeslaContainer = ({ children, maxWidth = '1440px' }) => (
-  <div style={{
-    maxWidth,
-    margin: '0 auto',
-    padding: '24px',
-    height: '100vh',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column'
-  }}>
-    {children}
-  </div>
-);
-
-const TeslaCard = ({ children, elevation = 1, padding = '24px', style = {} }) => (
-  <div style={{
-    background: '#fff',
-    borderRadius: '12px',
-    padding,
-    boxShadow: elevation === 1 ? '0 1px 3px rgba(0,0,0,0.1)' : 
-               elevation === 2 ? '0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1)' : 
-               '0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05)',
-    transition: 'all 0.2s ease',
-    ...style
-  }}>
-    {children}
-  </div>
-);
-
-const TeslaButton = ({ 
-  children, 
-  variant = 'contained', 
-  color = 'primary', 
-  onClick, 
-  startIcon, 
-  style = {},
-  disabled = false,
-  fullWidth = false
-}) => {
-  const getBackgroundColor = () => {
-    if (disabled) return '#e2e8f0';
-    if (variant === 'text') return 'transparent';
-    return color === 'primary' ? '#0f172a' : 
-           color === 'secondary' ? '#fff' : '#f1f5f9';
-  };
-
-  const getTextColor = () => {
-    if (disabled) return '#94a3b8';
-    if (variant === 'contained') {
-      return color === 'primary' ? '#fff' : '#0f172a';
-    }
-    return '#0f172a';
-  };
-
-  const getBorder = () => {
-    if (variant === 'outlined') {
-      return `2px solid ${color === 'primary' ? '#0f172a' : '#cbd5e1'}`;
-    }
-    return 'none';
-  };
-
-  return (
-    <button 
-      onClick={onClick}
-      disabled={disabled}
-      style={{
-        background: getBackgroundColor(),
-        color: getTextColor(),
-        border: getBorder(),
-        padding: '12px 24px',
-        borderRadius: '4px',
-        fontWeight: 500,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '8px',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'all 0.2s ease',
-        width: fullWidth ? '100%' : 'auto',
-        ...style
-      }}
-    >
-      {startIcon && <span>{startIcon}</span>}
-      {children}
-    </button>
-  );
-};
-
-const TeslaTypography = ({ 
-  variant = 'body1', 
-  children, 
-  color = 'inherit',
-  style = {},
-  gutterBottom = false
-}) => {
-  const getStyles = () => {
-    let styles = { color, margin: 0, ...style };
-    
-    if (gutterBottom) {
-      styles.marginBottom = '16px';
-    }
-    
-    switch (variant) {
-      case 'h1':
-        return { ...styles, fontSize: '32px', fontWeight: 700, lineHeight: 1.2 };
-      case 'h2':
-        return { ...styles, fontSize: '28px', fontWeight: 600, lineHeight: 1.2 };
-      case 'h3':
-        return { ...styles, fontSize: '24px', fontWeight: 600, lineHeight: 1.3 };
-      case 'h4':
-        return { ...styles, fontSize: '20px', fontWeight: 600, lineHeight: 1.4 };
-      case 'h5':
-        return { ...styles, fontSize: '18px', fontWeight: 500, lineHeight: 1.4 };
-      case 'h6':
-        return { ...styles, fontSize: '16px', fontWeight: 500, lineHeight: 1.4 };
-      case 'body1':
-        return { ...styles, fontSize: '16px', fontWeight: 400, lineHeight: 1.5 };
-      case 'body2':
-        return { ...styles, fontSize: '14px', fontWeight: 400, lineHeight: 1.5 };
-      case 'subtitle1':
-        return { ...styles, fontSize: '16px', fontWeight: 500, lineHeight: 1.5, opacity: 0.9 };
-      case 'subtitle2':
-        return { ...styles, fontSize: '14px', fontWeight: 500, lineHeight: 1.5, opacity: 0.9 };
-      default:
-        return styles;
-    }
-  };
-
-  return <div style={getStyles()}>{children}</div>;
-};
-
-const TeslaGrid = ({ children, container = false, item = false, xs = 12, gap = '24px', style = {} }) => {
-  if (container) {
-    return (
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(12, 1fr)',
-        gap,
-        width: '100%',
-        ...style
-      }}>
-        {children}
-      </div>
-    );
-  }
-  
-  if (item) {
-    return (
-      <div style={{
-        gridColumn: `span ${xs}`,
-        ...style
-      }}>
-        {children}
-      </div>
-    );
-  }
-  
-  return <div style={style}>{children}</div>;
-};
-
-const TeslaChip = ({ label, size = 'small', color = 'default' }) => {
-  const getBackgroundColor = () => {
-    return color === 'primary' ? 'rgba(15, 23, 42, 0.1)' : 
-           color === 'secondary' ? 'rgba(30, 58, 138, 0.1)' : 
-           'rgba(100, 116, 139, 0.1)';
-  };
-
-  const getTextColor = () => {
-    return color === 'primary' ? '#0f172a' : 
-           color === 'secondary' ? '#1e40af' : 
-           '#475569';
-  };
-
-  return (
-    <span style={{
-      backgroundColor: getBackgroundColor(),
-      color: getTextColor(),
-      padding: size === 'small' ? '4px 8px' : '6px 12px',
-      borderRadius: '16px',
-      fontSize: size === 'small' ? '12px' : '14px',
-      fontWeight: 500,
-      display: 'inline-flex',
-      alignItems: 'center',
-      margin: '2px',
-      whiteSpace: 'nowrap'
-    }}>
-      {label}
-    </span>
-  );
-};
-
-const TeslaDivider = ({ style = {} }) => (
-  <div style={{
-    height: '1px',
-    width: '100%',
-    backgroundColor: '#e2e8f0',
-    margin: '24px 0',
-    ...style
-  }} />
-);
-
-const TeslaModal = ({ open, onClose, children }) => {
-  if (!open) return null;
-  
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      backdropFilter: 'blur(4px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        position: 'relative',
-        backgroundColor: '#fff',
-        borderRadius: '12px',
-        padding: '24px',
-        maxWidth: '90%',
-        maxHeight: '90%',
-        overflow: 'auto'
-      }}>
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '12px',
-            right: '12px',
-            background: '#ef4444',
-            color: 'white',
-            borderRadius: '50%',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          ✕
-        </button>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-// Icons
-const IconWrapper = ({ children, color = '#0f172a', size = 24 }) => (
-  <div style={{ width: `${size}px`, height: `${size}px`, display: 'flex', alignItems: 'center', justifyContent: 'center', color }}>
-    {children}
-  </div>
-);
-
-const InfoIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-  </IconWrapper>
-);
-
-const GitHubIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="100%" height="100%">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-    </svg>
-  </IconWrapper>
-);
-
-const ZoomInIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-    </svg>
-  </IconWrapper>
-);
-
-const DownloadIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-    </svg>
-  </IconWrapper>
-);
-
-const SaveIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-    </svg>
-  </IconWrapper>
-);
-
-const RefreshIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-    </svg>
-  </IconWrapper>
-);
-
-const ScienceIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-    </svg>
-  </IconWrapper>
-);
-
-const CloseIcon = (props) => (
-  <IconWrapper {...props}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="100%" height="100%">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  </IconWrapper>
-);
-
-// Main Component
 const AIAnalysis = () => {
+  const theme = useTheme({
+    palette: {
+      primary: {
+        main: '#0f172a',
+        contrastText: '#ffffff'
+      },
+      secondary: {
+        main: '#3b82f6',
+        contrastText: '#ffffff'
+      },
+      background: {
+        default: '#f8fafc',
+        paper: '#ffffff'
+      }
+    },
+    shape: {
+      borderRadius: 12
+    },
+    typography: {
+      fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+      h1: {
+        fontWeight: 700,
+        fontSize: '2.5rem'
+      },
+      h2: {
+        fontWeight: 600,
+        fontSize: '2rem'
+      },
+      h3: {
+        fontWeight: 600,
+        fontSize: '1.75rem'
+      },
+      h4: {
+        fontWeight: 600,
+        fontSize: '1.5rem'
+      },
+      h5: {
+        fontWeight: 600,
+        fontSize: '1.25rem'
+      },
+      h6: {
+        fontWeight: 600,
+        fontSize: '1.1rem'
+      }
+    }
+  });
+
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
-  
   const [loading, setLoading] = useState(true);
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
@@ -347,13 +79,11 @@ const AIAnalysis = () => {
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
-  // Format patient name consistently
   const formatPatientName = (name) => {
     if (!name) return 'N/A';
     return name.replace(/\\/g, ' ').trim();
   };
 
-  // Format date consistently
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     try {
@@ -518,501 +248,656 @@ const AIAnalysis = () => {
 
   if (loading) {
     return (
-      <TeslaContainer>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100%',
-          gap: '24px'
+      <Container maxWidth="xl" sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        flexDirection: 'column',
+        gap: 3,
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)'
+      }}>
+        <ScienceIcon sx={{ 
+          fontSize: 80, 
+          color: theme.palette.primary.main,
+          filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))'
+        }} />
+        <CircularProgress 
+          size={60} 
+          thickness={4} 
+          sx={{ color: theme.palette.primary.main }}
+        />
+        <Typography variant="h4" fontWeight="bold" sx={{ 
+          background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, #3b82f6 100%)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          textAlign: 'center'
         }}>
-          <ScienceIcon size={80} color="#0f172a" />
-          <div style={{
-            width: '60px',
-            height: '60px',
-            border: '4px solid rgba(15, 23, 42, 0.1)',
-            borderTopColor: '#0f172a',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
-          <TeslaTypography variant="h4" color="#0f172a" style={{ fontWeight: 500 }}>
-            Processing AI Analysis...
-          </TeslaTypography>
-          <TeslaTypography variant="body1" color="#64748b">
-            Analyzing {currentModality} scan of {currentBodyPart}
-          </TeslaTypography>
-          <style>{`
-            @keyframes spin {
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
-        </div>
-      </TeslaContainer>
+          Processing AI Analysis
+        </Typography>
+        <Typography variant="body1" color="text.secondary" textAlign="center">
+          Analyzing {currentModality} scan of {currentBodyPart}
+        </Typography>
+      </Container>
     );
   }
 
   if (error) {
     return (
-      <TeslaContainer>
-        <TeslaCard elevation={3} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <div style={{
-            backgroundColor: '#0f172a',
-            color: 'white',
-            padding: '28px',
+      <Container maxWidth="xl" sx={{ 
+        py: 4,
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Card sx={{ 
+          borderRadius: 3,
+          boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.1)',
+          overflow: 'visible',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Box sx={{ 
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, #1e3a8a 100%)`,
+            color: theme.palette.primary.contrastText,
+            p: 4,
             textAlign: 'center',
-            borderTopLeftRadius: '12px',
-            borderTopRightRadius: '12px'
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12
           }}>
-            <TeslaTypography variant="h3" style={{ fontWeight: 600, color: 'white' }}>
-              Haske AI Analysis
-            </TeslaTypography>
+            <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
+              AI Analysis Dashboard
+            </Typography>
+            <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
+              Advanced Medical Imaging Analysis
+            </Typography>
             {githubRepo && (
-              <div style={{ marginTop: '16px' }}>
-                <TeslaButton 
-                  color="secondary"
-                  startIcon={<GitHubIcon color="white" />}
-                  onClick={() => window.open(githubRepo, '_blank')}
-                  style={{ borderRadius: '24px', padding: '10px 20px' }}
-                >
-                  View Main Repository
-                </TeslaButton>
-              </div>
+              <Button 
+                variant="contained"
+                color="secondary"
+                startIcon={<GitHubIcon />}
+                href={githubRepo}
+                target="_blank"
+                sx={{ 
+                  mt: 3,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 50,
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                View Repository
+              </Button>
             )}
-          </div>
+          </Box>
 
-          <div style={{ padding: '28px', flex: 1, overflow: 'auto' }}>
-            <div style={{
-              backgroundColor: '#fef2f2',
-              padding: '20px',
-              borderRadius: '8px',
-              marginBottom: '24px',
-              border: '1px solid #fee2e2'
+          <CardContent sx={{ 
+            p: 4,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <Box sx={{ 
+              backgroundColor: '#fee2e2',
+              p: 3,
+              borderRadius: 12,
+              mb: 4,
+              borderLeft: '4px solid #ef4444'
             }}>
-              <TeslaTypography variant="h5" color="#b91c1c" gutterBottom style={{ fontWeight: 600 }}>
+              <Typography variant="h5" color="#b91c1c" gutterBottom fontWeight="bold">
                 Analysis Not Available
-              </TeslaTypography>
-              <div style={{
-                backgroundColor: '#fee2e2',
-                padding: '16px',
-                borderRadius: '4px',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
+              </Typography>
+              <Alert severity="error" sx={{ 
+                mb: 2,
+                borderRadius: 8,
+                backgroundColor: 'rgba(239, 68, 68, 0.1)'
               }}>
-                <div style={{ color: '#dc2626', flexShrink: 0 }}>⚠</div>
-                <TeslaTypography variant="body1" color="#b91c1c">
-                  {error}
-                </TeslaTypography>
-              </div>
-              <TeslaTypography variant="body1" color="#64748b">
+                {error}
+              </Alert>
+              <Typography variant="body1" color="#6b7280">
                 We couldn't find a suitable AI model for {currentModality} scans of the {currentBodyPart}.
-              </TeslaTypography>
-            </div>
+              </Typography>
+            </Box>
             
             {availableModels.length > 0 && (
               <>
-                <TeslaDivider />
-                <TeslaTypography variant="h4" gutterBottom style={{ fontWeight: 600, marginBottom: '24px' }}>
+                <Divider sx={{ my: 4 }} />
+                <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ mb: 4 }}>
                   Available AI Models
-                </TeslaTypography>
+                </Typography>
                 
-                <div style={{
+                <Box sx={{ 
                   width: '100%',
                   overflowX: 'auto',
-                  padding: '8px 4px',
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#0f172a #f1f5f9'
+                  py: 2,
+                  px: 1,
+                  '&::-webkit-scrollbar': {
+                    height: '6px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    backgroundColor: theme.palette.primary.main,
+                    borderRadius: '3px',
+                  }
                 }}>
-                  <div style={{ display: 'flex', gap: '20px', paddingBottom: '12px' }}>
+                  <Grid container spacing={3} sx={{ width: 'max-content', minWidth: '100%' }}>
                     {availableModels.map((model) => (
-                      <TeslaCard 
-                        key={model.id}
-                        elevation={selectedModel?.id === model.id ? 3 : 1}
-                        style={{ 
-                          minWidth: '280px',
-                          maxWidth: '320px',
-                          height: '100%',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          cursor: 'pointer',
-                          border: selectedModel?.id === model.id ? '2px solid #0f172a' : '1px solid #e2e8f0',
-                          transform: selectedModel?.id === model.id ? 'translateY(-4px)' : 'none',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onClick={() => setSelectedModel(model)}
-                      >
-                        <div style={{ padding: '20px' }}>
-                          <div style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: '16px', 
-                            marginBottom: '16px' 
-                          }}>
-                            <div style={{ 
-                              backgroundColor: '#0f172a',
-                              width: '48px',
-                              height: '48px',
-                              borderRadius: '50%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: 'white'
-                            }}>
-                              <ScienceIcon color="white" size={24} />
-                            </div>
-                            <TeslaTypography variant="h5" style={{ fontWeight: 600 }}>
-                              {model.name}
-                            </TeslaTypography>
-                          </div>
-                          <TeslaTypography variant="body1" color="#64748b" style={{ marginBottom: '20px' }}>
-                            {model.description}
-                          </TeslaTypography>
-                          
-                          <div style={{ marginBottom: '16px' }}>
-                            <TeslaTypography variant="subtitle2" color="#64748b" gutterBottom>
-                              Supported Modalities:
-                            </TeslaTypography>
-                            <div style={{ 
-                              display: 'flex', 
-                              flexWrap: 'wrap', 
-                              gap: '6px', 
-                              marginTop: '6px' 
-                            }}>
-                              {model.modality?.map(m => (
-                                <TeslaChip key={m} label={m} color="primary" />
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <div style={{ marginBottom: '16px' }}>
-                            <TeslaTypography variant="subtitle2" color="#64748b" gutterBottom>
-                              Supported Body Parts:
-                            </TeslaTypography>
-                            <div style={{ 
-                              display: 'flex', 
-                              flexWrap: 'wrap', 
-                              gap: '6px', 
-                              marginTop: '6px' 
-                            }}>
-                              {model.body_part?.map(b => (
-                                <TeslaChip key={b} label={b} color="secondary" />
-                              ))}
-                            </div>
-                          </div>
-                          
-                          {model.github_link && (
-                            <TeslaButton 
-                              variant="outlined"
-                              startIcon={<GitHubIcon />}
-                onClick={() => window.open(model.github_link, '_blank')}
-                              style={{ borderRadius: '24px' }}
-                            >
-                              View Model Code
-                            </TeslaButton>
-                          )}
-                        </div>
-                      </TeslaCard>
+                      <Grid item key={model.id} xs={12} sm={6} md={4} lg={3}>
+                        <Card 
+                          sx={{ 
+                            height: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            border: selectedModel?.id === model.id ? 
+                              `2px solid ${theme.palette.primary.main}` : 
+                              `1px solid #e2e8f0`,
+                            borderRadius: 12,
+                            boxShadow: selectedModel?.id === model.id ? 
+                              `0 10px 15px -3px rgba(15, 23, 42, 0.2)` : 
+                              '0 1px 3px rgba(0, 0, 0, 0.05)',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                            }
+                          }}
+                          onClick={() => setSelectedModel(model)}
+                        >
+                          <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                              <Avatar sx={{ 
+                                bgcolor: theme.palette.primary.main,
+                                width: 40,
+                                height: 40
+                              }}>
+                                <ScienceIcon fontSize="small" />
+                              </Avatar>
+                              <Typography variant="h6" fontWeight="bold">
+                                {model.name}
+                              </Typography>
+                            </Stack>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                              {model.description}
+                            </Typography>
+                            
+                            <Box sx={{ mb: 3 }}>
+                              <Typography variant="caption" color="text.secondary" gutterBottom>
+                                SUPPORTED MODALITIES
+                              </Typography>
+                              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
+                                {model.modality?.map(m => (
+                                  <Chip 
+                                    key={m} 
+                                    label={m} 
+                                    size="small" 
+                                    sx={{ 
+                                      backgroundColor: '#e0f2fe',
+                                      color: '#0369a1',
+                                      fontSize: '0.7rem',
+                                      height: 24
+                                    }}
+                                  />
+                                ))}
+                              </Stack>
+                            </Box>
+                            
+                            <Box sx={{ mb: 3 }}>
+                              <Typography variant="caption" color="text.secondary" gutterBottom>
+                                SUPPORTED BODY PARTS
+                              </Typography>
+                              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
+                                {model.body_part?.map(b => (
+                                  <Chip 
+                                    key={b} 
+                                    label={b} 
+                                    size="small" 
+                                    sx={{
+                                      backgroundColor: '#dbeafe',
+                                      color: '#1d4ed8',
+                                      fontSize: '0.7rem',
+                                      height: 24
+                                    }}
+                                  />
+                                ))}
+                              </Stack>
+                            </Box>
+                            
+                            {model.github_link && (
+                              <Button 
+                                fullWidth
+                                variant="outlined"
+                                size="small"
+                                startIcon={<GitHubIcon fontSize="small" />}
+                                href={model.github_link}
+                                target="_blank"
+                                sx={{ 
+                                  mt: 1,
+                                  borderRadius: 8,
+                                  borderWidth: 1,
+                                  fontSize: '0.75rem',
+                                  '&:hover': {
+                                    borderWidth: 1
+                                  }
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                View Code
+                              </Button>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </Grid>
                     ))}
-                  </div>
-                </div>
+                  </Grid>
+                </Box>
               </>
             )}
-          </div>
-        </TeslaCard>
-
-        <TeslaCard elevation={2} style={{ marginTop: '24px' }}>
-          <div style={{ padding: '24px' }}>
-            <TeslaTypography variant="h4" gutterBottom style={{ fontWeight: 600 }}>
-              Study Details
-            </TeslaTypography>
-            
-            <TeslaGrid container gap="24px">
-              <TeslaGrid item xs={12} md={6}>
-                <TeslaCard elevation={0} style={{ backgroundColor: '#f8fafc', padding: '24px' }}>
-                  <TeslaTypography variant="subtitle1" color="#64748b" gutterBottom>
-                    PATIENT INFORMATION
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1" gutterBottom>
-                    <strong>Name:</strong> {formatPatientName(patientDetails?.PatientName)}
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1" gutterBottom>
-                    <strong>ID:</strong> {patientDetails?.PatientID || 'N/A'}
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1">
-                    <strong>DOB:</strong> {formatDate(patientDetails?.PatientBirthDate)}
-                  </TeslaTypography>
-                </TeslaCard>
-              </TeslaGrid>
-              
-              <TeslaGrid item xs={12} md={6}>
-                <TeslaCard elevation={0} style={{ backgroundColor: '#f8fafc', padding: '24px' }}>
-                  <TeslaTypography variant="subtitle1" color="#64748b" gutterBottom>
-                    STUDY INFORMATION
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1" gutterBottom>
-                    <strong>Study Date:</strong> {formatDate(seriesDetails[0]?.StudyDate)}
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1" gutterBottom>
-                    <strong>Modality:</strong> {currentModality}
-                  </TeslaTypography>
-                  <TeslaTypography variant="body1">
-                    <strong>Body Part:</strong> {currentBodyPart}
-                  </TeslaTypography>
-                </TeslaCard>
-              </TeslaGrid>
-            </TeslaGrid>
-          </div>
-        </TeslaCard>
-      </TeslaContainer>
+          </CardContent>
+        </Card>
+      </Container>
     );
   }
 
-  // Successful analysis results view
   return (
-    <TeslaContainer>
-      <TeslaCard elevation={3} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <div style={{
-          backgroundColor: '#0f172a',
-          color: 'white',
-          padding: '28px',
+    <Container maxWidth="xl" sx={{ 
+      py: 4,
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      <Card sx={{ 
+        borderRadius: 3,
+        boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.1)',
+        overflow: 'hidden',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <Box sx={{ 
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, #1e3a8a 100%)`,
+          color: theme.palette.primary.contrastText,
+          p: 4,
           textAlign: 'center',
-          borderTopLeftRadius: '12px',
-          borderTopRightRadius: '12px'
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12
         }}>
-          <TeslaTypography variant="h3" style={{ fontWeight: 600, color: 'white' }}>
-            Haske AI Analysis Results
-          </TeslaTypography>
+          <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
+            AI Analysis Results
+          </Typography>
+          <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
+            {currentModality} scan of {currentBodyPart}
+          </Typography>
           {githubRepo && (
-            <div style={{ marginTop: '16px' }}>
-              <TeslaButton 
-                color="secondary"
-                startIcon={<GitHubIcon color="white" />}
-                onClick={() => window.open(githubRepo, '_blank')}
-                style={{ borderRadius: '24px', padding: '10px 20px' }}
-              >
-                View Main Repository
-              </TeslaButton>
-            </div>
+            <Button 
+              variant="contained"
+              color="secondary"
+              startIcon={<GitHubIcon />}
+              href={githubRepo}
+              target="_blank"
+              sx={{ 
+                mt: 3,
+                px: 4,
+                py: 1.5,
+                borderRadius: 50,
+                fontWeight: 'bold',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              View Repository
+            </Button>
           )}
-        </div>
+        </Box>
 
-        <div style={{ padding: '28px', flex: 1, overflow: 'auto' }}>
-          <TeslaCard elevation={2} style={{ marginBottom: '32px' }}>
-            <div style={{ padding: '24px' }}>
-              <TeslaTypography variant="h4" gutterBottom style={{ fontWeight: 600 }}>
-                Study Information
-              </TeslaTypography>
-              
-              <TeslaGrid container gap="24px">
-                <TeslaGrid item xs={12} md={6}>
-                  <TeslaCard elevation={0} style={{ backgroundColor: '#f8fafc', padding: '24px' }}>
-                    <TeslaTypography variant="subtitle1" color="#64748b" gutterBottom>
-                      PATIENT INFORMATION
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1" gutterBottom>
-                      <strong>Name:</strong> {formatPatientName(patientDetails?.PatientName)}
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1" gutterBottom>
-                      <strong>ID:</strong> {patientDetails?.PatientID || 'N/A'}
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1">
-                      <strong>DOB:</strong> {formatDate(patientDetails?.PatientBirthDate)}
-                    </TeslaTypography>
-                  </TeslaCard>
-                </TeslaGrid>
-                
-                <TeslaGrid item xs={12} md={6}>
-                  <TeslaCard elevation={0} style={{ backgroundColor: '#f8fafc', padding: '24px' }}>
-                    <TeslaTypography variant="subtitle1" color="#64748b" gutterBottom>
-                      STUDY INFORMATION
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1" gutterBottom>
-                      <strong>Study Date:</strong> {formatDate(seriesDetails[0]?.StudyDate)}
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1" gutterBottom>
-                      <strong>Modality:</strong> {currentModality}
-                    </TeslaTypography>
-                    <TeslaTypography variant="body1">
-                      <strong>Body Part:</strong> {currentBodyPart}
-                    </TeslaTypography>
-                  </TeslaCard>
-                </TeslaGrid>
-              </TeslaGrid>
-            </div>
-          </TeslaCard>
-
-          <TeslaTypography variant="h4" gutterBottom style={{ fontWeight: 600, marginBottom: '24px' }}>
-            Analysis Results
-          </TeslaTypography>
-          
-          <TeslaGrid container gap="24px" style={{ marginBottom: '32px' }}>
-            <TeslaGrid item xs={12} md={6}>
-              <TeslaCard elevation={2} style={{ 
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                }
-              }}>
-                <div style={{ padding: '16px' }}>
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'center',
-                    marginBottom: '16px'
-                  }}>
-                    <TeslaTypography variant="h5" style={{ fontWeight: 600 }}>
-                      Original Image
-                    </TeslaTypography>
-                    <TeslaButton 
-                      variant="text"
-                      startIcon={<ZoomInIcon />}
-                      onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
-                      style={{ 
-                        padding: '8px',
-                        minWidth: 'auto',
-                        borderRadius: '50%'
-                      }}
-                    />
-                  </div>
-                  <img
-                    src={`https://haske.online:8090/instances/${orthancId}/preview`}
-                    alt="Original DICOM"
-                    style={{ 
-                      width: '100%',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease',
-                      ':hover': {
-                        transform: 'scale(1.02)'
-                      }
-                    }}
-                    onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
-                  />
-                </div>
-              </TeslaCard>
-            </TeslaGrid>
-            
-            {job?.results?.outputs?.map((output, index) => (
-              <TeslaGrid item xs={12} md={6} key={index}>
-                <TeslaCard elevation={2} style={{ 
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-                  }
+        <CardContent sx={{ 
+          p: 4,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Grid container spacing={3} sx={{ flex: 1 }}>
+            {/* Left Column - Patient Info and Original Image */}
+            <Grid item xs={12} md={4}>
+              <Stack spacing={3} sx={{ height: '100%' }}>
+                {/* Patient Info Card */}
+                <Card sx={{ 
+                  borderRadius: 12,
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid #e2e8f0'
                 }}>
-                  <div style={{ padding: '16px' }}>
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      alignItems: 'center',
-                      marginBottom: '16px'
-                    }}>
-                      <TeslaTypography variant="h5" style={{ fontWeight: 600 }}>
-                        {output.label}
-                      </TeslaTypography>
-                      <TeslaButton 
-                        variant="text"
-                        startIcon={<ZoomInIcon />}
-                        onClick={() => setZoomedImage(output.url)}
-                        style={{ 
-                          padding: '8px',
-                          minWidth: 'auto',
-                          borderRadius: '50%'
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      Patient Information
+                    </Typography>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        NAME
+                      </Typography>
+                      <Typography variant="body1">
+                        {formatPatientName(patientDetails?.PatientName)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        PATIENT ID
+                      </Typography>
+                      <Typography variant="body1">
+                        {patientDetails?.PatientID || 'N/A'}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        DATE OF BIRTH
+                      </Typography>
+                      <Typography variant="body1">
+                        {formatDate(patientDetails?.PatientBirthDate)}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+
+                {/* Study Info Card */}
+                <Card sx={{ 
+                  borderRadius: 12,
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid #e2e8f0'
+                }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      Study Information
+                    </Typography>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        STUDY DATE
+                      </Typography>
+                      <Typography variant="body1">
+                        {formatDate(seriesDetails[0]?.StudyDate)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ mb: 2 }}>
+                      <Typography variant="caption" color="text.secondary">
+                        MODALITY
+                      </Typography>
+                      <Typography variant="body1">
+                        {currentModality}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        BODY PART
+                      </Typography>
+                      <Typography variant="body1">
+                        {currentBodyPart}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+
+                {/* Original Image Card */}
+                <Card sx={{ 
+                  borderRadius: 12,
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                  border: '1px solid #e2e8f0',
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  <CardContent sx={{ 
+                    p: 2,
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                      <Typography variant="subtitle1" fontWeight="bold">Original Image</Typography>
+                      <IconButton 
+                        size="small"
+                        onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
+                        sx={{
+                          backgroundColor: theme.palette.primary.light,
+                          color: theme.palette.primary.contrastText,
+                          '&:hover': {
+                            backgroundColor: theme.palette.primary.main
+                          }
                         }}
+                      >
+                        <ZoomInIcon fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                    <Box sx={{ 
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#f8fafc',
+                      borderRadius: 8,
+                      overflow: 'hidden'
+                    }}>
+                      <CardMedia
+                        component="img"
+                        image={`https://haske.online:8090/instances/${orthancId}/preview`}
+                        alt="Original DICOM"
+                        sx={{ 
+                          width: '100%',
+                          height: 'auto',
+                          objectFit: 'contain',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            transform: 'scale(1.02)'
+                          }
+                        }}
+                        onClick={() => setZoomedImage(`https://haske.online:8090/instances/${orthancId}/preview`)}
                       />
-                    </div>
-                    <img
-                      src={output.url}
-                      alt={output.label}
-                      style={{ 
-                        width: '100%',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        ':hover': {
-                          transform: 'scale(1.02)'
-                        }
-                      }}
-                      onClick={() => setZoomedImage(output.url)}
-                    />
-                  </div>
-                </TeslaCard>
-              </TeslaGrid>
-            ))}
-          </TeslaGrid>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Stack>
+            </Grid>
 
-          {job?.results && (
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: '16px',
-              flexWrap: 'wrap'
-            }}>
-              <TeslaButton 
-                variant="contained"
-                color="primary"
-                startIcon={<DownloadIcon />}
-                onClick={handleDownloadResults}
-                style={{ 
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  minWidth: '200px'
-                }}
-              >
-                Download Results
-              </TeslaButton>
-              <TeslaButton 
-                variant="outlined"
-                color="primary"
-                startIcon={<SaveIcon />}
-                style={{ 
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  minWidth: '200px',
-                  borderWidth: '2px'
-                }}
-              >
-                Save to Orthanc
-              </TeslaButton>
-              <TeslaButton 
-                variant="outlined"
-                color="secondary"
-                startIcon={<RefreshIcon />}
-                onClick={handleProcessAnother}
-                style={{ 
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  minWidth: '200px',
-                  borderWidth: '2px'
-                }}
-              >
-                Process Another
-              </TeslaButton>
-            </div>
-          )}
-        </div>
-      </TeslaCard>
+            {/* Right Column - Results */}
+            <Grid item xs={12} md={8}>
+              <Card sx={{ 
+                borderRadius: 12,
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                border: '1px solid #e2e8f0',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <CardContent sx={{ 
+                  p: 3,
+                  flex: 1,
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}>
+                  <Typography variant="h5" fontWeight="bold" gutterBottom>
+                    AI Analysis Results
+                  </Typography>
+                  
+                  <Grid container spacing={2} sx={{ flex: 1 }}>
+                    {job?.results?.outputs?.map((output, index) => (
+                      <Grid item xs={12} sm={6} key={index}>
+                        <Card sx={{ 
+                          borderRadius: 12,
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
+                          border: '1px solid #e2e8f0',
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column'
+                        }}>
+                          <CardContent sx={{ 
+                            p: 2,
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column'
+                          }}>
+                            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                              <Typography variant="subtitle1" fontWeight="bold">{output.label}</Typography>
+                              <IconButton 
+                                size="small"
+                                onClick={() => setZoomedImage(output.url)}
+                                sx={{
+                                  backgroundColor: theme.palette.primary.light,
+                                  color: theme.palette.primary.contrastText,
+                                  '&:hover': {
+                                    backgroundColor: theme.palette.primary.main
+                                  }
+                                }}
+                              >
+                                <ZoomInIcon fontSize="small" />
+                              </IconButton>
+                            </Stack>
+                            <Box sx={{ 
+                              flex: 1,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              background: '#f8fafc',
+                              borderRadius: 8,
+                              overflow: 'hidden'
+                            }}>
+                              <CardMedia
+                                component="img"
+                                image={output.url}
+                                alt={output.label}
+                                sx={{ 
+                                  width: '100%',
+                                  height: 'auto',
+                                  objectFit: 'contain',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s ease',
+                                  '&:hover': {
+                                    transform: 'scale(1.02)'
+                                  }
+                                }}
+                                onClick={() => setZoomedImage(output.url)}
+                              />
+                            </Box>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
 
-      <TeslaModal open={Boolean(zoomedImage)} onClose={() => setZoomedImage(null)}>
-        <div style={{ position: 'relative' }}>
+          {/* Action Buttons */}
+          <Box sx={{ 
+            mt: 4,
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 2,
+            flexWrap: 'wrap'
+          }}>
+            <Button 
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              onClick={handleDownloadResults}
+              sx={{
+                px: 4,
+                py: 1.5,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                minWidth: 180,
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              Download Results
+            </Button>
+            <Button 
+              variant="outlined"
+              color="primary"
+              startIcon={<SaveIcon />}
+              sx={{
+                px: 4,
+                py: 1.5,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                minWidth: 180,
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              Save to PACS
+            </Button>
+            <Button 
+              variant="outlined"
+              color="secondary"
+              startIcon={<RefreshIcon />}
+              onClick={handleProcessAnother}
+              sx={{
+                px: 4,
+                py: 1.5,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                minWidth: 180,
+                borderWidth: 2,
+                '&:hover': {
+                  borderWidth: 2
+                }
+              }}
+            >
+              New Analysis
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Image Zoom Modal */}
+      <Modal
+        open={Boolean(zoomedImage)}
+        onClose={() => setZoomedImage(null)}
+        sx={{ 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backdropFilter: 'blur(8px)'
+        }}
+      >
+        <Box sx={{ 
+          position: 'relative',
+          bgcolor: 'background.paper',
+          p: 2,
+          borderRadius: 12,
+          outline: 'none',
+          maxWidth: '90%',
+          maxHeight: '90%',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+        }}>
+          <IconButton
+            sx={{ 
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              zIndex: 1,
+              backgroundColor: '#ef4444',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#dc2626'
+              }
+            }}
+            onClick={() => setZoomedImage(null)}
+          >
+            <CloseIcon />
+          </IconButton>
           <img 
             src={zoomedImage} 
             alt="Zoomed view" 
             style={{ 
-              maxWidth: '80vw',
-              maxHeight: '80vh',
+              maxWidth: '100%',
+              maxHeight: 'calc(90vh - 32px)',
               display: 'block',
-              borderRadius: '8px'
+              borderRadius: 8
             }}
           />
-        </div>
-      </TeslaModal>
-    </TeslaContainer>
+        </Box>
+      </Modal>
+    </Container>
   );
 };
 
