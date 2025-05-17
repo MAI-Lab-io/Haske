@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { Add, Delete, Edit } from '@mui/icons-material';
 import axios from 'axios';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Models = () => {
   const [models, setModels] = useState([]);
