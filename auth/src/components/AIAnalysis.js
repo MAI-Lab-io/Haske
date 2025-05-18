@@ -118,8 +118,8 @@ const AIAnalysis = () => {
     const fetchStudyDetails = async () => {
       try {
         const [studyResponse, seriesResponse] = await Promise.all([
-          axios.get(`https://haske.online:5000/studies/${orthancId}`),
-          axios.get(`https://haske.online:5000/studies/${orthancId}/series`)
+          axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}`),
+          axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}/series`)
         ]);
 
         if (isMounted) {
@@ -127,7 +127,7 @@ const AIAnalysis = () => {
           
           const seriesData = await Promise.all(
             seriesResponse.data.map(async (series) => {
-              const seriesDetails = await axios.get(`https://haske.online:5000/series/${series.ID}`);
+              const seriesDetails = await axios.get(`https://haske.online:8090/proxy/orthanc/series/${series.ID}`);
               return {
                 ...series,
                 Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
