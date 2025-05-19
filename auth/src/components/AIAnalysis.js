@@ -633,195 +633,216 @@ const AIAnalysis = () => {
       </Box>
 
       {/* Row 2: Model Gallery */}
-      <Box sx={{ 
-        flex: 1,
+{/* Row 2: Model Gallery */}
+<Box sx={{ 
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  mb: 4
+}}>
+  <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
+    mb: 3,
+    textAlign: 'center',
+    color: 'white'
+  }}>
+    Available AI Models
+  </Typography>
+  
+  <Box sx={{ 
+    position: 'relative',
+    width: '100%',
+    mb: 4
+  }}>
+    <IconButton
+      onClick={() => handleScroll('left')}
+      sx={{
+        position: 'absolute',
+        left: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+        backgroundColor: '#1e3a8a',
+        color: 'white',
+        '&:hover': {
+          backgroundColor: '#1e40af'
+        }
+      }}
+    >
+      <ChevronLeftIcon />
+    </IconButton>
+    
+    <Box
+      id="model-gallery"
+      sx={{
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        mb: 4
-      }}>
-        <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
-          mb: 3,
-          textAlign: 'center',
-          color: theme.palette.text.primary
-        }}>
-          Available AI Models
-        </Typography>
-        
-        <Box sx={{ 
-          position: 'relative',
-          width: '100%',
-          mb: 4
-        }}>
-          <IconButton
-            onClick={() => handleScroll('left')}
-            sx={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              backgroundColor: '#1e293b',
-              color: theme.palette.secondary.main,
-              '&:hover': {
-                backgroundColor: '#334155'
-              }
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-          
-          <Box
-            id="model-gallery"
-            sx={{
-              display: 'flex',
-              overflowX: 'auto',
-              scrollBehavior: 'smooth',
-              py: 2,
-              px: 1,
-              gap: 3,
-              '&::-webkit-scrollbar': {
-                height: '6px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: theme.palette.secondary.main,
-                borderRadius: '3px',
-              }
-            }}
-          >
-            {availableModels.map((model) => (
-              <Card 
-                key={model.id}
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        py: 2,
+        px: 1,
+        gap: 3,
+        '&::-webkit-scrollbar': {
+          height: '6px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#3b82f6',
+          borderRadius: '3px',
+        }
+      }}
+    >
+      {availableModels.map((model) => (
+        <Card 
+          key={model.id}
+          sx={{ 
+            width: 320, // Fixed width
+            height: 420, // Fixed height
+            flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            border: '1px solid #3b82f6',
+            borderRadius: 12,
+            background: 'linear-gradient(145deg, #0f172a 0%, #1e3a8a 100%)',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-5px)',
+              boxShadow: '0 10px 15px rgba(59, 130, 246, 0.4)'
+            }
+          }}
+          onClick={() => setSelectedModel(model)}
+        >
+          <CardContent sx={{ 
+            flexGrow: 1,
+            p: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100%',
+            boxSizing: 'border-box'
+          }}>
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+              <Avatar sx={{ 
+                bgcolor: 'white',
+                width: 40,
+                height: 40,
+                color: '#1e3a8a'
+              }}>
+                <ScienceIcon fontSize="small" />
+              </Avatar>
+              <Typography variant="h6" fontWeight="bold" color="white">
+                {model.name}
+              </Typography>
+            </Stack>
+            
+            <Box sx={{
+              flex: 1,
+              overflow: 'hidden',
+              mb: 2
+            }}>
+              <Typography variant="body2" color="rgba(255, 255, 255, 0.8)" sx={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                {model.description}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" color="rgba(255, 255, 255, 0.6)" gutterBottom>
+                SUPPORTED MODALITIES
+              </Typography>
+              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
+                {model.modality?.map(m => (
+                  <Chip 
+                    key={m} 
+                    label={m} 
+                    size="small" 
+                    sx={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '0.7rem',
+                      height: 24,
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+            
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="caption" color="rgba(255, 255, 255, 0.6)" gutterBottom>
+                SUPPORTED BODY PARTS
+              </Typography>
+              <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
+                {model.body_part?.map(b => (
+                  <Chip 
+                    key={b} 
+                    label={b} 
+                    size="small" 
+                    sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white',
+                      fontSize: '0.7rem',
+                      height: 24,
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+            
+            {model.github_link && (
+              <Button 
+                fullWidth
+                variant="outlined"
+                size="small"
+                startIcon={<GitHubIcon fontSize="small" />}
+                href={model.github_link}
+                target="_blank"
                 sx={{ 
-                  minWidth: 300,
-                  flexShrink: 0,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  border: selectedModel?.id === model.id ? 
-                    `2px solid ${theme.palette.secondary.main}` : 
-                    `1px solid #334155`,
-                  borderRadius: 12,
-                  backgroundColor: '#1e293b',
-                  boxShadow: selectedModel?.id === model.id ? 
-                    `0 10px 15px -3px rgba(59, 130, 246, 0.3)` : 
-                    '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
+                  mt: 'auto',
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  fontSize: '0.75rem',
+                  color: 'white',
+                  borderColor: 'white',
                   '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)'
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
                   }
                 }}
-                onClick={() => setSelectedModel(model)}
+                onClick={(e) => e.stopPropagation()}
               >
-                <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                  <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
-                    <Avatar sx={{ 
-                      bgcolor: theme.palette.secondary.main,
-                      width: 40,
-                      height: 40
-                    }}>
-                      <ScienceIcon fontSize="small" />
-                    </Avatar>
-                    <Typography variant="h6" fontWeight="bold" color="text.primary">
-                      {model.name}
-                    </Typography>
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                    {model.description}
-                  </Typography>
-                  
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="caption" color="text.secondary" gutterBottom>
-                      SUPPORTED MODALITIES
-                    </Typography>
-                    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                      {model.modality?.map(m => (
-                        <Chip 
-                          key={m} 
-                          label={m} 
-                          size="small" 
-                          sx={{ 
-                            backgroundColor: '#1e40af',
-                            color: '#bfdbfe',
-                            fontSize: '0.7rem',
-                            height: 24
-                          }}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                  
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="caption" color="text.secondary" gutterBottom>
-                      SUPPORTED BODY PARTS
-                    </Typography>
-                    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                      {model.body_part?.map(b => (
-                        <Chip 
-                          key={b} 
-                          label={b} 
-                          size="small" 
-                          sx={{
-                            backgroundColor: '#1e3a8a',
-                            color: '#93c5fd',
-                            fontSize: '0.7rem',
-                            height: 24
-                          }}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                  
-                  {model.github_link && (
-                    <Button 
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<GitHubIcon fontSize="small" />}
-                      href={model.github_link}
-                      target="_blank"
-                      sx={{ 
-                        mt: 1,
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        fontSize: '0.75rem',
-                        color: theme.palette.secondary.main,
-                        borderColor: theme.palette.secondary.main,
-                        '&:hover': {
-                          borderWidth: 1,
-                          backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                        }
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Code
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
-          
-          <IconButton
-            onClick={() => handleScroll('right')}
-            sx={{
-              position: 'absolute',
-              right: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              backgroundColor: '#1e293b',
-              color: theme.palette.secondary.main,
-              '&:hover': {
-                backgroundColor: '#334155'
-              }
-            }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
-      </Box>
+                View Code
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      ))}
+    </Box>
+    
+    <IconButton
+      onClick={() => handleScroll('right')}
+      sx={{
+        position: 'absolute',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+        backgroundColor: '#1e3a8a',
+        color: 'white',
+        '&:hover': {
+          backgroundColor: '#1e40af'
+        }
+      }}
+    >
+      <ChevronRightIcon />
+    </IconButton>
+  </Box>
+</Box>
+    
 
       {/* Row 3: Model Output */}
       <Box sx={{
