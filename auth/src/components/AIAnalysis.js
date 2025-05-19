@@ -24,7 +24,7 @@ const AIAnalysis = () => {
         contrastText: '#ffffff'
       },
       secondary: {
-        main: '#3b82f6',
+        main: '#dd841a',
         contrastText: '#ffffff'
       },
       background: {
@@ -32,8 +32,8 @@ const AIAnalysis = () => {
         paper: '#1e293b'
       },
       text: {
-        primary: '#f8fafc',
-        secondary: '#e2e8f0'
+        primary: '#ffff',
+        secondary: '#dd841a'
       }
     },
     shape: {
@@ -284,14 +284,14 @@ const AIAnalysis = () => {
           sx={{ color: theme.palette.secondary.main }}
         />
         <Typography variant="h4" fontWeight="bold" sx={{
-          background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, #93c5fd 100%)`,
+          background: `linear-gradient(90deg, rgb(147, 197, 253) 0%, #93c5fd 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           textAlign: 'center'
         }}>
           Processing AI Analysis
         </Typography>
-        <Typography variant="body1" color="text.secondary" textAlign="center">
+        <Typography variant="body1" color="#ffff" textAlign="center">
           Analyzing {currentModality} scan of {currentBodyPart}
         </Typography>
       </Box>
@@ -319,7 +319,7 @@ const AIAnalysis = () => {
             WebkitTextFillColor: 'transparent',
             mb: 2
           }}>
-            Medical AI Analysis
+            Haske MedAI
           </Typography>
           <Typography variant="subtitle1" color="#ffff" sx={{ mb: 3 }}>
             Advanced diagnostic imaging analysis powered by AI
@@ -327,7 +327,7 @@ const AIAnalysis = () => {
           {githubRepo && (
             <Button
               variant="contained"
-              color="secondary"
+              color="#dd841a"
               startIcon={<GitHubIcon />}
               href={githubRepo}
               target="_blank"
@@ -357,17 +357,17 @@ const AIAnalysis = () => {
           mb: 4
         }}>
           <Box sx={{ 
-            backgroundColor: '#1e293b',
+            backgroundColor: '#0f172a',
             p: 4,
             borderRadius: 12,
             mb: 4,
-            borderLeft: '4px solid #ef4444',
+            borderLeft: '4px solid #dd841a',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
           }}>
-            <Typography variant="h4" color="#fca5a5" gutterBottom fontWeight="bold">
+            <Typography variant="h4" color="#fffff" gutterBottom fontWeight="bold">
               Analysis Not Available
             </Typography>
-            <Typography variant="body1" color="#94a3b8" sx={{ mb: 3 }}>
+            <Typography variant="body1" color="#ffff" sx={{ mb: 3 }}>
               {error}
             </Typography>
             <Typography variant="body1" color="#94a3b8">
@@ -387,7 +387,7 @@ const AIAnalysis = () => {
               
               <Box sx={{ 
                 position: 'relative',
-                width: '100%',
+                width: '50%',
                 mb: 4
               }}>
                 <IconButton
@@ -398,7 +398,7 @@ const AIAnalysis = () => {
                     top: '50%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
-                    backgroundColor: '#1e293b',
+                    backgroundColor: '#0f172a',
                     color: theme.palette.secondary.main,
                     '&:hover': {
                       backgroundColor: '#334155'
@@ -565,7 +565,7 @@ const AIAnalysis = () => {
         {/* Row 3: Model Output */}
         <Box sx={{
           height: '30vh',
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+          background: 'linear-gradient(135deg, #ffff 0%, #0f172a 100%)',
           borderRadius: 12,
           display: 'flex',
           alignItems: 'center',
@@ -643,7 +643,7 @@ const AIAnalysis = () => {
         <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
           mb: 3,
           textAlign: 'center',
-          color: '#f8fafc'
+          color: '#fffff'
         }}>
           Available AI Models
         </Typography>
