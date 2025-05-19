@@ -321,7 +321,7 @@ const AIAnalysis = () => {
           }}>
             Medical AI Analysis
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" color="#ffff" sx={{ mb: 3 }}>
             Advanced diagnostic imaging analysis powered by AI
           </Typography>
           {githubRepo && (
@@ -603,7 +603,7 @@ const AIAnalysis = () => {
           WebkitTextFillColor: 'transparent',
           mb: 2
         }}>
-          Medical AI Analysis
+         Haske MedAI
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
           Advanced diagnostic imaging analysis powered by AI
@@ -662,7 +662,7 @@ const AIAnalysis = () => {
         top: '50%',
         transform: 'translateY(-50%)',
         zIndex: 2,
-        backgroundColor: '#1e3a8a',
+        backgroundColor: '#dd841a',
         color: 'white',
         '&:hover': {
           backgroundColor: '#1e40af'
@@ -908,7 +908,7 @@ const AIAnalysis = () => {
               top: 8,
               right: 8,
               zIndex: 1,
-              backgroundColor: '#ef4444',
+              backgroundColor: '#dd841a',
               color: 'white',
               '&:hover': {
                 backgroundColor: '#dc2626'
