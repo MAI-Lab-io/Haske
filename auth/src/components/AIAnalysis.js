@@ -302,7 +302,7 @@ if (loading) {
         {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
           <Typography variant="h2" fontWeight="bold" sx={{
-            background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
+            background: `linear-gradient(90deg, #ffff 0%, #dd841a 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 2
@@ -405,7 +405,7 @@ if (loading) {
                     <Card 
                       key={model.id}
                       sx={{ 
-                        width: 300,
+                        width: 400,
                         height: 300, // Fixed square size
                         flexShrink: 0,
                         display: 'flex',
@@ -557,7 +557,7 @@ if (loading) {
       {/* Header Section */}
       <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
         <Typography variant="h2" fontWeight="bold" sx={{
-          background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
+          background: `linear-gradient(90deg, #ffff 0%, #dd841a 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           mb: 2
