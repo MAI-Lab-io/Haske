@@ -15,14 +15,16 @@ import {
   Switch,
   ThemeProvider,
   createTheme,
+  IconButton,
 } from "@mui/material";
 import logo from "../assets/haske.png"; // Import the logo properly
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Import the back icon
 
 // Define menu items for the admin sidebar
 const menuItems = [
   { name: "Dashboard", path: "/admin/dashboard" },
   { name: "Manage Users", path: "/admin/users" },
-  { name: "Manage Institutions", path: "/admin/institutions" }, // Add this line
+  { name: "Manage Institutions", path: "/admin/institutions" },
   { name: "AI Models", path: "/admin/models" },
   { name: "Analytics", path: "/admin/analytics" },
   { name: "Settings", path: "/admin/settings" },
@@ -94,6 +96,11 @@ const AdminLayout = () => {
     );
   }
 
+  // Function to handle back navigation
+  const handleBackClick = () => {
+    navigate("/patient-details");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* Apply the theme globally */}
@@ -145,6 +152,18 @@ const AdminLayout = () => {
         <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: darkMode ? "#121212" : "#E5E7EB", color: darkMode ? "#E5E7EB" : "#333" }}>
           <AppBar position="static" sx={{ bgcolor: darkMode ? "#333" : "#0F172A" }}>
             <Toolbar>
+              {/* Back button - only show when not on dashboard */}
+              {location.pathname !== "/admin/dashboard" && (
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="back"
+                  onClick={handleBackClick}
+                  sx={{ mr: 2 }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              )}
               <Typography variant="h6" sx={{ flexGrow: 1 }}>
                 Admin Panel
               </Typography>
