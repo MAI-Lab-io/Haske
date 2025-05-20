@@ -33,7 +33,7 @@ const customTheme = createTheme({
       paper: '#1e293b'
     },
     text: {
-      primary: '#ffff',
+      primary: '#ffffff',
       secondary: '#dd841a'
     }
   },
@@ -359,7 +359,7 @@ const AIAnalysis = () => {
           pt: 4
         }}>
           <Typography variant="h2" fontWeight="bold" sx={{
-            background: `linear-gradient(90deg, #dd841a 0%, #93c5fd 100%)`,
+            background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, #93c5fd 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 2
@@ -372,7 +372,7 @@ const AIAnalysis = () => {
           {githubRepo && (
             <Button
               variant="contained"
-              color="#dd841a"
+              color="secondary"
               startIcon={<GitHubIcon />}
               href={githubRepo}
               target="_blank"
@@ -425,7 +425,7 @@ const AIAnalysis = () => {
               <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
                 mb: 3,
                 textAlign: 'center',
-                color: '#ffff'
+                color: theme.palette.text.primary
               }}>
                 Available AI Models
               </Typography>
@@ -444,7 +444,7 @@ const AIAnalysis = () => {
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     backgroundColor: '#0f172a',
-                    color: '#dd841a',
+                    color: theme.palette.secondary.main,
                     '&:hover': {
                       backgroundColor: '#334155'
                     }
@@ -962,7 +962,7 @@ const AIAnalysis = () => {
             </Button>
           </>
         ) : (
-          <Typography variant="h5" color="#ffff">
+          <Typography variant="h5" color="#94a3b8">
             Model output will be displayed here based on selected modality
           </Typography>
         )}
