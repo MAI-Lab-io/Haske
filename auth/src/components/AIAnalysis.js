@@ -25,10 +25,14 @@ const AIAnalysis = () => {
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const [seriesDetails, setSeriesDetails] = useState([]);
+  const [patientDetails, setPatientDetails] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
+  const [availableModels, setAvailableModels] = useState([]);
+  const [githubRepo, setGithubRepo] = useState('');
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const orthancId = query.get('orthancId');
   const initialModality = query.get('modality');
