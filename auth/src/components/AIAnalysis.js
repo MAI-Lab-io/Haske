@@ -8,66 +8,13 @@ import {
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
-import {
+import { 
   GitHub as GitHubIcon,
   ZoomIn as ZoomInIcon, Download as DownloadIcon,
   Save as SaveIcon, Refresh as RefreshIcon,
   Close as CloseIcon, Science as ScienceIcon,
   ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
-
-// Create a custom theme using MUI's createTheme function
-const customTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#0f172a',
-      contrastText: '#ffffff'
-    },
-    secondary: {
-      main: '#dd841a',
-      contrastText: '#ffffff'
-    },
-    background: {
-      default: '#020617',
-      paper: '#1e293b'
-    },
-    text: {
-      primary: '#ffffff',
-      secondary: '#dd841a'
-    }
-  },
-  shape: {
-    borderRadius: 12
-  },
-  typography: {
-    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-    h1: {
-      fontWeight: 700,
-      fontSize: '2.5rem'
-    },
-    h2: {
-      fontWeight: 600,
-      fontSize: '2rem'
-    },
-    h3: {
-      fontWeight: 600,
-      fontSize: '1.75rem'
-    },
-    h4: {
-      fontWeight: 600,
-      fontSize: '1.5rem'
-    },
-    h5: {
-      fontWeight: 600,
-      fontSize: '1.25rem'
-    },
-    h6: {
-      fontWeight: 600,
-      fontSize: '1.1rem'
-    }
-  }
-});
 
 const AIAnalysis = () => {
   const theme = useTheme();
@@ -78,12 +25,10 @@ const AIAnalysis = () => {
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const [seriesDetails, setSeriesDetails] = useState([]);
-  const [patientDetails, setPatientDetails] = useState(null);
   const [zoomedImage, setZoomedImage] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   const orthancId = query.get('orthancId');
   const initialModality = query.get('modality');
@@ -106,12 +51,11 @@ const AIAnalysis = () => {
     }
   };
 
-  const handleScroll = (direction) => {
+    const handleScroll = (direction) => {
     const container = document.getElementById('model-gallery');
     if (container) {
       const scrollAmount = direction === 'left' ? -300 : 300;
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-      setScrollPosition(container.scrollLeft + scrollAmount);
     }
   };
 
@@ -307,7 +251,7 @@ const AIAnalysis = () => {
   const currentModality = initialModality || seriesDetails[0]?.Modality;
   const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
 
-  if (loading) {
+if (loading) {
     return (
       <Box sx={{
         display: 'flex',
@@ -320,29 +264,30 @@ const AIAnalysis = () => {
       }}>
         <ScienceIcon sx={{
           fontSize: 80,
-          color: theme.palette.secondary.main,
-          filter: 'drop-shadow(0 4px 6px rgba(59, 130, 246, 0.3))'
+          color: '#dd841a',
+          filter: 'drop-shadow(0 4px 6px rgba(221, 132, 26, 0.3))'
         }} />
         <CircularProgress
           size={60}
           thickness={4}
-          sx={{ color: theme.palette.secondary.main }}
+          sx={{ color: '#dd841a' }}
         />
         <Typography variant="h4" fontWeight="bold" sx={{
-          background: `linear-gradient(90deg, rgb(147, 197, 253) 0%, #93c5fd 100%)`,
+          background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           textAlign: 'center'
         }}>
           Processing AI Analysis
         </Typography>
-        <Typography variant="body1" color="#ffff" textAlign="center">
-          Analyzing {currentModality} scan of {currentBodyPart}
+        <Typography variant="body1" color="white" textAlign="center">
+          Analyzing {initialModality || seriesDetails[0]?.Modality} scan of {initialBodyPart || seriesDetails[0]?.BodyPartExamined}
         </Typography>
       </Box>
     );
   }
 
+  // Error State
   if (error) {
     return (
       <Box sx={{
@@ -353,40 +298,37 @@ const AIAnalysis = () => {
         p: 4
       }}>
         {/* Header Section */}
-        <Box sx={{
-          textAlign: 'center',
-          mb: 4,
-          pt: 4
-        }}>
+        <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
           <Typography variant="h2" fontWeight="bold" sx={{
-            background: `linear-gradient(90deg, ${theme.palette.secondary.main} 0%, #93c5fd 100%)`,
+            background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             mb: 2
           }}>
             Haske MedAI
           </Typography>
-          <Typography variant="subtitle1" color="#ffff" sx={{ mb: 3 }}>
+          <Typography variant="subtitle1" color="white" sx={{ mb: 3 }}>
             Advanced diagnostic imaging analysis powered by AI
           </Typography>
           {githubRepo && (
             <Button
               variant="contained"
-              color="secondary"
-              startIcon={<GitHubIcon />}
-              href={githubRepo}
-              target="_blank"
               sx={{
                 px: 4,
                 py: 1.5,
                 borderRadius: 8,
                 fontWeight: 'bold',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+                backgroundColor: '#dd841a',
+                color: 'white',
                 '&:hover': {
+                  backgroundColor: '#f59e0b',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
                 }
               }}
+              startIcon={<GitHubIcon />}
+              href={githubRepo}
+              target="_blank"
             >
               View on GitHub
             </Button>
@@ -394,13 +336,7 @@ const AIAnalysis = () => {
         </Box>
 
         {/* Error Message */}
-        <Box sx={{ 
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          mb: 4
-        }}>
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
           <Box sx={{ 
             backgroundColor: '#0f172a',
             p: 4,
@@ -409,14 +345,14 @@ const AIAnalysis = () => {
             borderLeft: '4px solid #dd841a',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
           }}>
-            <Typography variant="h4" color="#fffff" gutterBottom fontWeight="bold">
+            <Typography variant="h4" color="white" gutterBottom fontWeight="bold">
               Analysis Not Available
             </Typography>
-            <Typography variant="body1" color="#ffff" sx={{ mb: 3 }}>
+            <Typography variant="body1" color="white" sx={{ mb: 3 }}>
               {error}
             </Typography>
             <Typography variant="body1" color="#94a3b8">
-              We couldn't find a suitable AI model for {currentModality} scans of the {currentBodyPart}.
+              We couldn't find a suitable AI model for this study.
             </Typography>
           </Box>
           
@@ -425,16 +361,12 @@ const AIAnalysis = () => {
               <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
                 mb: 3,
                 textAlign: 'center',
-                color: theme.palette.text.primary
+                color: 'white'
               }}>
                 Available AI Models
               </Typography>
               
-              <Box sx={{ 
-                position: 'relative',
-                width: '100%',
-                mb: 4
-              }}>
+              <Box sx={{ position: 'relative', width: '100%', mb: 4 }}>
                 <IconButton
                   onClick={() => handleScroll('left')}
                   sx={{
@@ -444,10 +376,8 @@ const AIAnalysis = () => {
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     backgroundColor: '#0f172a',
-                    color: theme.palette.secondary.main,
-                    '&:hover': {
-                      backgroundColor: '#334155'
-                    }
+                    color: '#dd841a',
+                    '&:hover': { backgroundColor: '#1e293b' }
                   }}
                 >
                   <ChevronLeftIcon />
@@ -462,11 +392,9 @@ const AIAnalysis = () => {
                     py: 2,
                     px: 1,
                     gap: 3,
-                    '&::-webkit-scrollbar': {
-                      height: '6px',
-                    },
+                    '&::-webkit-scrollbar': { height: '6px' },
                     '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: theme.palette.secondary.main,
+                      backgroundColor: '#dd841a',
                       borderRadius: '3px',
                     }
                   }}
@@ -475,111 +403,100 @@ const AIAnalysis = () => {
                     <Card 
                       key={model.id}
                       sx={{ 
-                        minWidth: 300,
+                        width: 300,
+                        height: 300, // Fixed square size
                         flexShrink: 0,
-                        height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         border: selectedModel?.id === model.id ? 
-                          `2px solid ${theme.palette.secondary.main}` : 
-                          `1px solid #334155`,
+                          `2px solid #dd841a` : `1px solid #334155`,
                         borderRadius: 12,
                         backgroundColor: '#1e293b',
                         boxShadow: selectedModel?.id === model.id ? 
-                          `0 10px 15px -3px rgba(59, 130, 246, 0.3)` : 
+                          `0 10px 15px -3px rgba(221, 132, 26, 0.3)` : 
                           '0 4px 6px rgba(0, 0, 0, 0.1)',
                         transition: 'all 0.3s ease',
                         '&:hover': {
                           transform: 'translateY(-5px)',
-                          boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)'
+                          boxShadow: '0 10px 15px -3px rgba(221, 132, 26, 0.4)'
                         }
                       }}
                       onClick={() => setSelectedModel(model)}
                     >
-                      <CardContent sx={{ flexGrow: 1, p: 3 }}>
-                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                      <CardContent sx={{ 
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        p: 2,
+                        overflow: 'hidden'
+                      }}>
+                        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
                           <Avatar sx={{ 
-                            bgcolor: theme.palette.secondary.main,
-                            width: 40,
-                            height: 40
+                            bgcolor: '#dd841a',
+                            width: 32,
+                            height: 32
                           }}>
                             <ScienceIcon fontSize="small" />
                           </Avatar>
-                          <Typography variant="h6" fontWeight="bold" color="text.primary">
+                          <Typography variant="h6" fontWeight="bold" color="white" noWrap>
                             {model.name}
                           </Typography>
                         </Stack>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                          {model.description}
-                        </Typography>
                         
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            SUPPORTED MODALITIES
+                        <Box sx={{ flex: 1, overflow: 'hidden', mb: 1 }}>
+                          <Typography variant="body2" color="#e2e8f0" sx={{ 
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            fontSize: '0.875rem'
+                          }}>
+                            {model.description}
                           </Typography>
-                          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                            {model.modality?.map(m => (
+                        </Box>
+                        
+                        <Box sx={{ mb: 1 }}>
+                          <Typography variant="caption" color="#94a3b8" gutterBottom>
+                            MODALITIES
+                          </Typography>
+                          <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
+                            {model.modality?.slice(0, 3).map(m => (
                               <Chip 
                                 key={m} 
                                 label={m} 
                                 size="small" 
                                 sx={{ 
-                                  backgroundColor: '#1e40af',
-                                  color: '#bfdbfe',
-                                  fontSize: '0.7rem',
-                                  height: 24
+                                  backgroundColor: '#1e293b',
+                                  color: '#dd841a',
+                                  fontSize: '0.6rem',
+                                  height: 20
                                 }}
                               />
                             ))}
                           </Stack>
                         </Box>
                         
-                        <Box sx={{ mb: 3 }}>
-                          <Typography variant="caption" color="text.secondary" gutterBottom>
-                            SUPPORTED BODY PARTS
+                        <Box sx={{ mb: 1 }}>
+                          <Typography variant="caption" color="#94a3b8" gutterBottom>
+                            BODY PARTS
                           </Typography>
-                          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                            {model.body_part?.map(b => (
+                          <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
+                            {model.body_part?.slice(0, 3).map(b => (
                               <Chip 
                                 key={b} 
                                 label={b} 
                                 size="small" 
                                 sx={{
-                                  backgroundColor: '#1e3a8a',
-                                  color: '#93c5fd',
-                                  fontSize: '0.7rem',
-                                  height: 24
+                                  backgroundColor: '#1e293b',
+                                  color: '#dd841a',
+                                  fontSize: '0.6rem',
+                                  height: 20
                                 }}
                               />
                             ))}
                           </Stack>
                         </Box>
-                        
-                        {model.github_link && (
-                          <Button 
-                            fullWidth
-                            variant="outlined"
-                            size="small"
-                            startIcon={<GitHubIcon fontSize="small" />}
-                            href={model.github_link}
-                            target="_blank"
-                            sx={{ 
-                              mt: 1,
-                              borderRadius: 8,
-                              borderWidth: 1,
-                              fontSize: '0.75rem',
-                              color: theme.palette.secondary.main,
-                              borderColor: theme.palette.secondary.main,
-                              '&:hover': {
-                                borderWidth: 1,
-                                backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                              }
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Code
-                          </Button>
-                        )}
                       </CardContent>
                     </Card>
                   ))}
@@ -593,11 +510,9 @@ const AIAnalysis = () => {
                     top: '50%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
-                    backgroundColor: '#1e293b',
-                    color: theme.palette.secondary.main,
-                    '&:hover': {
-                      backgroundColor: '#334155'
-                    }
+                    backgroundColor: '#0f172a',
+                    color: '#dd841a',
+                    '&:hover': { backgroundColor: '#1e293b' }
                   }}
                 >
                   <ChevronRightIcon />
@@ -619,14 +534,15 @@ const AIAnalysis = () => {
           boxShadow: 'inset 0 4px 6px rgba(0, 0, 0, 0.3)',
           border: '1px solid #334155'
         }}>
-          <Typography variant="h5" color="text.secondary">
-            Model output will be displayed here based on selected modality
+          <Typography variant="h5" color="#94a3b8">
+            Model output will be displayed here
           </Typography>
         </Box>
       </Box>
     );
   }
 
+  // Success State
   return (
     <Box sx={{
       height: '100vh',
@@ -637,40 +553,37 @@ const AIAnalysis = () => {
       overflow: 'hidden'
     }}>
       {/* Header Section */}
-      <Box sx={{
-        textAlign: 'center',
-        mb: 4,
-        pt: 4
-      }}>
+      <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
         <Typography variant="h2" fontWeight="bold" sx={{
-          background: `linear-gradient(90deg, #3b82f6 0%, #93c5fd 100%)`,
+          background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           mb: 2
         }}>
-          Medical AI Analysis
+          Haske MedAI
         </Typography>
-        <Typography variant="subtitle1" color="#e2e8f0" sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" color="white" sx={{ mb: 3 }}>
           Advanced diagnostic imaging analysis powered by AI
         </Typography>
         {githubRepo && (
           <Button
             variant="contained"
-            color="secondary"
-            startIcon={<GitHubIcon />}
-            href={githubRepo}
-            target="_blank"
             sx={{
               px: 4,
               py: 1.5,
               borderRadius: 8,
               fontWeight: 'bold',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+              backgroundColor: '#dd841a',
+              color: 'white',
               '&:hover': {
+                backgroundColor: '#f59e0b',
                 transform: 'translateY(-2px)',
                 boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
               }
             }}
+            startIcon={<GitHubIcon />}
+            href={githubRepo}
+            target="_blank"
           >
             View on GitHub
           </Button>
@@ -678,26 +591,16 @@ const AIAnalysis = () => {
       </Box>
 
       {/* Model Gallery */}
-      <Box sx={{ 
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        mb: 4
-      }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
           mb: 3,
           textAlign: 'center',
-          color: '#fffff'
+          color: 'white'
         }}>
           Available AI Models
         </Typography>
         
-        <Box sx={{ 
-          position: 'relative',
-          width: '100%',
-          mb: 4
-        }}>
+        <Box sx={{ position: 'relative', width: '100%', mb: 4 }}>
           <IconButton
             onClick={() => handleScroll('left')}
             sx={{
@@ -707,10 +610,8 @@ const AIAnalysis = () => {
               transform: 'translateY(-50%)',
               zIndex: 2,
               backgroundColor: '#1e293b',
-              color: '#3b82f6',
-              '&:hover': {
-                backgroundColor: '#334155'
-              }
+              color: '#dd841a',
+              '&:hover': { backgroundColor: '#334155' }
             }}
           >
             <ChevronLeftIcon />
@@ -725,11 +626,9 @@ const AIAnalysis = () => {
               py: 2,
               px: 1,
               gap: 3,
-              '&::-webkit-scrollbar': {
-                height: '6px',
-              },
+              '&::-webkit-scrollbar': { height: '6px' },
               '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#3b82f6',
+                backgroundColor: '#dd841a',
                 borderRadius: '3px',
               }
             }}
@@ -738,24 +637,22 @@ const AIAnalysis = () => {
               <Card 
                 key={model.id}
                 sx={{ 
-                  minWidth: 320,
-                  width: 320,
-                  height: 420,
+                  width: 300,
+                  height: 300, // Fixed square size
                   flexShrink: 0,
                   display: 'flex',
                   flexDirection: 'column',
                   border: selectedModel?.id === model.id ? 
-                    `2px solid #3b82f6` : 
-                    `1px solid #334155`,
+                    `2px solid #dd841a` : `1px solid #334155`,
                   borderRadius: 12,
                   backgroundColor: '#1e293b',
                   boxShadow: selectedModel?.id === model.id ? 
-                    `0 10px 15px -3px rgba(59, 130, 246, 0.3)` : 
+                    `0 10px 15px -3px rgba(221, 132, 26, 0.3)` : 
                     '0 4px 6px rgba(0, 0, 0, 0.1)',
                   transition: 'all 0.3s ease',
                   '&:hover': {
                     transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)'
+                    boxShadow: '0 10px 15px -3px rgba(221, 132, 26, 0.4)'
                   }
                 }}
                 onClick={() => setSelectedModel(model)}
@@ -764,105 +661,76 @@ const AIAnalysis = () => {
                   flex: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  p: 3,
+                  p: 2,
                   overflow: 'hidden'
                 }}>
-                  <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+                  <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
                     <Avatar sx={{ 
-                      bgcolor: '#3b82f6',
-                      width: 40,
-                      height: 40
+                      bgcolor: '#dd841a',
+                      width: 32,
+                      height: 32
                     }}>
                       <ScienceIcon fontSize="small" />
                     </Avatar>
-                    <Typography variant="h6" fontWeight="bold" color="#f8fafc" noWrap>
+                    <Typography variant="h6" fontWeight="bold" color="white" noWrap>
                       {model.name}
                     </Typography>
                   </Stack>
                   
-                  <Box sx={{ 
-                    flex: 1,
-                    overflow: 'hidden',
-                    mb: 2
-                  }}>
+                  <Box sx={{ flex: 1, overflow: 'hidden', mb: 1 }}>
                     <Typography variant="body2" color="#e2e8f0" sx={{ 
                       display: '-webkit-box',
-                      WebkitLineClamp: 3,
+                      WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
-                      textOverflow: 'ellipsis'
+                      textOverflow: 'ellipsis',
+                      fontSize: '0.875rem'
                     }}>
                       {model.description}
                     </Typography>
                   </Box>
                   
-                  <Box sx={{ mb: 2 }}>
+                  <Box sx={{ mb: 1 }}>
                     <Typography variant="caption" color="#94a3b8" gutterBottom>
-                      SUPPORTED MODALITIES
+                      MODALITIES
                     </Typography>
-                    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                      {model.modality?.map(m => (
+                    <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
+                      {model.modality?.slice(0, 3).map(m => (
                         <Chip 
                           key={m} 
                           label={m} 
                           size="small" 
                           sx={{ 
-                            backgroundColor: '#1e40af',
-                            color: '#bfdbfe',
-                            fontSize: '0.7rem',
-                            height: 24
+                            backgroundColor: '#1e293b',
+                            color: '#dd841a',
+                            fontSize: '0.6rem',
+                            height: 20
                           }}
                         />
                       ))}
                     </Stack>
                   </Box>
                   
-                  <Box sx={{ mb: 2 }}>
+                  <Box sx={{ mb: 1 }}>
                     <Typography variant="caption" color="#94a3b8" gutterBottom>
-                      SUPPORTED BODY PARTS
+                      BODY PARTS
                     </Typography>
-                    <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ mt: 1 }}>
-                      {model.body_part?.map(b => (
+                    <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
+                      {model.body_part?.slice(0, 3).map(b => (
                         <Chip 
                           key={b} 
                           label={b} 
                           size="small" 
                           sx={{
-                            backgroundColor: '#1e3a8a',
-                            color: '#93c5fd',
-                            fontSize: '0.7rem',
-                            height: 24
+                            backgroundColor: '#1e293b',
+                            color: '#dd841a',
+                            fontSize: '0.6rem',
+                            height: 20
                           }}
                         />
                       ))}
                     </Stack>
                   </Box>
-                  
-                  {model.github_link && (
-                    <Button 
-                      fullWidth
-                      variant="outlined"
-                      size="small"
-                      startIcon={<GitHubIcon fontSize="small" />}
-                      href={model.github_link}
-                      target="_blank"
-                      sx={{ 
-                        mt: 'auto',
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        fontSize: '0.75rem',
-                        color: '#3b82f6',
-                        borderColor: '#3b82f6',
-                        '&:hover': {
-                          borderWidth: 1,
-                          backgroundColor: 'rgba(59, 130, 246, 0.1)'
-                        }
-                      }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Code
-                    </Button>
-                  )}
                 </CardContent>
               </Card>
             ))}
@@ -877,10 +745,8 @@ const AIAnalysis = () => {
               transform: 'translateY(-50%)',
               zIndex: 2,
               backgroundColor: '#1e293b',
-              color: '#3b82f6',
-              '&:hover': {
-                backgroundColor: '#334155'
-              }
+              color: '#dd841a',
+              '&:hover': { backgroundColor: '#334155' }
             }}
           >
             <ChevronRightIcon />
@@ -920,9 +786,6 @@ const AIAnalysis = () => {
             />
             <Button
               variant="contained"
-              color="secondary"
-              startIcon={<DownloadIcon />}
-              onClick={handleDownloadResults}
               sx={{
                 position: 'absolute',
                 bottom: 16,
@@ -930,20 +793,21 @@ const AIAnalysis = () => {
                 zIndex: 1,
                 borderRadius: 8,
                 fontWeight: 'bold',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+                backgroundColor: '#dd841a',
+                color: 'white',
                 '&:hover': {
+                  backgroundColor: '#f59e0b',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
                 }
               }}
+              startIcon={<DownloadIcon />}
+              onClick={handleDownloadResults}
             >
               Download Results
             </Button>
             <Button
               variant="contained"
-              color="primary"
-              startIcon={<RefreshIcon />}
-              onClick={handleProcessAnother}
               sx={{
                 position: 'absolute',
                 bottom: 16,
@@ -951,19 +815,23 @@ const AIAnalysis = () => {
                 zIndex: 1,
                 borderRadius: 8,
                 fontWeight: 'bold',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+                backgroundColor: '#0f172a',
+                color: 'white',
                 '&:hover': {
+                  backgroundColor: '#1e293b',
                   transform: 'translateY(-2px)',
                   boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
                 }
               }}
+              startIcon={<RefreshIcon />}
+              onClick={handleProcessAnother}
             >
               Process Another
             </Button>
           </>
         ) : (
           <Typography variant="h5" color="#94a3b8">
-            Model output will be displayed here based on selected modality
+            Model output will be displayed here
           </Typography>
         )}
       </Box>
@@ -998,9 +866,7 @@ const AIAnalysis = () => {
               zIndex: 1,
               backgroundColor: '#ef4444',
               color: 'white',
-              '&:hover': {
-                backgroundColor: '#dc2626'
-              }
+              '&:hover': { backgroundColor: '#dc2626' }
             }}
             onClick={() => setZoomedImage(null)}
           >
