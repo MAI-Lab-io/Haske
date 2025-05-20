@@ -18,7 +18,12 @@ import {
 const AIAnalysis = () => {
   const theme = useTheme({
     palette: {
-    
+    dark: {
+      main: '#000000', 
+    },
+    light: {
+      main: '#ffffff',
+    },    
       primary: {
         main: '#0f172a',
         contrastText: '#ffffff'
