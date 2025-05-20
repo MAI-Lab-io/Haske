@@ -68,10 +68,9 @@ const customTheme = createTheme({
     }
   }
 });
-const AIAnalysis = () => {
-  // Use the theme from ThemeProvider context instead of creating inline
-  const theme = useTheme();
 
+const AIAnalysis = () => {
+  const theme = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const query = new URLSearchParams(location.search);
@@ -116,116 +115,156 @@ const AIAnalysis = () => {
     }
   };
 
+  const fetchConfig = async () => {
+    try {
+      const configResponse = await axios.get('https://haske.online:8090/api/ai/config');
+      return {
+        models: configResponse.data.models || [],
+        githubRepo: configResponse.data.githubRepo || 'https://github.com/MAILABHASKE/mailab-models'
+      };
+    } catch (err) {
+      console.error('Failed to fetch config:', err);
+      return { models: [], githubRepo: '' };
+    }
+  };
+
+  const fetchStudyDetails = async () => {
+    try {
+      const [studyResponse, seriesResponse] = await Promise.all([
+        axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}`),
+        axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}/series`)
+      ]);
+
+      const seriesData = await Promise.all(
+        seriesResponse.data.map(async (series) => {
+          const seriesDetails = await axios.get(`https://haske.online:8090/proxy/orthanc/series/${series.ID}`);
+          return {
+            ...series,
+            Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
+            BodyPartExamined: seriesDetails.data.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
+          };
+        })
+      );
+
+      return {
+        patientDetails: studyResponse.data.PatientMainDicomTags || {},
+        seriesDetails: seriesData
+      };
+    } catch (err) {
+      console.error('Failed to fetch study details:', err);
+      return {
+        patientDetails: {},
+        seriesDetails: [{
+          Modality: initialModality || 'UNKNOWN',
+          BodyPartExamined: initialBodyPart || 'UNKNOWN'
+        }]
+      };
+    }
+  };
+
+  const startAnalysis = async (modality, bodyPart) => {
+    try {
+      const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
+        orthancId,
+        modality,
+        bodyPart
+      });
+      
+      if (data.status === 'no_model') {
+        return { error: data.message || 'No suitable model found for this study' };
+      }
+      
+      if (data.status === 'queued') {
+        return { jobId: data.jobId };
+      }
+
+      return { error: 'Unknown response from server' };
+    } catch (err) {
+      return { error: err.response?.data?.error || err.message || 'Failed to start analysis' };
+    }
+  };
+
+  const checkJobStatus = async (jobId) => {
+    try {
+      const { data: jobData } = await axios.get(
+        `https://haske.online:8090/api/ai/job/${jobId}`
+      );
+      
+      if (jobData.status === 'completed') {
+        return { job: jobData };
+      } else if (jobData.status === 'failed') {
+        return { error: jobData.results?.error || 'Analysis failed' };
+      } else {
+        // Continue polling
+        return { continuePolling: true };
+      }
+    } catch (err) {
+      return { error: 'Failed to check job status' };
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
-
-    const fetchConfig = async () => {
-      try {
-        const configResponse = await axios.get('https://haske.online:8090/api/ai/config');
-        if (isMounted) {
-          setAvailableModels(configResponse.data.models || []);
-          setGithubRepo(configResponse.data.githubRepo || 'https://github.com/MAILABHASKE/mailab-models');
-        }
-      } catch (err) {
-        console.error('Failed to fetch config:', err);
-        if (isMounted) {
-          setAvailableModels([]);
-          setGithubRepo('');
-        }
-      }
-    };
-
-    const fetchStudyDetails = async () => {
-      try {
-        const [studyResponse, seriesResponse] = await Promise.all([
-          axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}`),
-          axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}/series`)
-        ]);
-
-        if (isMounted) {
-          setPatientDetails(studyResponse.data.PatientMainDicomTags || {});
-          
-          const seriesData = await Promise.all(
-            seriesResponse.data.map(async (series) => {
-              const seriesDetails = await axios.get(`https://haske.online:8090/proxy/orthanc/series/${series.ID}`);
-              return {
-                ...series,
-                Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
-                BodyPartExamined: seriesDetails.data.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
-              };
-            })
-          );
-
-          setSeriesDetails(seriesData);
-        }
-      } catch (err) {
-        console.error('Failed to fetch study details:', err);
-        if (isMounted) {
-          setSeriesDetails([{
-            Modality: initialModality || 'UNKNOWN',
-            BodyPartExamined: initialBodyPart || 'UNKNOWN'
-          }]);
-          setPatientDetails({});
-        }
-      }
-    };
-
-    
-    const startAnalysis = async () => {
-      try {
-        const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
-          orthancId,
-          modality: initialModality || seriesDetails[0]?.Modality,
-          bodyPart: initialBodyPart || seriesDetails[0]?.BodyPartExamined
-        });
-        
-        if (!isMounted) return;
-
-        if (data.status === 'no_model') {
-          setError(data.message || 'No suitable model found for this study');
-          setLoading(false);
-          return;
-        }
-        
-        if (data.status === 'queued') {
-          const checkStatus = async (jobId) => {
-            try {
-              const { data: jobData } = await axios.get(
-                `https://haske.online:8090/api/ai/job/${jobId}`
-              );
-              
-              if (!isMounted) return;
-
-              if (jobData.status === 'completed') {
-                setJob(jobData);
-                setLoading(false);
-              } else if (jobData.status === 'failed') {
-                setError(jobData.results?.error || 'Analysis failed');
-                setLoading(false);
-              } else {
-                setTimeout(() => checkStatus(jobId), 2000);
-              }
-            } catch (err) {
-              if (isMounted) {
-                setError('Failed to check job status');
-                setLoading(false);
-              }
-            }
-          };
-          checkStatus(data.jobId);
-        }
-      } catch (err) {
-        if (isMounted) {
-          setError(err.response?.data?.error || err.message || 'Failed to start analysis');
-          setLoading(false);
-        }
-      }
-    };
+    let pollingTimeout;
 
     const initialize = async () => {
       try {
-        await Promise.all([fetchConfig(), fetchStudyDetails()]);
-        await startAnalysis();
+        const [configData, studyData] = await Promise.all([
+          fetchConfig(),
+          fetchStudyDetails()
+        ]);
+
+        if (!isMounted) return;
+
+        setAvailableModels(configData.models);
+        setGithubRepo(configData.githubRepo);
+        setPatientDetails(studyData.patientDetails);
+        setSeriesDetails(studyData.seriesDetails);
+
+        const currentModality = initialModality || studyData.seriesDetails[0]?.Modality;
+        const currentBodyPart = initialBodyPart || studyData.seriesDetails[0]?.BodyPartExamined;
+
+        const { jobId, error: analysisError } = await startAnalysis(
+          currentModality,
+          currentBodyPart
+        );
+
+        if (analysisError) {
+          setError(analysisError);
+          setLoading(false);
+          return;
+        }
+
+        if (!jobId) {
+          setError('No job ID returned from server');
+          setLoading(false);
+          return;
+        }
+
+        const pollJobStatus = async () => {
+          if (!isMounted) return;
+          
+          const { job: completedJob, error: statusError, continuePolling } = 
+            await checkJobStatus(jobId);
+
+          if (statusError) {
+            setError(statusError);
+            setLoading(false);
+            return;
+          }
+
+          if (completedJob) {
+            setJob(completedJob);
+            setLoading(false);
+            return;
+          }
+
+          if (continuePolling) {
+            pollingTimeout = setTimeout(pollJobStatus, 2000);
+          }
+        };
+
+        pollJobStatus();
       } catch (err) {
         if (isMounted) {
           setError('Initialization failed');
@@ -238,6 +277,7 @@ const AIAnalysis = () => {
 
     return () => {
       isMounted = false;
+      clearTimeout(pollingTimeout);
     };
   }, [orthancId, initialModality, initialBodyPart]);
 
@@ -312,7 +352,7 @@ const AIAnalysis = () => {
         background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)',
         p: 4
       }}>
-        {/* Row 1: Header Section */}
+        {/* Header Section */}
         <Box sx={{
           textAlign: 'center',
           mb: 4,
@@ -332,7 +372,7 @@ const AIAnalysis = () => {
           {githubRepo && (
             <Button
               variant="contained"
-              color="#dd841a"
+              color="secondary"
               startIcon={<GitHubIcon />}
               href={githubRepo}
               target="_blank"
@@ -353,7 +393,7 @@ const AIAnalysis = () => {
           )}
         </Box>
 
-        {/* Row 2: Model Gallery */}
+        {/* Error Message */}
         <Box sx={{ 
           flex: 1,
           display: 'flex',
@@ -392,7 +432,7 @@ const AIAnalysis = () => {
               
               <Box sx={{ 
                 position: 'relative',
-                width: '50%',
+                width: '100%',
                 mb: 4
               }}>
                 <IconButton
@@ -567,10 +607,10 @@ const AIAnalysis = () => {
           )}
         </Box>
 
-        {/* Row 3: Model Output */}
+        {/* Model Output Placeholder */}
         <Box sx={{
           height: '30vh',
-          background: 'linear-gradient(135deg, #ffff 0%, #0f172a 100%)',
+          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
           borderRadius: 12,
           display: 'flex',
           alignItems: 'center',
@@ -596,7 +636,7 @@ const AIAnalysis = () => {
       p: 4,
       overflow: 'hidden'
     }}>
-      {/* Row 1: Header Section */}
+      {/* Header Section */}
       <Box sx={{
         textAlign: 'center',
         mb: 4,
@@ -637,7 +677,7 @@ const AIAnalysis = () => {
         )}
       </Box>
 
-      {/* Row 2: Model Gallery */}
+      {/* Model Gallery */}
       <Box sx={{ 
         flex: 1,
         display: 'flex',
@@ -848,7 +888,7 @@ const AIAnalysis = () => {
         </Box>
       </Box>
 
-      {/* Row 3: Model Output */}
+      {/* Model Output */}
       <Box sx={{
         height: '30vh',
         background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
@@ -863,20 +903,64 @@ const AIAnalysis = () => {
         overflow: 'hidden'
       }}>
         {job?.results?.outputs?.[0]?.url ? (
-          <CardMedia
-            component="img"
-            image={job.results.outputs[0].url}
-            alt="AI Analysis Output"
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              opacity: 0.7
-            }}
-          />
+          <>
+            <CardMedia
+              component="img"
+              image={job.results.outputs[0].url}
+              alt="AI Analysis Output"
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                opacity: 0.7
+              }}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<DownloadIcon />}
+              onClick={handleDownloadResults}
+              sx={{
+                position: 'absolute',
+                bottom: 16,
+                right: 16,
+                zIndex: 1,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
+                }
+              }}
+            >
+              Download Results
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<RefreshIcon />}
+              onClick={handleProcessAnother}
+              sx={{
+                position: 'absolute',
+                bottom: 16,
+                left: 16,
+                zIndex: 1,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
+                }
+              }}
+            >
+              Process Another
+            </Button>
+          </>
         ) : (
           <Typography variant="h5" color="#94a3b8">
             Model output will be displayed here based on selected modality
