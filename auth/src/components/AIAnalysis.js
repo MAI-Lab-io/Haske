@@ -30,8 +30,6 @@ const AIAnalysis = () => {
   const [selectedModel, setSelectedModel] = useState(null);
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
-  const [availableModels, setAvailableModels] = useState([]);
-  const [githubRepo, setGithubRepo] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
 
   const orthancId = query.get('orthancId');
