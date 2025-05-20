@@ -6,6 +6,7 @@ import {
   Chip, Stack, IconButton, Modal, Container,
   Avatar, useTheme, useScrollTrigger
 } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import {
   GitHub as GitHubIcon,
@@ -15,63 +16,61 @@ import {
   ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon
 } from '@mui/icons-material';
 
-const AIAnalysis = () => {
-  const theme = useTheme({
-    palette: {
-    dark: {
-      main: '#000000', 
+// Create a custom theme using MUI's createTheme function
+const customTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#0f172a',
+      contrastText: '#ffffff'
     },
-    light: {
-      main: '#ffffff',
-    },    
-      primary: {
-        main: '#0f172a',
-        contrastText: '#ffffff'
-      },
-      secondary: {
-        main: '#dd841a',
-        contrastText: '#ffffff'
-      },
-      background: {
-        default: '#020617',
-        paper: '#1e293b'
-      },
-      text: {
-        primary: '#ffff',
-        secondary: '#dd841a'
-      }
+    secondary: {
+      main: '#dd841a',
+      contrastText: '#ffffff'
     },
-    shape: {
-      borderRadius: 12
+    background: {
+      default: '#020617',
+      paper: '#1e293b'
     },
-    typography: {
-      fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
-      h1: {
-        fontWeight: 700,
-        fontSize: '2.5rem'
-      },
-      h2: {
-        fontWeight: 600,
-        fontSize: '2rem'
-      },
-      h3: {
-        fontWeight: 600,
-        fontSize: '1.75rem'
-      },
-      h4: {
-        fontWeight: 600,
-        fontSize: '1.5rem'
-      },
-      h5: {
-        fontWeight: 600,
-        fontSize: '1.25rem'
-      },
-      h6: {
-        fontWeight: 600,
-        fontSize: '1.1rem'
-      }
+    text: {
+      primary: '#ffffff',
+      secondary: '#dd841a'
     }
-  });
+  },
+  shape: {
+    borderRadius: 12
+  },
+  typography: {
+    fontFamily: '"Inter", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+      fontSize: '2.5rem'
+    },
+    h2: {
+      fontWeight: 600,
+      fontSize: '2rem'
+    },
+    h3: {
+      fontWeight: 600,
+      fontSize: '1.75rem'
+    },
+    h4: {
+      fontWeight: 600,
+      fontSize: '1.5rem'
+    },
+    h5: {
+      fontWeight: 600,
+      fontSize: '1.25rem'
+    },
+    h6: {
+      fontWeight: 600,
+      fontSize: '1.1rem'
+    }
+  }
+});
+const AIAnalysis = () => {
+  // Use the theme from ThemeProvider context instead of creating inline
+  const theme = useTheme();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -171,6 +170,7 @@ const AIAnalysis = () => {
       }
     };
 
+    
     const startAnalysis = async () => {
       try {
         const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
