@@ -36,6 +36,7 @@ const Dashboard = () => {
     studyDescriptions: [],
     bodyParts: [],
     institutions: [],
+    modalitiesPerInstitution: [],
     totalStudies: 0
   });
   const [loading, setLoading] = useState(true);
@@ -102,7 +103,11 @@ const Dashboard = () => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
-  const topStudyDescriptions = [...dicomStats.studyDescriptions]
+  const topInstitutions = [...dicomStats.institutions]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  const topModalitiesPerInstitution = [...dicomStats.modalitiesPerInstitution]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
@@ -221,9 +226,9 @@ const Dashboard = () => {
         {/* Additional Charts */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Study Descriptions</Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>Modalities per Institution</Typography>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={topStudyDescriptions}>
+              <BarChart data={topModalitiesPerInstitution}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
                 <YAxis />
@@ -236,14 +241,22 @@ const Dashboard = () => {
 
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Institutions</Typography>
+            <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={dicomStats.institutions.slice(0, 10)}>
+              <BarChart 
+                data={topInstitutions}
+                layout="vertical" // Changed to vertical layout for better readability
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
-                <YAxis />
+                <XAxis type="number" />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  width={150} // Increased width for institution names
+                  tick={{ fontSize: 12 }} // Adjusted font size
+                />
                 <Tooltip />
-                <Bar dataKey="count" fill="#64748B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </Paper>
