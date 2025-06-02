@@ -7,7 +7,8 @@ import {
   CircularProgress,
   Alert,
   Card,
-  CardContent
+  CardContent,
+  useTheme
 } from "@mui/material";
 import { 
   PieChart, 
@@ -20,12 +21,10 @@ import {
   Bar, 
   XAxis, 
   YAxis, 
-  CartesianGrid,
-  Treemap,
-  Rectangle
+  CartesianGrid 
 } from "recharts";
 
-const COLORS = ["#0F172A", "#1E2A4A", "#E5E7EB", "#dd841a", "#64748B", "#94A3B8"];
+const COLORS = ["#0F172A", "#1E2A4A", "#E5E7EB", "#dd841a", "#64748B", "#94A3B8", "#334155", "#475569"];
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ 
@@ -43,6 +42,8 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeModalities, setActiveModalities] = useState([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +68,10 @@ const Dashboard = () => {
         setStats(statsData);
         setDicomStats(dicomData);
 
+        // Initialize active modalities
+        const uniqueModalities = [...new Set(dicomData.modalitiesPerInstitution.map(item => item.modality))];
+        setActiveModalities(uniqueModalities);
+        
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.message);
@@ -77,7 +82,35 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
+ // Transform data for stacked bar chart
+  const getStackedChartData = () => {
+    const institutionMap = {};
+    
+    // Filter by active modalities
+    const filteredData = dicomStats.modalitiesPerInstitution.filter(item => 
+      activeModalities.includes(item.modality)
+    );
 
+    // Group by institution
+    filteredData.forEach(item => {
+      if (!institutionMap[item.institution]) {
+        institutionMap[item.institution] = {
+          institution: item.institution,
+          total: 0
+        };
+      }
+      institutionMap[item.institution][item.modality] = item.count;
+      institutionMap[item.institution].total += item.count;
+    });
+
+    // Sort by total count and take top 10
+    return Object.values(institutionMap)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 10);
+  };
+
+  const stackedChartData = getStackedChartData();
+  const uniqueModalities = [...new Set(dicomStats.modalitiesPerInstitution.map(item => item.modality))];
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -113,78 +146,6 @@ const Dashboard = () => {
   const topInstitutions = [...dicomStats.institutions]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
-
-  const topModalitiesPerInstitution = [...dicomStats.modalitiesPerInstitution]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
-
-// Format data for treemap
-    const formatTreemapData = (data) => {
-      const institutions = {};
-      
-      data.forEach(item => {
-        if (!institutions[item.institution]) {
-          institutions[item.institution] = {
-            name: item.institution,
-            children: []
-          };
-        }
-        institutions[item.institution].children.push({
-          name: item.modality,
-          count: item.count,
-          institution: item.institution,
-          modality: item.modality
-        });
-      });
-    
-      return {
-        name: 'All Institutions',
-        children: Object.values(institutions)
-      };
-    };
-    
-    // Custom content for treemap
-    const CustomizedContent = ({ root, depth, x, y, width, height, index, colors, name }) => {
-      return (
-        <g>
-          <Rectangle
-            x={x}
-            y={y}
-            width={width}
-            height={height}
-            style={{
-              fill: depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)',
-              stroke: '#fff',
-              strokeWidth: 2 / (depth + 1e-10),
-              strokeOpacity: 1 / (depth + 1e-10),
-            }}
-          />
-          {depth === 1 ? (
-            <text
-              x={x + width / 2}
-              y={y + height / 2 + 7}
-              textAnchor="middle"
-              fill="#fff"
-              fontSize={14}
-            >
-              {name}
-            </text>
-          ) : null}
-          {depth === 2 ? (
-            <text
-              x={x + 4}
-              y={y + 18}
-              fill="#fff"
-              fontSize={16}
-              fillOpacity={0.9}
-            >
-              {name}
-            </text>
-          ) : null}
-        </g>
-      );
-    };
-  
 
   return (
     <Box sx={{ p: 3 }}>
@@ -298,56 +259,108 @@ const Dashboard = () => {
           </Paper>
         </Grid>
 
-        {/* Additional Charts */}
-        <Grid item xs={12} md={6}>
-      <Paper sx={{ p: 2, height: '100%' }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Modality Distribution by Institution (Treemap)
-          <Typography variant="body2" color="text.secondary">
-            Size = Study Count • Color = Modality Type
-          </Typography>
-        </Typography>
-        <ResponsiveContainer width="100%" height={400}>
-          <Treemap
-            width={400}
-            height={400}
-            data={formatTreemapData(topModalitiesPerInstitution)}
-            dataKey="count"
-            ratio={4/3}
-            stroke="#fff"
-            fill="#8884d8"
-            isAnimationActive={true}
-            animationDuration={800}
-            content={<CustomizedContent colors={COLORS} />}
-          >
-            <Tooltip 
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  const data = payload[0].payload;
-                  return (
-                    <Paper sx={{ p: 1.5, border: '1px solid #ddd' }}>
-                      <Typography variant="subtitle2">
-                        {data.institution || data.name}
-                      </Typography>
-                      {data.modality && (
-                        <Typography>
-                          <strong>Modality:</strong> {data.modality}
+        {/* Modalities per Instiution - Stacked Bar Chart */}
+     <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Modality Distribution by Institution
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                Click legend items to filter modalities
+              </Typography>
+            </Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart
+                data={stackedChartData}
+                layout="vertical"
+                margin={{ left: 100, right: 20, top: 20, bottom: 20 }}
+                stackOffset="expand"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  type="number" 
+                  domain={[0, 1]}
+                  tickFormatter={(value) => `${(value * 100).toFixed(0)}%`}
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="institution" 
+                  width={150}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(value, name) => [
+                    `${(value * 100).toFixed(1)}% (${Math.round(value * stackedChartData.find(d => d.institution === payload[0]?.payload.institution)?.total || 0)})`,
+                    name
+                  ]}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    
+                    const total = payload.reduce((sum, entry) => sum + (entry.value * payload[0].payload.total), 0);
+                    return (
+                      <Paper sx={{ p: 1.5, border: `1px solid ${theme.palette.divider}` }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                          {label}
                         </Typography>
-                      )}
-                      <Typography>
-                        <strong>Studies:</strong> {data.count}
-                      </Typography>
-                    </Paper>
-                  );
-                }
-                return null;
-          }}
-        />
-      </Treemap>
-    </ResponsiveContainer>
-  </Paper>
-</Grid>
+                        <Typography variant="body2">
+                          Total Studies: {payload[0].payload.total}
+                        </Typography>
+                        {payload.map((entry, index) => (
+                          <Box key={`tooltip-${index}`} sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center',
+                            mt: 0.5
+                          }}>
+                            <Box sx={{
+                              width: 12,
+                              height: 12,
+                              bgcolor: entry.color,
+                              mr: 1,
+                              borderRadius: '2px'
+                            }} />
+                            <Typography variant="body2">
+                              {entry.name}: {Math.round(entry.value * payload[0].payload.total)} (
+                              {(entry.value * 100).toFixed(1)}%)
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Paper>
+                    );
+                  }}
+                />
+                <Legend 
+                  onClick={(e) => {
+                    const clickedModality = e.value;
+                    setActiveModalities(prev => 
+                      prev.includes(clickedModality)
+                        ? prev.filter(m => m !== clickedModality)
+                        : [...prev, clickedModality]
+                    );
+                  }}
+                />
+                {uniqueModalities.map((modality, index) => (
+                  <Bar
+                    key={`bar-${modality}`}
+                    dataKey={modality}
+                    stackId="a"
+                    name={modality}
+                    fill={COLORS[index % COLORS.length]}
+                    hide={!activeModalities.includes(modality)}
+                  >
+                    {stackedChartData.map((entry, entryIndex) => (
+                      <Cell 
+                        key={`cell-${modality}-${entryIndex}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Bar>
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
 
+
+        {/* Top Institutions*/}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
