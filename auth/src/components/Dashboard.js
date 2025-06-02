@@ -27,6 +27,7 @@ import {
 const COLORS = ["#0F172A", "#1E2A4A", "#E5E7EB", "#dd841a", "#64748B", "#94A3B8", "#334155", "#475569"];
 
 const Dashboard = () => {
+  const theme = useTheme();
   const [stats, setStats] = useState({ 
     users: 0, 
     admins: 0, 
@@ -44,14 +45,12 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [activeModalities, setActiveModalities] = useState([]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        // Fetch both endpoints in parallel
         const [statsResponse, dicomResponse] = await Promise.all([
           fetch("https://haske.online:8090/api/verification/stats"),
           fetch("https://haske.online:8090/api/dicom-stats")
@@ -67,11 +66,11 @@ const Dashboard = () => {
 
         setStats(statsData);
         setDicomStats(dicomData);
-
+        
         // Initialize active modalities
         const uniqueModalities = [...new Set(dicomData.modalitiesPerInstitution.map(item => item.modality))];
         setActiveModalities(uniqueModalities);
-        
+
       } catch (err) {
         console.error("Error fetching data:", err);
         setError(err.message);
@@ -82,7 +81,8 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
- // Transform data for stacked bar chart
+
+  // Transform data for stacked bar chart
   const getStackedChartData = () => {
     const institutionMap = {};
     
@@ -111,6 +111,7 @@ const Dashboard = () => {
 
   const stackedChartData = getStackedChartData();
   const uniqueModalities = [...new Set(dicomStats.modalitiesPerInstitution.map(item => item.modality))];
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -127,14 +128,13 @@ const Dashboard = () => {
     );
   }
 
-  // Prepare chart data
+  // Prepare other chart data
   const userData = [
     { name: "Users", value: stats.users },
     { name: "Admins", value: stats.admins },
     { name: "Institutions", value: stats.institutions },
   ];
 
-  // Sort and limit to top 10 for better visualization
   const topModalities = [...dicomStats.modalities]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
@@ -259,8 +259,8 @@ const Dashboard = () => {
           </Paper>
         </Grid>
 
-        {/* Modalities per Instiution - Stacked Bar Chart */}
-<Grid item xs={12} md={6}>
+        {/* Improved Modalities per Institution - Stacked Bar Chart */}
+        <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Modality Distribution by Institution
@@ -354,9 +354,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
 
-
-
-        {/* Top Institutions*/}
+        {/* Top Institutions */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
