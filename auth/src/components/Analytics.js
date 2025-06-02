@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Paper, Typography, TextField, Button, Menu, MenuItem } from "@mui/material";
+import { 
+  Table, TableBody, TableCell, TableHead, TableRow, 
+  Paper, Typography, TextField, Button, Menu, MenuItem,
+  CircularProgress, Alert, Snackbar
+} from "@mui/material";
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
-import FileDownloadIcon from "@mui/icons-material/GitHub";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
 const Analytics = ({ darkMode }) => {
   const [logs, setLogs] = useState([]);
