@@ -48,16 +48,21 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         
-        // Fetch user stats
-        const statsResponse = await fetch("https://haske.online:8090/api/verification/stats");
-        if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
-        const statsData = await statsResponse.json();
-        setStats(statsData);
+        // Fetch both endpoints in parallel
+        const [statsResponse, dicomResponse] = await Promise.all([
+          fetch("https://haske.online:8090/api/verification/stats"),
+          fetch("https://haske.online:8090/api/dicom-stats")
+        ]);
 
-        // Fetch DICOM stats
-        const dicomResponse = await fetch("https://haske.online:8090/api/dicom-stats");
+        if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
         if (!dicomResponse.ok) throw new Error("Failed to fetch DICOM stats");
-        const dicomData = await dicomResponse.json();
+
+        const [statsData, dicomData] = await Promise.all([
+          statsResponse.json(),
+          dicomResponse.json()
+        ]);
+
+        setStats(statsData);
         setDicomStats(dicomData);
 
       } catch (err) {
@@ -245,15 +250,15 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height={400}>
               <BarChart 
                 data={topInstitutions}
-                layout="vertical" // Changed to vertical layout for better readability
+                layout="vertical"
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" />
                 <YAxis 
                   type="category" 
                   dataKey="name" 
-                  width={150} // Increased width for institution names
-                  tick={{ fontSize: 12 }} // Adjusted font size
+                  width={150}
+                  tick={{ fontSize: 12 }}
                 />
                 <Tooltip />
                 <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
