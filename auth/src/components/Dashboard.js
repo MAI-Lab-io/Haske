@@ -230,16 +230,70 @@ const Dashboard = () => {
 
         {/* Additional Charts */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Modalities per Institution</Typography>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Modality Distribution by Institution
+            </Typography>
             <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={topModalitiesPerInstitution}>
+              <ScatterChart
+                margin={{ top: 20, right: 20, bottom: 60, left: 100 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" angle={-45} textAnchor="end" height={70} />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#dd841a" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <XAxis 
+                  dataKey="institution" 
+                  name="Institution"
+                  angle={-45} 
+                  textAnchor="end"
+                  height={70}
+                  tick={{ fontSize: 10 }}
+                />
+                <YAxis 
+                  dataKey="modality" 
+                  name="Modality"
+                  tick={{ fontSize: 12 }}
+                />
+                <ZAxis 
+                  dataKey="count" 
+                  range={[50, 500]} 
+                  name="Studies"
+                />
+                <Tooltip
+                  cursor={{ strokeDasharray: '3 3' }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <Paper sx={{ p: 1.5, border: '1px solid #ddd' }}>
+                          <Typography variant="subtitle2">
+                            {data.institution}
+                          </Typography>
+                          <Typography>
+                            <strong>Modality:</strong> {data.modality}
+                          </Typography>
+                          <Typography>
+                            <strong>Studies:</strong> {data.count}
+                          </Typography>
+                        </Paper>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Legend />
+                <Scatter
+                  name="Studies"
+                  data={topModalitiesPerInstitution}
+                  fill="#8884d8"
+                  shape="circle"
+                >
+                  {topModalitiesPerInstitution.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Scatter>
+              </ScatterChart>
             </ResponsiveContainer>
           </Paper>
         </Grid>
