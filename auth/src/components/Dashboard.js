@@ -20,7 +20,9 @@ import {
   Bar, 
   XAxis, 
   YAxis, 
-  CartesianGrid 
+  CartesianGrid,
+  Treemap,
+  Rectangle
 } from "recharts";
 
 const COLORS = ["#0F172A", "#1E2A4A", "#E5E7EB", "#dd841a", "#64748B", "#94A3B8"];
@@ -115,6 +117,74 @@ const Dashboard = () => {
   const topModalitiesPerInstitution = [...dicomStats.modalitiesPerInstitution]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
+
+// Format data for treemap
+    const formatTreemapData = (data) => {
+      const institutions = {};
+      
+      data.forEach(item => {
+        if (!institutions[item.institution]) {
+          institutions[item.institution] = {
+            name: item.institution,
+            children: []
+          };
+        }
+        institutions[item.institution].children.push({
+          name: item.modality,
+          count: item.count,
+          institution: item.institution,
+          modality: item.modality
+        });
+      });
+    
+      return {
+        name: 'All Institutions',
+        children: Object.values(institutions)
+      };
+    };
+    
+    // Custom content for treemap
+    const CustomizedContent = ({ root, depth, x, y, width, height, index, colors, name }) => {
+      return (
+        <g>
+          <Rectangle
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            style={{
+              fill: depth < 2 ? colors[index % colors.length] : 'rgba(255,255,255,0)',
+              stroke: '#fff',
+              strokeWidth: 2 / (depth + 1e-10),
+              strokeOpacity: 1 / (depth + 1e-10),
+            }}
+          />
+          {depth === 1 ? (
+            <text
+              x={x + width / 2}
+              y={y + height / 2 + 7}
+              textAnchor="middle"
+              fill="#fff"
+              fontSize={14}
+            >
+              {name}
+            </text>
+          ) : null}
+          {depth === 2 ? (
+            <text
+              x={x + 4}
+              y={y + 18}
+              fill="#fff"
+              fontSize={16}
+              fillOpacity={0.9}
+            >
+              {name}
+            </text>
+          ) : null}
+        </g>
+      );
+    };
+  
 
   return (
     <Box sx={{ p: 3 }}>
@@ -230,73 +300,53 @@ const Dashboard = () => {
 
         {/* Additional Charts */}
         <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2, height: '100%' }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Modality Distribution by Institution
-            </Typography>
-            <ResponsiveContainer width="100%" height={400}>
-              <ScatterChart
-                margin={{ top: 20, right: 20, bottom: 60, left: 100 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="institution" 
-                  name="Institution"
-                  angle={-45} 
-                  textAnchor="end"
-                  height={70}
-                  tick={{ fontSize: 10 }}
-                />
-                <YAxis 
-                  dataKey="modality" 
-                  name="Modality"
-                  tick={{ fontSize: 12 }}
-                />
-                <ZAxis 
-                  dataKey="count" 
-                  range={[50, 500]} 
-                  name="Studies"
-                />
-                <Tooltip
-                  cursor={{ strokeDasharray: '3 3' }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <Paper sx={{ p: 1.5, border: '1px solid #ddd' }}>
-                          <Typography variant="subtitle2">
-                            {data.institution}
-                          </Typography>
-                          <Typography>
-                            <strong>Modality:</strong> {data.modality}
-                          </Typography>
-                          <Typography>
-                            <strong>Studies:</strong> {data.count}
-                          </Typography>
-                        </Paper>
-                      );
-                    }
-                    return null;
-                  }}
-                />
-                <Legend />
-                <Scatter
-                  name="Studies"
-                  data={topModalitiesPerInstitution}
-                  fill="#8884d8"
-                  shape="circle"
-                >
-                  {topModalitiesPerInstitution.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Scatter>
-              </ScatterChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
+      <Paper sx={{ p: 2, height: '100%' }}>
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          Modality Distribution by Institution (Treemap)
+          <Typography variant="body2" color="text.secondary">
+            Size = Study Count • Color = Modality Type
+          </Typography>
+        </Typography>
+        <ResponsiveContainer width="100%" height={400}>
+          <Treemap
+            width={400}
+            height={400}
+            data={formatTreemapData(topModalitiesPerInstitution)}
+            dataKey="count"
+            ratio={4/3}
+            stroke="#fff"
+            fill="#8884d8"
+            isAnimationActive={true}
+            animationDuration={800}
+            content={<CustomizedContent colors={COLORS} />}
+          >
+            <Tooltip 
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <Paper sx={{ p: 1.5, border: '1px solid #ddd' }}>
+                      <Typography variant="subtitle2">
+                        {data.institution || data.name}
+                      </Typography>
+                      {data.modality && (
+                        <Typography>
+                          <strong>Modality:</strong> {data.modality}
+                        </Typography>
+                      )}
+                      <Typography>
+                        <strong>Studies:</strong> {data.count}
+                      </Typography>
+                    </Paper>
+                  );
+                }
+                return null;
+          }}
+        />
+      </Treemap>
+    </ResponsiveContainer>
+  </Paper>
+</Grid>
 
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
