@@ -260,7 +260,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Modalities per Instiution - Stacked Bar Chart */}
-     <Grid item xs={12} md={6}>
+<Grid item xs={12} md={6}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
               Modality Distribution by Institution
@@ -288,14 +288,9 @@ const Dashboard = () => {
                   tick={{ fontSize: 12 }}
                 />
                 <Tooltip
-                  formatter={(value, name) => [
-                    `${(value * 100).toFixed(1)}% (${Math.round(value * stackedChartData.find(d => d.institution === payload[0]?.payload.institution)?.total || 0)})`,
-                    name
-                  ]}
                   content={({ active, payload, label }) => {
                     if (!active || !payload || !payload.length) return null;
                     
-                    const total = payload.reduce((sum, entry) => sum + (entry.value * payload[0].payload.total), 0);
                     return (
                       <Paper sx={{ p: 1.5, border: `1px solid ${theme.palette.divider}` }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
@@ -358,6 +353,7 @@ const Dashboard = () => {
             </ResponsiveContainer>
           </Paper>
         </Grid>
+
 
 
         {/* Top Institutions*/}
