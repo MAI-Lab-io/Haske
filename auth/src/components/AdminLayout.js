@@ -25,8 +25,8 @@ const menuItems = [
   { name: "Dashboard", path: "/admin/dashboard" },
   { name: "Manage Users", path: "/admin/users" },
   { name: "Manage Institutions", path: "/admin/institutions" },
-  { name: "AI Models", path: "/admin/models" },
-  { name: "Analytics", path: "/admin/analytics" },
+  { name: "Manage Haske MedAI", path: "/admin/models" },
+  { name: "User Analytics", path: "/admin/analytics" },
   { name: "Settings", path: "/admin/settings" },
 ];
 
