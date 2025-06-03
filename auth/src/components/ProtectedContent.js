@@ -14,6 +14,17 @@ function ProtectedContent() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    // Track page view after verification - MOVED BEFORE CONDITIONAL RETURNS
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (isVerified && user) {
+            logAction('Protected Content Viewed', {
+                isAdmin,
+                institutionName
+            }, user);
+        }
+    }, [isVerified, isAdmin, institutionName]);
+
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
