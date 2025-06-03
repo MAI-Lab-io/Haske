@@ -8,7 +8,10 @@ import {
   Alert,
   Card,
   CardContent,
-  useTheme
+  useTheme,
+  Chip,
+  ToggleButton,
+  ToggleButtonGroup
 } from "@mui/material";
 import { 
   PieChart, 
@@ -34,9 +37,9 @@ const Dashboard = () => {
     institutions: 0 
   });
   const [dicomStats, setDicomStats] = useState({
-    modalities: [],
-    studyDescriptions: [],
     bodyParts: [],
+    studyDescriptions: [],
+    modalities: [],
     institutions: [],
     modalitiesPerInstitution: [],
     totalStudies: 0
@@ -44,6 +47,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeModalities, setActiveModalities] = useState([]);
+  const [timeRange, setTimeRange] = useState('all');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,9 +55,10 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         
-        const [statsResponse, dicomResponse] = await Promise.all([
+        const [statsResponse, dicomResponse, analyticsResponse] = await Promise.all([
           fetch("https://haske.online:8090/api/verification/stats"),
-          fetch("https://haske.online:8090/api/dicom-stats")
+          fetch("https://haske.online:8090/api/dicom-stats"),
+          fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`)
         ]);
 
         if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
@@ -68,7 +73,7 @@ const Dashboard = () => {
         setDicomStats(dicomData);
         
         // Initialize active modalities
-        const uniqueModalities = [...new Set(dicomData.modalitiesPerInstitution.map(item => item.modality))];
+        const uniqueModalities = [...new Set(dicomData.modalities.map(item => item.name))];
         setActiveModalities(uniqueModalities);
 
       } catch (err) {
@@ -80,7 +85,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, []);
+  }, [timeRange]);
 
   // Transform data for stacked bar chart
   const getStackedChartData = () => {
@@ -110,7 +115,7 @@ const Dashboard = () => {
   };
 
   const stackedChartData = getStackedChartData();
-  const uniqueModalities = [...new Set(dicomStats.modalitiesPerInstitution.map(item => item.modality))];
+  const uniqueModalities = [...new Set(dicomStats.modalities.map(item => item.name))];
 
   if (loading) {
     return (
@@ -150,6 +155,29 @@ const Dashboard = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>Admin Dashboard</Typography>
+
+      {/* Time range selector */}
+      <Box sx={{ mb: 3 }}>
+        <ToggleButtonGroup
+          value={timeRange}
+          exclusive
+          onChange={(e, newRange) => setTimeRange(newRange)}
+          aria-label="time range"
+        >
+          <ToggleButton value="24h" aria-label="24 hours">
+            Last 24h
+          </ToggleButton>
+          <ToggleButton value="7d" aria-label="7 days">
+            Last 7d
+          </ToggleButton>
+          <ToggleButton value="30d" aria-label="30 days">
+            Last 30d
+          </ToggleButton>
+          <ToggleButton value="all" aria-label="All time">
+            All Time
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
 
       {/* Summary Cards */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
@@ -220,7 +248,24 @@ const Dashboard = () => {
         <Grid item xs={12} md={4}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>Top Modalities</Typography>
-            <ResponsiveContainer width="100%" height={300}>
+            <Box sx={{ mb: 2 }}>
+              {uniqueModalities.map(modality => (
+                <Chip
+                  key={modality}
+                  label={modality}
+                  onClick={() => {
+                    if (activeModalities.includes(modality)) {
+                      setActiveModalities(activeModalities.filter(m => m !== modality));
+                    } else {
+                      setActiveModalities([...activeModalities, modality]);
+                    }
+                  }}
+                  color={activeModalities.includes(modality) ? "primary" : "default"}
+                  sx={{ m: 0.5 }}
+                />
+              ))}
+            </Box>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={topModalities}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
@@ -259,7 +304,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
 
-        {/* Improved Modalities per Institution - Stacked Bar Chart */}
+        {/* Modalities per Institution - Stacked Bar Chart */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2, height: '100%' }}>
             <Typography variant="h6" sx={{ mb: 2 }}>
