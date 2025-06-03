@@ -148,6 +148,7 @@ const Analytics = ({ darkMode }) => {
             </CardContent>
           </Card>
         </Grid>
+// Update the device stats card
         <Grid item xs={12} md={3}>
           <Card sx={{ backgroundColor: cardColor }}>
             <CardContent>
@@ -156,7 +157,7 @@ const Analytics = ({ darkMode }) => {
                 <Box>
                   <Typography variant="h6">Top Device</Typography>
                   <Typography variant="h6">
-                    {data.stats.userAgentStats?.[0]?.[0]?.split(' ')[0] || 'N/A'}
+                    {data.stats.deviceStats?.[0]?.[0] || 'N/A'} ({data.stats.deviceStats?.[0]?.[1] || 0})
                   </Typography>
                 </Box>
               </Box>
