@@ -109,7 +109,7 @@
 }
 
 .verified-row {
-  background-color: #dd841a; /* Light green for verified */
+  background-color: #dd841a82; /* Light green for verified */
 }
 
 .unverified-row {
