@@ -148,7 +148,6 @@ const Analytics = ({ darkMode }) => {
             </CardContent>
           </Card>
         </Grid>
-// Update the device stats card
         <Grid item xs={12} md={3}>
           <Card sx={{ backgroundColor: cardColor }}>
             <CardContent>
@@ -309,43 +308,42 @@ const Analytics = ({ darkMode }) => {
       {/* Logs Table */}
       <Typography variant="h6" sx={{ mb: 2, color: textColor }}>Recent Activity</Typography>
       <Paper sx={{ backgroundColor: cardColor }}>
-// Update the table columns in Analytics.js
-<Table>
-  <TableHead>
-    <TableRow sx={{ backgroundColor: darkMode ? '#1E293B' : '#E5E7EB' }}>
-      <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>User</TableCell>
-      <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Action</TableCell>
-      <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Timestamp</TableCell>
-      <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Browser</TableCell>
-      <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>OS/Device</TableCell>
-    </TableRow>
-  </TableHead>
-  <TableBody>
-    {data.logs.length > 0 ? (
-      data.logs.slice(0, 50).map((log, index) => (
-        <TableRow key={index}>
-          <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
-          <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
-          <TableCell sx={{ color: textColor }}>
-            {new Date(log.timestamp).toLocaleString()}
-          </TableCell>
-          <TableCell sx={{ color: textColor }}>
-            {log.metadata?.deviceInfo?.browser || log.browser || 'Unknown'}
-          </TableCell>
-          <TableCell sx={{ color: textColor }}>
-            {log.metadata?.deviceInfo?.os || log.os || 'Unknown'} ({log.deviceType || 'desktop'})
-          </TableCell>
-        </TableRow>
-      ))
-    ) : (
-      <TableRow>
-        <TableCell colSpan={5} sx={{ textAlign: 'center', color: textColor }}>
-          No activity logs found
-        </TableCell>
-      </TableRow>
-    )}
-  </TableBody>
-</Table>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: darkMode ? '#1E293B' : '#E5E7EB' }}>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>User</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Action</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Timestamp</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Browser</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>OS/Device</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.logs.length > 0 ? (
+              data.logs.slice(0, 50).map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
+                  <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
+                  <TableCell sx={{ color: textColor }}>
+                    {new Date(log.timestamp).toLocaleString()}
+                  </TableCell>
+                  <TableCell sx={{ color: textColor }}>
+                    {log.metadata?.deviceInfo?.browser || log.browser || 'Unknown'}
+                  </TableCell>
+                  <TableCell sx={{ color: textColor }}>
+                    {log.metadata?.deviceInfo?.os || log.os || 'Unknown'} ({log.deviceType || 'desktop'})
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} sx={{ textAlign: 'center', color: textColor }}>
+                  No activity logs found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </Paper>
     </Paper>
   );
