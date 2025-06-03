@@ -6,14 +6,21 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaShieldAlt } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
-import ReCAPTCHA from "react-google-recaptcha";
 import "./SignIn.css";
 import logo from "../assets/haske.png";
 import aiWebBackground from "../assets/ai-web-background.png";
 import { logAction } from "../utils/analytics";
-import UAParser from "ua-parser-js"; // For device info parsing
+import { detect } from "detect-browser";
+import UAParser from "ua-parser-js";
+
+// Security thresholds
+const SECURITY_CONFIG = {
+  failedAttemptsThreshold: 5, // Alert after 5 failed attempts
+  resetRequestsThreshold: 3, // Alert after 3 password reset requests
+  timeBetweenAttempts: 30000, // 30 seconds between attempts threshold
+};
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -22,49 +29,105 @@ const SignIn = () => {
   const [message, setMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null);
-  const [showCaptcha, setShowCaptcha] = useState(false);
-  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [securityCheck, setSecurityCheck] = useState(null);
   const navigate = useNavigate();
-  const recaptchaRef = useRef(null);
   const signInStartTime = useRef(null);
+  const failedAttempts = useRef({});
+  const resetRequests = useRef({});
 
-  // Get device and browser information
+  // Get detailed device and browser info
   const getDeviceInfo = () => {
+    const browser = detect();
     const parser = new UAParser();
-    const result = parser.getResult();
+    const ua = parser.getResult();
+    
     return {
-      browser: `${result.browser.name} ${result.browser.version}`,
-      os: `${result.os.name} ${result.os.version}`,
-      device: result.device.type || 'desktop',
-      deviceModel: result.device.model || 'unknown',
+      browser: `${browser.name} ${browser.version}`,
+      os: ua.os.name,
+      deviceType: ua.device.type || 'desktop',
       screenResolution: `${window.screen.width}x${window.screen.height}`,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      language: navigator.language,
+      cookiesEnabled: navigator.cookieEnabled,
+      doNotTrack: navigator.doNotTrack === '1',
+      ipAddress: '', // Will be captured by backend from request headers
     };
   };
 
-  // Check for suspicious activity patterns
-  const checkSuspiciousActivity = (email) => {
-    // In a real app, you would check against your analytics API
-    // This is a simplified version for demonstration
-    const recentFailedAttempts = localStorage.getItem(`failed_attempts_${email}`) || 0;
-    return recentFailedAttempts > 3; // Show CAPTCHA after 3 failed attempts
-  };
+  // Check for suspicious patterns
+  const checkSecurityPatterns = (email, action) => {
+    const now = Date.now();
+    const emailKey = email.toLowerCase();
 
-  useEffect(() => {
-    const storedAttempts = localStorage.getItem(`failed_attempts_${email}`);
-    if (storedAttempts && parseInt(storedAttempts) >= 3) {
-      setShowCaptcha(true);
+    if (action === 'failed') {
+      if (!failedAttempts.current[emailKey]) {
+        failedAttempts.current[emailKey] = { count: 0, timestamps: [] };
+      }
+
+      failedAttempts.current[emailKey].count++;
+      failedAttempts.current[emailKey].timestamps.push(now);
+
+      // Check threshold
+      if (failedAttempts.current[emailKey].count >= SECURITY_CONFIG.failedAttemptsThreshold) {
+        logAction('Security Alert - Failed Attempts Threshold', {
+          email,
+          count: failedAttempts.current[emailKey].count,
+          lastAttempts: failedAttempts.current[emailKey].timestamps
+        }, null, getDeviceInfo());
+        
+        setSecurityCheck('We noticed several failed attempts. Please wait a moment or reset your password if needed.');
+        return true;
+      }
+
+      // Check rapid attempts
+      const recentAttempts = failedAttempts.current[emailKey].timestamps.filter(
+        timestamp => now - timestamp < SECURITY_CONFIG.timeBetweenAttempts
+      );
+      
+      if (recentAttempts.length > 2) {
+        logAction('Security Alert - Rapid Attempts', {
+          email,
+          attemptsInPeriod: recentAttempts.length,
+          timeWindow: SECURITY_CONFIG.timeBetweenAttempts
+        }, null, getDeviceInfo());
+        
+        setSecurityCheck('Too many attempts too quickly. Please wait 30 seconds.');
+        return true;
+      }
     }
-  }, [email]);
+
+    if (action === 'reset') {
+      if (!resetRequests.current[emailKey]) {
+        resetRequests.current[emailKey] = { count: 0, timestamps: [] };
+      }
+
+      resetRequests.current[emailKey].count++;
+      resetRequests.current[emailKey].timestamps.push(now);
+
+      if (resetRequests.current[emailKey].count >= SECURITY_CONFIG.resetRequestsThreshold) {
+        logAction('Security Alert - Reset Requests Threshold', {
+          email,
+          count: resetRequests.current[emailKey].count,
+          lastRequests: resetRequests.current[emailKey].timestamps
+        }, null, getDeviceInfo());
+        
+        setSecurityCheck('Multiple password reset requests detected. Check your email or contact support.');
+        return true;
+      }
+    }
+
+    return false;
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        const deviceInfo = getDeviceInfo();
         logAction('User Auto-Sign In', { 
           method: 'session',
-          ...deviceInfo
-        }, user);
+          sessionDuration: user.metadata.lastSignInTime 
+            ? (new Date() - new Date(user.metadata.lastSignInTime)) / 1000 
+            : 'first_time'
+        }, user, getDeviceInfo());
         navigate("/patient-details");
       }
     });
@@ -73,106 +136,84 @@ const SignIn = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    signInStartTime.current = new Date().getTime();
-    
     if (!email || !password) {
       setError("Email and password are required.");
       logAction('Sign In Attempt', { 
         status: 'failed', 
         reason: 'missing_fields', 
-        email,
-        ...getDeviceInfo()
-      }, null);
+        email 
+      }, null, getDeviceInfo());
       return;
     }
 
-    // Check for suspicious activity
-    if (checkSuspiciousActivity(email) {
-      setShowCaptcha(true);
-      if (!captchaToken) {
-        setError("Please complete the CAPTCHA to continue");
-        return;
-      }
+    // Check security patterns before proceeding
+    if (checkSecurityPatterns(email, 'failed')) {
+      setError("Security check triggered. Please follow the instructions.");
+      return;
     }
 
     setLoading(true);
     setError(null);
     setMessage(null);
+    setSecurityCheck(null);
+    signInStartTime.current = Date.now();
 
-    const deviceInfo = getDeviceInfo();
-    
     // Track sign in attempt with device info
     logAction('Sign In Attempt', { 
       email,
-      ...deviceInfo,
-      captchaUsed: showCaptcha,
-      failedAttempts: failedAttempts
+      deviceInfo: getDeviceInfo()
     }, null);
 
     try {
+      const startTime = Date.now();
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      const signInDuration = new Date().getTime() - signInStartTime.current;
+      const signInDuration = Date.now() - startTime;
       
-      // Track successful sign in with timing
+      // Track successful sign in with performance metrics
       logAction('User Sign In', { 
         method: 'email',
         provider: user.providerData[0]?.providerId,
-        durationMs: signInDuration,
-        ...deviceInfo
-      }, user);
+        signInDuration,
+        authTime: user.metadata.lastSignInTime,
+        isNewUser: user.metadata.creationTime === user.metadata.lastSignInTime
+      }, user, getDeviceInfo());
       
-      // Reset failed attempts on successful login
-      localStorage.removeItem(`failed_attempts_${email}`);
-      setFailedAttempts(0);
-      setShowCaptcha(false);
+      // Reset failed attempts counter on success
+      const emailKey = email.toLowerCase();
+      if (failedAttempts.current[emailKey]) {
+        failedAttempts.current[emailKey] = { count: 0, timestamps: [] };
+      }
       
       navigate("/patient-details");
     } catch (error) {
       const errorMessage = "Invalid email or password. Please try again.";
       setError(errorMessage);
       
-      // Increment and store failed attempts
-      const attempts = failedAttempts + 1;
-      setFailedAttempts(attempts);
-      localStorage.setItem(`failed_attempts_${email}`, attempts);
-      
-      // Show CAPTCHA after 3 failed attempts
-      if (attempts >= 3) {
-        setShowCaptcha(true);
-      }
-      
-      // Track failed sign in with detailed info
+      // Track failed sign in with error details
       logAction('Sign In Failed', { 
         email,
         errorCode: error.code,
         errorMessage: error.message,
-        failedAttempts: attempts,
-        ...deviceInfo,
-        captchaUsed: showCaptcha
-      }, null);
-
-      // Trigger security alert if multiple failures
-      if (attempts >= 5) {
-        logAction('Security Alert', {
-          type: 'multiple_failed_attempts',
-          email,
-          attempts,
-          ...deviceInfo
-        }, null);
-      }
+        failedAttempts: failedAttempts.current[email.toLowerCase()]?.count || 1,
+        timeSinceLastAttempt: failedAttempts.current[email.toLowerCase()]?.timestamps.length 
+          ? (Date.now() - failedAttempts.current[email.toLowerCase()].timestamps.slice(-1)[0]) / 1000 
+          : 'first_attempt'
+      }, null, getDeviceInfo());
     } finally {
       setLoading(false);
-      if (recaptchaRef.current) {
-        recaptchaRef.current.reset();
-      }
-      setCaptchaToken(null);
     }
   };
 
   const handlePasswordReset = async () => {
     if (!email) {
       setError("Please enter your email address first.");
+      return;
+    }
+
+    // Check security patterns before proceeding
+    if (checkSecurityPatterns(email, 'reset')) {
+      setError("Security check triggered. Please follow the instructions.");
       return;
     }
 
@@ -184,8 +225,8 @@ const SignIn = () => {
       // Track password reset request with device info
       logAction('Password Reset Requested', { 
         email,
-        ...getDeviceInfo()
-      }, null);
+        resetCount: resetRequests.current[email.toLowerCase()]?.count + 1 || 1
+      }, null, getDeviceInfo());
     } catch (error) {
       setError(`Error sending reset email: ${error.message}`);
       
@@ -194,15 +235,9 @@ const SignIn = () => {
         email,
         errorCode: error.code,
         errorMessage: error.message,
-        ...getDeviceInfo()
-      }, null);
+        resetAttempts: resetRequests.current[email.toLowerCase()]?.count || 1
+      }, null, getDeviceInfo());
     }
-  };
-
-  const onCaptchaChange = (token) => {
-    setCaptchaToken(token);
-    setError(null);
-    logAction('CAPTCHA Completed', { email }, null);
   };
 
   return (
@@ -228,10 +263,9 @@ const SignIn = () => {
           <h2 className="form-title">Welcome to Haske!</h2>
           <p className="form-subtitle">Please sign in to access scans</p>
 
-          {failedAttempts >= 3 && (
+          {securityCheck && (
             <div className="security-alert">
-              <FaShieldAlt className="security-icon" />
-              <span>Additional verification required</span>
+              <p>{securityCheck}</p>
             </div>
           )}
 
@@ -260,24 +294,13 @@ const SignIn = () => {
                 onClick={() => {
                   setShowPassword((prev) => !prev);
                   logAction('Password Visibility Toggled', { 
-                    visible: !showPassword,
-                    ...getDeviceInfo()
-                  }, null);
+                    visible: !showPassword 
+                  }, null, getDeviceInfo());
                 }}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-
-            {showCaptcha && (
-              <div className="captcha-container">
-                <ReCAPTCHA
-                  ref={recaptchaRef}
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                  onChange={onCaptchaChange}
-                />
-              </div>
-            )}
 
             <motion.button
               whileHover={{ scale: 1.05 }}
