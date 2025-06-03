@@ -1,6 +1,6 @@
 export const logAction = async (action, metadata = {}, currentUser) => {
   try {
-    await fetch('https://haske.online:8090/api/analytics/log', {
+    await fetch('https://haske.online:8090/api/analytics/logs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
