@@ -48,6 +48,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [activeModalities, setActiveModalities] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
+  const [institutionsList, setInstitutionsList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,22 +56,26 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         
-        const [statsResponse, dicomResponse, analyticsResponse] = await Promise.all([
+        const [statsResponse, dicomResponse, analyticsResponse, institutionsResponse] = await Promise.all([
           fetch("https://haske.online:8090/api/verification/stats"),
           fetch("https://haske.online:8090/api/dicom-stats"),
-          fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`)
+          fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`),
+          fetch("https://haske.online:8090/api/institutions?page=1&pageSize=100") // Fetch all institutions
         ]);
 
         if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
         if (!dicomResponse.ok) throw new Error("Failed to fetch DICOM stats");
+        if (!institutionsResponse.ok) throw new Error("Failed to fetch institutions");
 
-        const [statsData, dicomData] = await Promise.all([
+        const [statsData, dicomData, institutionsData] = await Promise.all([
           statsResponse.json(),
-          dicomResponse.json()
+          dicomResponse.json(),
+          institutionsResponse.json()
         ]);
 
         setStats(statsData);
         setDicomStats(dicomData);
+        setInstitutionsList(institutionsData.institutions);
         
         // Initialize active modalities
         const uniqueModalities = [...new Set(dicomData.modalities.map(item => item.name))];
@@ -117,6 +122,21 @@ const Dashboard = () => {
   const stackedChartData = getStackedChartData();
   const uniqueModalities = [...new Set(dicomStats.modalities.map(item => item.name))];
 
+  // Prepare top institutions data with full institution details
+  const topInstitutions = [...dicomStats.institutions]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10)
+    .map(institution => {
+      const fullDetails = institutionsList.find(inst => inst.id === institution.id) || {};
+      return {
+        ...institution,
+        name: fullDetails.name || `Institution ${institution.id}`,
+        address: fullDetails.address,
+        contactEmail: fullDetails.contactEmail,
+        contactPhone: fullDetails.contactPhone
+      };
+    });
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -145,10 +165,6 @@ const Dashboard = () => {
     .slice(0, 10);
 
   const topBodyParts = [...dicomStats.bodyParts]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
-
-  const topInstitutions = [...dicomStats.institutions]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
@@ -400,28 +416,58 @@ const Dashboard = () => {
         </Grid>
 
         {/* Top Institutions */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart 
-                data={topInstitutions}
-                layout="vertical"
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis 
-                  type="category" 
-                  dataKey="name" 
-                  width={150}
-                  tick={{ fontSize: 12 }}
-                />
-                <Tooltip />
-                <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
+             <Grid item xs={12} md={6}>
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart 
+              data={topInstitutions}
+              layout="vertical"
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis type="number" />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                width={150}
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip 
+                content={({ active, payload, label }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  const institution = payload[0].payload;
+                  
+                  return (
+                    <Paper sx={{ p: 1.5, border: `1px solid ${theme.palette.divider}` }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                        {institution.name}
+                      </Typography>
+                      <Typography variant="body2">
+                        Studies: {institution.count}
+                      </Typography>
+                      {institution.address && (
+                        <Typography variant="body2">
+                          Address: {institution.address}
+                        </Typography>
+                      )}
+                      {institution.contactEmail && (
+                        <Typography variant="body2">
+                          Email: {institution.contactEmail}
+                        </Typography>
+                      )}
+                      {institution.contactPhone && (
+                        <Typography variant="body2">
+                          Phone: {institution.contactPhone}
+                        </Typography>
+                      )}
+                    </Paper>
+                  );
+                }}
+              />
+              <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Paper>
       </Grid>
     </Box>
   );
