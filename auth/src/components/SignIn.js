@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "./SignIn.css";
-import logo from "../assets/haske.png"; // Import your logo here
-import aiWebBackground from "../assets/ai-web-background.png"; // Import your new background image here
+import logo from "../assets/haske.png";
+import aiWebBackground from "../assets/ai-web-background.png";
+import { logAction } from "../utils/analytics"; // Import the analytics utility
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +24,10 @@ const SignIn = () => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) navigate("/patient-details");
+      if (user) {
+        logAction('User Auto-Sign In', { method: 'session' }, user);
+        navigate("/patient-details");
+      }
     });
     return () => unsubscribe();
   }, [navigate]);
@@ -32,6 +36,7 @@ const SignIn = () => {
     e.preventDefault();
     if (!email || !password) {
       setError("Email and password are required.");
+      logAction('Sign In Attempt', { status: 'failed', reason: 'missing_fields', email }, null);
       return;
     }
 
@@ -39,13 +44,57 @@ const SignIn = () => {
     setError(null);
     setMessage(null);
 
+    // Track sign in attempt
+    logAction('Sign In Attempt', { email }, null);
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Track successful sign in
+      logAction('User Sign In', { 
+        method: 'email',
+        provider: user.providerData[0]?.providerId 
+      }, user);
+      
       navigate("/patient-details");
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+      const errorMessage = "Invalid email or password. Please try again.";
+      setError(errorMessage);
+      
+      // Track failed sign in
+      logAction('Sign In Failed', { 
+        email,
+        errorCode: error.code,
+        errorMessage: error.message 
+      }, null);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMessage("Password reset email sent. Please check your inbox.");
+      setError(null);
+      
+      // Track password reset request
+      logAction('Password Reset Requested', { email }, null);
+    } catch (error) {
+      setError(`Error sending reset email: ${error.message}`);
+      
+      // Track failed password reset
+      logAction('Password Reset Failed', { 
+        email,
+        errorCode: error.code,
+        errorMessage: error.message 
+      }, null);
     }
   };
 
@@ -94,7 +143,10 @@ const SignIn = () => {
               <button
                 type="button"
                 className="password-toggle-button"
-                onClick={() => setShowPassword((prev) => !prev)}
+                onClick={() => {
+                  setShowPassword((prev) => !prev);
+                  logAction('Password Visibility Toggled', { visible: !showPassword }, null);
+                }}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -117,7 +169,10 @@ const SignIn = () => {
           <p className="signin-footer">
             New on our platform? <a href="/register">Create an account</a>
           </p>
-          <p className="forgot-password-link" onClick={() => sendPasswordResetEmail(auth, email)}>
+          <p 
+            className="forgot-password-link" 
+            onClick={handlePasswordReset}
+          >
             Forgot Password?
           </p>
         </motion.div>
