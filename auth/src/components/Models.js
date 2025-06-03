@@ -8,8 +8,6 @@ import {
 import { Add, Delete, Edit } from '@mui/icons-material';
 import axios from 'axios';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import { logAction } from '../utils/analytics'; // Add this import
-import { useUser } from '../context/UserContext'; // Import your user context
 
 const Models = () => {
   const [models, setModels] = useState([]);
@@ -33,24 +31,16 @@ const Models = () => {
     severity: 'success'
   });
 
-  const { currentUser } = useUser(); // Get current user from context
-
   useEffect(() => {
     fetchModels();
-    // Track initial page view
-    logAction('Models Page View', { page: 'Models Management' }, currentUser);
-  }, [currentUser]);
+  }, []);
 
   const fetchModels = async () => {
     try {
       const { data } = await axios.get('https://haske.online:8090/api/ai/models');
       setModels(data);
-      // Track successful model fetch
-      logAction('Models Fetched', { count: data.length }, currentUser);
     } catch (err) {
       showSnackbar('Error fetching models', 'error');
-      // Track failed fetch
-      logAction('Models Fetch Failed', { error: err.message }, currentUser);
     }
   };
 
@@ -59,55 +49,52 @@ const Models = () => {
       if (currentModel) {
         await axios.put(`https://haske.online:8090/api/ai/models/${currentModel.id}`, formData);
         showSnackbar('Model updated successfully', 'success');
-        // Track model update
-        logAction('Model Updated', { 
-          modelId: currentModel.id,
-          modelName: formData.name,
-          changes: formData 
-        }, currentUser);
       } else {
-        const response = await axios.post('https://haske.online:8090/api/ai/models', formData);
+        await axios.post('https://haske.online:8090/api/ai/models', formData);
         showSnackbar('Model created successfully', 'success');
-        // Track model creation
-        logAction('Model Created', { 
-          modelId: response.data.id,
-          modelName: formData.name 
-        }, currentUser);
       }
       fetchModels();
       setOpenDialog(false);
     } catch (err) {
       showSnackbar('Error saving model', 'error');
-      // Track failed save
-      logAction('Model Save Failed', { 
-        action: currentModel ? 'update' : 'create',
-        error: err.message 
-      }, currentUser);
     }
   };
 
   const handleDelete = async (id) => {
     try {
-      const modelToDelete = models.find(m => m.id === id);
       await axios.delete(`https://haske.online:8090/api/ai/models/${id}`);
       showSnackbar('Model deleted successfully', 'success');
       fetchModels();
-      // Track model deletion
-      logAction('Model Deleted', { 
-        modelId: id,
-        modelName: modelToDelete?.name 
-      }, currentUser);
     } catch (err) {
       showSnackbar('Error deleting model', 'error');
-      // Track failed deletion
-      logAction('Model Delete Failed', { 
-        modelId: id,
-        error: err.message 
-      }, currentUser);
     }
   };
 
-  // ... rest of your existing functions remain the same ...
+  const showSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  // Helper functions for managing arrays in form data
+  const addToArray = (field, value, setTempValue) => {
+    if (value && !formData[field].includes(value)) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: [...prev[field], value]
+      }));
+      setTempValue('');
+    }
+  };
+
+  const removeFromArray = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].filter(item => item !== value)
+    }));
+  };
 
   return (
     <Box p={4}>
@@ -125,29 +112,216 @@ const Models = () => {
               body_part: [],
               docker_image: '',
               entry_point: '',
-              is_active: true,
-              github_link: ''
+              is_active: true
             });
             setOpenDialog(true);
-            // Track "Add Model" button click
-            logAction('Add Model Clicked', {}, currentUser);
           }}
         >
           Add Model
         </Button>
       </Box>
 
-      {/* ... rest of your JSX remains the same ... */}
+     <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Modalities</TableCell>
+              <TableCell>Body Parts</TableCell>
+              <TableCell>Docker Image</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+              <TableCell>GitHub</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {models.map((model) => (
+              <TableRow key={model.id}>
+                <TableCell>{model.name}</TableCell>
+                <TableCell>{model.description}</TableCell>
+                <TableCell>
+                  {model.modality?.map(m => (
+                    <Chip key={m} label={m} size="small" sx={{ mr: 1, mb: 1 }} />
+                  ))}
+                </TableCell>
+                <TableCell>
+                  {model.body_part?.map(b => (
+                    <Chip key={b} label={b} size="small" sx={{ mr: 1, mb: 1 }} />
+                  ))}
+                </TableCell>
+                <TableCell>{model.docker_image}</TableCell>
+                <TableCell>
+                  <Chip 
+                    label={model.is_active ? 'Active' : 'Inactive'} 
+                    color={model.is_active ? 'success' : 'error'} 
+                    size="small" 
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton onClick={() => {
+                    setCurrentModel(model);
+                    setFormData({
+                      name: model.name,
+                      description: model.description,
+                      modality: model.modality || [],
+                      body_part: model.body_part || [],
+                      docker_image: model.docker_image,
+                      entry_point: model.entry_point,
+                      is_active: model.is_active,
+                      github_link: model.github_link || ''
+                    });
+                    setOpenDialog(true);
+                  }}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(model.id)}>
+                    <Delete color="error" />
+                  </IconButton>
+                </TableCell>
+                <TableCell>
+                  {model.github_link && (
+                    <IconButton 
+                      href={model.github_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <GitHubIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      <Dialog open={openDialog} onClose={() => {
-        setOpenDialog(false);
-        // Track dialog close
-        logAction('Model Dialog Closed', { action: currentModel ? 'edit' : 'add' }, currentUser);
-      }} fullWidth maxWidth="md">
-        {/* ... dialog content remains the same ... */}
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="md">
+        <DialogTitle>{currentModel ? 'Edit Model' : 'Add New Model'}</DialogTitle>
+        <DialogContent>
+          <Box mt={2} display="flex" flexDirection="column" gap={3}>
+            <TextField
+              label="Model Name"
+              fullWidth
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
+            />
+            
+            <TextField
+              label="Description"
+              fullWidth
+              multiline
+              rows={3}
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
+            />
+            <TextField
+              label="GitHub Repository Link"
+              fullWidth
+              value={formData.github_link}
+              onChange={(e) => setFormData({...formData, github_link: e.target.value})}
+              placeholder="https://github.com/Heartz00/mailabhaske"
+              sx={{ mb: 2 }}
+            />
+                        
+            <Box>
+              <Typography variant="subtitle1" gutterBottom>Supported Modalities</Typography>
+              <Box display="flex" alignItems="center" gap={1} mb={1}>
+                <TextField
+                  size="small"
+                  value={tempModality}
+                  onChange={(e) => setTempModality(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addToArray('modality', tempModality, setTempModality)}
+                  placeholder="Add modality (e.g., CT, MRI)"
+                  fullWidth
+                />
+                <Button onClick={() => addToArray('modality', tempModality, setTempModality)}>Add</Button>
+              </Box>
+              <Box>
+                {formData.modality.map(m => (
+                  <Chip 
+                    key={m} 
+                    label={m} 
+                    onDelete={() => removeFromArray('modality', m)}
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                ))}
+              </Box>
+            </Box>
+            
+            <Box>
+              <Typography variant="subtitle1" gutterBottom>Supported Body Parts</Typography>
+              <Box display="flex" alignItems="center" gap={1} mb={1}>
+                <TextField
+                  size="small"
+                  value={tempBodyPart}
+                  onChange={(e) => setTempBodyPart(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && addToArray('body_part', tempBodyPart, setTempBodyPart)}
+                  placeholder="Add body part (e.g., HEAD, CHEST)"
+                  fullWidth
+                />
+                <Button onClick={() => addToArray('body_part', tempBodyPart, setTempBodyPart)}>Add</Button>
+              </Box>
+              <Box>
+                {formData.body_part.map(b => (
+                  <Chip 
+                    key={b} 
+                    label={b} 
+                    onDelete={() => removeFromArray('body_part', b)}
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                ))}
+              </Box>
+            </Box>
+            
+            <TextField
+              label="Docker Image"
+              fullWidth
+              value={formData.docker_image}
+              onChange={(e) => setFormData({...formData, docker_image: e.target.value})}
+              placeholder="e.g., username/repo:tag"
+            />
+            
+            <TextField
+              label="Entry Point Command"
+              fullWidth
+              value={formData.entry_point}
+              onChange={(e) => setFormData({...formData, entry_point: e.target.value})}
+              placeholder="e.g., python predict.py"
+            />
+            
+            {currentModel && (
+              <Box display="flex" alignItems="center">
+                <Typography variant="body1" sx={{ mr: 2 }}>Status:</Typography>
+                <Button
+                  variant={formData.is_active ? "contained" : "outlined"}
+                  color={formData.is_active ? "success" : "error"}
+                  onClick={() => setFormData({...formData, is_active: !formData.is_active})}
+                >
+                  {formData.is_active ? 'Active' : 'Inactive'}
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleSubmit} variant="contained" color="primary">
+            {currentModel ? 'Update Model' : 'Create Model'}
+          </Button>
+        </DialogActions>
       </Dialog>
 
-      {/* ... snackbar and other components remain the same ... */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
