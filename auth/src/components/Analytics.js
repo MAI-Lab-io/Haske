@@ -2,248 +2,345 @@ import React, { useEffect, useState } from "react";
 import { 
   Table, TableBody, TableCell, TableHead, TableRow, 
   Paper, Typography, TextField, Button, Menu, MenuItem,
-  CircularProgress, Alert, Snackbar
+  Select, FormControl, InputLabel, Box, Grid, Card, CardContent
 } from "@mui/material";
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, YAxis } from "recharts";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { 
+  BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, 
+  CartesianGrid, Legend, YAxis, LineChart, Line, PieChart, Pie, Cell
+} from "recharts";
+import {
+  FileDownload as FileDownloadIcon,
+  Person as PersonIcon,
+  Event as EventIcon,
+  Timeline as TimelineIcon,
+  Devices as DevicesIcon
+} from "@mui/icons-material";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Analytics = ({ darkMode }) => {
-  const [logs, setLogs] = useState([]);
+  const [data, setData] = useState({
+    logs: [],
+    chartData: [],
+    stats: {}
+  });
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [actionFilter, setActionFilter] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // Define colors and userColors at the component level
-  const colors = darkMode ? ["#0F172A", "#E5E7EB", "#dd841a"] : ["#0F172A", "#E5E7EB", "#dd841a"];
-  const [userColors, setUserColors] = useState({});
-  let colorIndex = 0;
+  const colors = darkMode 
+    ? ["#dd841a", "#4CAF50", "#2196F3", "#9C27B0", "#FF5722"] 
+    : ["#0F172A", "#4CAF50", "#2196F3", "#9C27B0", "#FF5722"];
 
   useEffect(() => {
-    fetch("https://haske.online:8090/api/verification/logs")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data?.logs)) {
-          const validLogs = data.logs.filter(log => 
-            log?.action && typeof log.action === 'string' && 
-            log?.email && typeof log.email === 'string' &&
-            log?.timestamp
-          );
-          setLogs(validLogs);
-        } else {
-          console.error("Unexpected API response format:", data);
-          setLogs([]);
-        }
-      })
-      .catch((error) => console.error("Error fetching logs:", error));
-  }, []);
+    fetchAnalytics();
+  }, [search, actionFilter, startDate, endDate]);
 
-  const filteredLogs = logs.filter(
-    (log) =>
-      (log.action?.toLowerCase() === "user signed in" || log.action?.toLowerCase() === "user signed out") &&
-      (search ? log.email?.toLowerCase().includes(search.toLowerCase()) : true)
-  );
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    try {
+      let url = `https://haske.online:8090/api/analytics/logs?`;
+      if (search) url += `&email=${encodeURIComponent(search)}`;
+      if (actionFilter) url += `&action=${encodeURIComponent(actionFilter)}`;
+      if (startDate) url += `&startDate=${startDate.toISOString()}`;
+      if (endDate) url += `&endDate=${endDate.toISOString()}`;
 
-  const sortedLogs = [...filteredLogs].sort((a, b) => {
-    const dateA = a.timestamp ? new Date(a.timestamp) : new Date(0);
-    const dateB = b.timestamp ? new Date(b.timestamp) : new Date(0);
-    return dateB - dateA;
-  });
+      const response = await fetch(url);
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleExport = (format) => {
     let dataString = "";
 
     if (format === "csv") {
-      dataString += "Email,Action,Timestamp\n";
-      sortedLogs.forEach((log) => {
-        dataString += `${log.email},${log.action},${new Date(log.timestamp).toLocaleString()}\n`;
+      dataString += "Email,Action,Timestamp,User Agent\n";
+      data.logs.forEach((log) => {
+        dataString += `"${log.email}","${log.action}","${new Date(log.timestamp).toLocaleString()}","${log.userAgent}"\n`;
       });
-    } else if (format === "txt") {
-      dataString += "Analytics\n\n";
-      sortedLogs.forEach((log) => {
-        dataString += `Email: ${log.email} | Action: ${log.action} | Timestamp: ${new Date(log.timestamp).toLocaleString()}\n`;
-      });
+    } else if (format === "json") {
+      dataString = JSON.stringify(data.logs, null, 2);
     }
 
-    const blob = new Blob([dataString], { type: format === "csv" ? "text/csv" : "text/plain" });
+    const blob = new Blob([dataString], { type: format === "csv" ? "text/csv" : "application/json" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `user_logs.${format}`;
+    a.download = `analytics.${format}`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
 
-  const userSessions = {};
-  filteredLogs.forEach((log) => {
-    if (!log?.email) return;
-    
-    if (!userSessions[log.email]) {
-      userSessions[log.email] = [];
-    }
-    userSessions[log.email].push({ 
-      action: log.action || '', 
-      timestamp: new Date(log.timestamp) 
-    });
-  });
+  const getActionTypes = () => {
+    const actions = new Set();
+    data.logs.forEach(log => actions.add(log.action));
+    return Array.from(actions).sort();
+  };
 
-  // Calculate total active time per user per day (in hours)
-  const aggregatedData = {};
-  const twoWeeksAgo = new Date();
-  twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 13);
-
-  // Initialize all dates in the last 2 weeks
-  for (let i = 0; i < 14; i++) {
-    const date = new Date(twoWeeksAgo);
-    date.setDate(twoWeeksAgo.getDate() + i);
-    const dateKey = date.toISOString().split("T")[0];
-    aggregatedData[dateKey] = { date: dateKey };
-
-    Object.keys(userSessions).forEach((email) => {
-      aggregatedData[dateKey][email] = 0;
-    });
-  }
-
-  // Temporary object to track colors during this calculation
-  const tempUserColors = {...userColors};
-
-  Object.keys(userSessions).forEach((email) => {
-    const sessions = userSessions[email];
-    sessions.sort((a, b) => a.timestamp - b.timestamp);
-
-    let activeSessions = [];
-
-    sessions.forEach((session) => {
-      if (session.action?.toLowerCase() === "user signed in") {
-        activeSessions.push(session.timestamp);
-      } else if (session.action?.toLowerCase() === "user signed out" && activeSessions.length > 0) {
-        const signInTimestamp = activeSessions.pop();
-        const duration = (session.timestamp - signInTimestamp) / 1000 / 60 / 60;
-        const dateKey = signInTimestamp.toISOString().split("T")[0];
-
-        if (signInTimestamp >= twoWeeksAgo) {
-          if (!tempUserColors[email]) {
-            tempUserColors[email] = colors[colorIndex % colors.length];
-            colorIndex++;
-          }
-          aggregatedData[dateKey][email] += duration;
-        }
-      }
-    });
-
-    activeSessions.forEach((signInTimestamp) => {
-      const dateKey = signInTimestamp.toISOString().split("T")[0];
-      if (signInTimestamp >= twoWeeksAgo) {
-        aggregatedData[dateKey][email] += 0;
-      }
-    });
-  });
-
-  // Update user colors state if changed
-  if (JSON.stringify(tempUserColors) !== JSON.stringify(userColors)) {
-    setUserColors(tempUserColors);
-  }
-
-  const chartDataArray = Object.values(aggregatedData).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  // Dynamic colors for dark/light mode
+  // Theme colors
   const backgroundColor = darkMode ? "#0F172A" : "#E5E7EB";
   const textColor = darkMode ? "#E5E7EB" : "#0F172A";
+  const cardColor = darkMode ? "#1E293B" : "#FFFFFF";
   const gridColor = darkMode ? "#444" : "#ddd";
-  const tooltipBackgroundColor = darkMode ? "#1E1E1E" : "#fff";
-  const tooltipTextColor = darkMode ? "#E5E7EB" : "#0F172A";
-  const buttonBackgroundColor = darkMode ? "#dd841a" : "#0F172A";
-  const buttonTextColor = darkMode ? "#0F172A" : "#E5E7EB";
+
+  if (loading) {
+    return (
+      <Paper sx={{ p: 3, backgroundColor, color: textColor }}>
+        <Typography>Loading analytics data...</Typography>
+      </Paper>
+    );
+  }
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 3, boxShadow: 4, backgroundColor, color: textColor }}>
-      <Typography variant="h5" sx={{ mb: 2, fontWeight: "bold", textAlign: "center", color: "#dd841a" }}>
-        Analytics
+    <Paper sx={{ p: 3, backgroundColor, color: textColor }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold", color: "#dd841a" }}>
+        User Analytics Dashboard
       </Typography>
 
-      <Typography variant="h6" sx={{ mb: 1, fontWeight: "bold", color: "#dd841a" }}>Filter by Email</Typography>
-      <TextField
-        label="Search by Email"
-        variant="outlined"
-        size="small"
-        sx={{ backgroundColor: textColor, borderRadius: 1, mb: 2, input: { color: backgroundColor } }}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: cardColor }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <PersonIcon color="primary" sx={{ fontSize: 40, mr: 2 }} />
+                <Box>
+                  <Typography variant="h6">Unique Users</Typography>
+                  <Typography variant="h4">{data.stats.uniqueUsers || 0}</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: cardColor }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <EventIcon color="secondary" sx={{ fontSize: 40, mr: 2 }} />
+                <Box>
+                  <Typography variant="h6">Total Actions</Typography>
+                  <Typography variant="h4">{data.stats.totalLogs || 0}</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: cardColor }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <TimelineIcon color="success" sx={{ fontSize: 40, mr: 2 }} />
+                <Box>
+                  <Typography variant="h6">Top Action</Typography>
+                  <Typography variant="h6">
+                    {data.stats.mostCommonAction?.[0] || 'N/A'} ({data.stats.mostCommonAction?.[1] || 0})
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <Card sx={{ backgroundColor: cardColor }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <DevicesIcon color="info" sx={{ fontSize: 40, mr: 2 }} />
+                <Box>
+                  <Typography variant="h6">Top Device</Typography>
+                  <Typography variant="h6">
+                    {data.stats.userAgentStats?.[0]?.[0]?.split(' ')[0] || 'N/A'}
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
-      <Button
-        variant="contained"
-        startIcon={<FileDownloadIcon />}
-        onClick={(e) => setAnchorEl(e.currentTarget)}
-        sx={{ backgroundColor: buttonBackgroundColor, color: buttonTextColor }}
-      >
-        Export Data
-      </Button>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem onClick={() => handleExport("csv")}>Export as CSV</MenuItem>
-        <MenuItem onClick={() => handleExport("txt")}>Export as TXT</MenuItem>
-      </Menu>
+      {/* Filters */}
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+        <TextField
+          label="Search by Email"
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{ backgroundColor: cardColor }}
+        />
+        
+        <FormControl size="small" sx={{ minWidth: 200, backgroundColor: cardColor }}>
+          <InputLabel>Filter by Action</InputLabel>
+          <Select
+            value={actionFilter}
+            onChange={(e) => setActionFilter(e.target.value)}
+            label="Filter by Action"
+          >
+            <MenuItem value="">All Actions</MenuItem>
+            {getActionTypes().map((action) => (
+              <MenuItem key={action} value={action}>{action}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          selectsStart
+          startDate={startDate}
+          endDate={endDate}
+          placeholderText="Start Date"
+          className="date-picker"
+          wrapperClassName="date-picker-wrapper"
+        />
+        
+        <DatePicker
+          selected={endDate}
+          onChange={(date) => setEndDate(date)}
+          selectsEnd
+          startDate={startDate}
+          endDate={endDate}
+          minDate={startDate}
+          placeholderText="End Date"
+          className="date-picker"
+          wrapperClassName="date-picker-wrapper"
+        />
+        
+        <Button
+          variant="contained"
+          startIcon={<FileDownloadIcon />}
+          onClick={(e) => setAnchorEl(e.currentTarget)}
+          sx={{ backgroundColor: "#dd841a", color: textColor }}
+        >
+          Export Data
+        </Button>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+          <MenuItem onClick={() => { handleExport("csv"); setAnchorEl(null); }}>Export as CSV</MenuItem>
+          <MenuItem onClick={() => { handleExport("json"); setAnchorEl(null); }}>Export as JSON</MenuItem>
+        </Menu>
+      </Box>
 
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={chartDataArray} margin={{ top: 10, right: 30, left: 0, bottom: 30 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <XAxis
-            dataKey="date"
-            stroke={textColor}
-            angle={-20}
-            textAnchor="end"
-            interval={0}
-            tick={{ fontSize: 12, fill: textColor }}
-            height={60}
-          />
-          <YAxis
-            stroke={textColor}
-            tick={{ fill: textColor }}
-            label={{ value: "Active Time (hours)", angle: -90, position: "insideLeft", fill: textColor }}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: tooltipBackgroundColor,
-              color: tooltipTextColor,
-              border: `1px solid ${darkMode ? "#dd841a" : "#0F172A"}`,
-            }}
-            formatter={(value) => `${value.toFixed(2)} hours`}
-          />
-          <Legend verticalAlign="top" height={36} wrapperStyle={{ color: textColor }} />
-          {Object.keys(userColors).map((email) => (
-            <Bar
-              key={email}
-              dataKey={email}
-              name={email}
-              fill={userColors[email]}
-            />
-          ))}
-        </BarChart>
-      </ResponsiveContainer>
+      {/* Charts */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, backgroundColor: cardColor }}>
+            <Typography variant="h6" sx={{ mb: 2, color: textColor }}>Activity Over Time</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={data.chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke={textColor}
+                  tick={{ fill: textColor }}
+                />
+                <YAxis stroke={textColor} tick={{ fill: textColor }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: cardColor, 
+                    borderColor: gridColor,
+                    color: textColor
+                  }}
+                />
+                <Legend wrapperStyle={{ color: textColor }} />
+                <Line 
+                  type="monotone" 
+                  dataKey="signIns" 
+                  name="Sign Ins" 
+                  stroke={colors[0]} 
+                  activeDot={{ r: 8 }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="signOuts" 
+                  name="Sign Outs" 
+                  stroke={colors[1]} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="pageViews" 
+                  name="Page Views" 
+                  stroke={colors[2]} 
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, backgroundColor: cardColor }}>
+            <Typography variant="h6" sx={{ mb: 2, color: textColor }}>Action Distribution</Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={Object.entries(data.stats.actionCounts || {}).map(([name, value]) => ({ name, value }))}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {Object.keys(data.stats.actionCounts || {}).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: cardColor, 
+                    borderColor: gridColor,
+                    color: textColor
+                  }}
+                />
+                <Legend wrapperStyle={{ color: textColor }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
 
-      <Table sx={{ mt: 3, backgroundColor, color: textColor, borderRadius: 2 }}>
-        <TableHead>
-          <TableRow sx={{ backgroundColor: "#dd841a" }}>
-            <TableCell sx={{ color: buttonTextColor }}>User Email</TableCell>
-            <TableCell sx={{ color: buttonTextColor }}>Action</TableCell>
-            <TableCell sx={{ color: buttonTextColor }}>Timestamp</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedLogs.length > 0 ? (
-            sortedLogs.map((log, index) => (
-              <TableRow key={index} sx={{ borderBottom: `1px solid ${gridColor}` }}>
-                <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
-                <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
-                <TableCell sx={{ color: textColor, fontSize: "0.875rem" }}>
-                  {log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}
+      {/* Logs Table */}
+      <Typography variant="h6" sx={{ mb: 2, color: textColor }}>Recent Activity</Typography>
+      <Paper sx={{ backgroundColor: cardColor }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: darkMode ? '#1E293B' : '#E5E7EB' }}>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>User</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Action</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Timestamp</TableCell>
+              <TableCell sx={{ color: textColor, fontWeight: 'bold' }}>Device</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.logs.length > 0 ? (
+              data.logs.slice(0, 50).map((log, index) => (
+                <TableRow key={index}>
+                  <TableCell sx={{ color: textColor }}>{log.email}</TableCell>
+                  <TableCell sx={{ color: "#dd841a" }}>{log.action}</TableCell>
+                  <TableCell sx={{ color: textColor }}>
+                    {new Date(log.timestamp).toLocaleString()}
+                  </TableCell>
+                  <TableCell sx={{ color: textColor }}>
+                    {log.userAgent?.split(' ')[0] || 'Unknown'}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} sx={{ textAlign: 'center', color: textColor }}>
+                  No activity logs found
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={3} sx={{ textAlign: "center", color: textColor }}>No logs available</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
     </Paper>
   );
 };
