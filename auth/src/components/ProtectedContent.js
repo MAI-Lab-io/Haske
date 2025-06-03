@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { logAction } from "../utils/analytics";
 import "./ProtectedContent.css";
 
 function ProtectedContent() {
@@ -16,6 +17,9 @@ function ProtectedContent() {
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
+            // Track verification check
+            logAction('Verification Check Started', {}, user);
+            
             fetch(`https://haske.online:8090/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json())
                 .then((data) => {
@@ -23,21 +27,32 @@ function ProtectedContent() {
                         setIsVerified(true);
                         setInstitutionName(data.institutionName || "");
                         setIsAdmin(data.isAdmin || false);
+                        logAction('User Verified', {
+                            institution: data.institutionName,
+                            isAdmin: data.isAdmin
+                        }, user);
                     } else {
                         setIsVerified(false);
+                        logAction('User Not Verified', {}, user);
                     }
                 })
                 .catch((error) => {
                     console.error("Error checking verification:", error);
                     setIsVerified(false);
+                    logAction('Verification Check Failed', { error: error.message }, user);
                 });
         } else {
             setIsVerified(false);
+            logAction('No User Found - Redirecting', {}, null);
         }
     }, []);
 
     useEffect(() => {
         if (isVerified && isAdmin) {
+            // Track admin institutions load
+            const user = auth.currentUser;
+            logAction('Admin Institutions Load Started', {}, user);
+            
             setLoadingInstitutions(true);
             setError(null);
             
@@ -46,6 +61,9 @@ function ProtectedContent() {
                 .then((data) => {
                     if (data.success && Array.isArray(data.institutions)) {
                         setInstitutionsList(data.institutions);
+                        logAction('Admin Institutions Loaded', {
+                            count: data.institutions.length
+                        }, user);
                     } else {
                         throw new Error(data.error || "Invalid response format");
                     }
@@ -54,6 +72,9 @@ function ProtectedContent() {
                     console.error("Error fetching institutions:", error);
                     setError("Failed to load institutions");
                     setInstitutionsList([]);
+                    logAction('Admin Institutions Load Failed', {
+                        error: error.message
+                    }, user);
                 })
                 .finally(() => setLoadingInstitutions(false));
         }
@@ -62,6 +83,8 @@ function ProtectedContent() {
     const handleSignOut = () => {
         const user = auth.currentUser;
         if (user) {
+            logAction('Sign Out Initiated', {}, user);
+            
             fetch('https://haske.online:8090/api/verification/log-action', {
                 method: 'POST',
                 headers: {
@@ -74,34 +97,71 @@ function ProtectedContent() {
             })
                 .then((response) => {
                     if (response.ok) {
-                        console.log('Sign out action logged');
+                        logAction('Sign Out Logged', {}, user);
                     } else {
-                        console.error('Failed to log sign out');
+                        logAction('Sign Out Log Failed', {}, user);
                     }
                     return auth.signOut();
                 })
                 .then(() => {
+                    logAction('User Signed Out', {}, user);
                     navigate("/", { state: { message: "Signed out successfully!" }, replace: true });
                 })
                 .catch((error) => {
                     console.error('Error during sign out:', error);
+                    logAction('Sign Out Error', {
+                        error: error.message
+                    }, user);
                 });
         }
     };
 
     const handleInstitutionChange = (event) => {
-        setSelectedInstitution(event.target.value);
+        const user = auth.currentUser;
+        const newInstitution = event.target.value;
+        setSelectedInstitution(newInstitution);
+        
+        logAction('Institution Filter Changed', {
+            selectedInstitution: newInstitution
+        }, user);
     };
 
     const handleFilterClick = () => {
+        const user = auth.currentUser;
+        logAction('Institution Filter Applied', {
+            institution: selectedInstitution
+        }, user);
+        
         setInstitutionName(selectedInstitution);
     };
 
-    if (isVerified === null) return <div>Loading...</div>;
+    const handleAdminPanelClick = () => {
+        const user = auth.currentUser;
+        logAction('Admin Panel Accessed', {}, user);
+        navigate("/admin");
+    };
+
+    if (isVerified === null) {
+        return <div>Loading...</div>;
+    }
+    
     if (isVerified === false) {
+        const user = auth.currentUser;
+        logAction('Redirected to Register - Not Verified', {}, user);
         navigate("/register");
         return null;
     }
+
+    // Track page view after verification
+    useEffect(() => {
+        const user = auth.currentUser;
+        if (isVerified && user) {
+            logAction('Protected Content Viewed', {
+                isAdmin,
+                institutionName
+            }, user);
+        }
+    }, [isVerified, isAdmin, institutionName]);
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
@@ -111,7 +171,19 @@ function ProtectedContent() {
 
     return (
         <div className="protected-container">
-            <iframe src={iframeSrc} title="Haske" className="protected-iframe"></iframe>
+            <iframe 
+                src={iframeSrc} 
+                title="Haske" 
+                className="protected-iframe"
+                onLoad={() => {
+                    const user = auth.currentUser;
+                    logAction('Study Viewer Loaded', {
+                        url: iframeSrc,
+                        isAdmin,
+                        institution: isAdmin ? selectedInstitution : institutionName
+                    }, user);
+                }}
+            ></iframe>
             <div className="overlay-container">
                 {isAdmin && (
                     <div className="filter-section">
@@ -147,7 +219,10 @@ function ProtectedContent() {
                 )}
                 <div className="signout-container">
                     {isAdmin && (
-                        <button onClick={() => navigate("/admin")} className="admin-button">
+                        <button 
+                            onClick={handleAdminPanelClick} 
+                            className="admin-button"
+                        >
                             Admin Panel
                         </button>
                     )}
