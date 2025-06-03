@@ -416,58 +416,59 @@ const Dashboard = () => {
         </Grid>
 
         {/* Top Institutions */}
-             <Grid item xs={12} md={6}>
-        <Paper sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart 
-              data={topInstitutions}
-              layout="vertical"
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" />
-              <YAxis 
-                type="category" 
-                dataKey="name" 
-                width={150}
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip 
-                content={({ active, payload, label }) => {
-                  if (!active || !payload || !payload.length) return null;
-                  const institution = payload[0].payload;
-                  
-                  return (
-                    <Paper sx={{ p: 1.5, border: `1px solid ${theme.palette.divider}` }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-                        {institution.name}
-                      </Typography>
-                      <Typography variant="body2">
-                        Studies: {institution.count}
-                      </Typography>
-                      {institution.address && (
-                        <Typography variant="body2">
-                          Address: {institution.address}
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>Top Institutions</Typography>
+            <ResponsiveContainer width="100%" height={400}>
+              <BarChart 
+                data={topInstitutions}
+                layout="vertical"
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  width={150}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip 
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload || !payload.length) return null;
+                    const institution = payload[0].payload;
+                    
+                    return (
+                      <Paper sx={{ p: 1.5, border: `1px solid ${theme.palette.divider}` }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                          {institution.name}
                         </Typography>
-                      )}
-                      {institution.contactEmail && (
                         <Typography variant="body2">
-                          Email: {institution.contactEmail}
+                          Studies: {institution.count}
                         </Typography>
-                      )}
-                      {institution.contactPhone && (
-                        <Typography variant="body2">
-                          Phone: {institution.contactPhone}
-                        </Typography>
-                      )}
-                    </Paper>
-                  );
-                }}
-              />
-              <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Paper>
+                        {institution.address && (
+                          <Typography variant="body2">
+                            Address: {institution.address}
+                          </Typography>
+                        )}
+                        {institution.contactEmail && (
+                          <Typography variant="body2">
+                            Email: {institution.contactEmail}
+                          </Typography>
+                        )}
+                        {institution.contactPhone && (
+                          <Typography variant="body2">
+                            Phone: {institution.contactPhone}
+                          </Typography>
+                        )}
+                      </Paper>
+                    );
+                  }}
+                />
+                <Bar dataKey="count" fill="#64748B" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
       </Grid>
     </Box>
   );
