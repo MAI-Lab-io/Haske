@@ -14,7 +14,7 @@ function ProtectedContent() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // Track page view after verification - MOVED BEFORE CONDITIONAL RETURNS
+    // All hooks must be called unconditionally at the top level
     useEffect(() => {
         const user = auth.currentUser;
         if (isVerified && user) {
@@ -28,7 +28,6 @@ function ProtectedContent() {
     useEffect(() => {
         const user = auth.currentUser;
         if (user) {
-            // Track verification check
             logAction('Verification Check Started', {}, user);
             
             fetch(`https://haske.online:8090/api/verification/check-verification?email=${user.email}`)
@@ -60,7 +59,6 @@ function ProtectedContent() {
 
     useEffect(() => {
         if (isVerified && isAdmin) {
-            // Track admin institutions load
             const user = auth.currentUser;
             logAction('Admin Institutions Load Started', {}, user);
             
@@ -162,17 +160,6 @@ function ProtectedContent() {
         navigate("/register");
         return null;
     }
-
-    // Track page view after verification
-    useEffect(() => {
-        const user = auth.currentUser;
-        if (isVerified && user) {
-            logAction('Protected Content Viewed', {
-                isAdmin,
-                institutionName
-            }, user);
-        }
-    }, [isVerified, isAdmin, institutionName]);
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
