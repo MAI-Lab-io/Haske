@@ -148,6 +148,19 @@ const Dashboard = () => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
+const allInstitutions = [...dicomStats.institutions]
+  .sort((a, b) => b.count - a.count)
+  .map(institution => {
+    const fullDetails = institutionsList.find(inst => inst.id === institution.id) || {};
+    return {
+      ...institution,
+      name: fullDetails.name || `Institution ${institution.id}`,
+      address: fullDetails.address,
+      contactEmail: fullDetails.contactEmail,
+      contactPhone: fullDetails.contactPhone
+    };
+  });
+
   const topInstitutions = [...dicomStats.institutions]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
@@ -201,7 +214,7 @@ const Dashboard = () => {
           <Card>
             <CardContent>
               <Typography variant="h6">Total Institutions</Typography>
-              <Typography variant="h4">{stats.institutions}</Typography>
+              <Typography variant="h4">{allInstitutions.length}</Typography>
             </CardContent>
           </Card>
         </Grid>
