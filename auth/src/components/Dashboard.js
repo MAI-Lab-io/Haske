@@ -48,45 +48,50 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [activeModalities, setActiveModalities] = useState([]);
   const [timeRange, setTimeRange] = useState('all');
+  const [institutionsList, setInstitutionsList] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const [statsResponse, dicomResponse, analyticsResponse] = await Promise.all([
-          fetch("https://haske.online:8090/api/verification/stats"),
-          fetch("https://haske.online:8090/api/dicom-stats"),
-          fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`)
-        ]);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const [statsResponse, dicomResponse, analyticsResponse, institutionsResponse] = await Promise.all([
+        fetch("https://haske.online:8090/api/verification/stats"),
+        fetch("https://haske.online:8090/api/dicom-stats"),
+        fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`),
+        fetch("https://haske.online:8090/api/institutions?page=1&pageSize=100") // Fetch all institutions
+      ]);
 
-        if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
-        if (!dicomResponse.ok) throw new Error("Failed to fetch DICOM stats");
+      if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
+      if (!dicomResponse.ok) throw new Error("Failed to fetch DICOM stats");
+      if (!institutionsResponse.ok) throw new Error("Failed to fetch institutions");
 
-        const [statsData, dicomData] = await Promise.all([
-          statsResponse.json(),
-          dicomResponse.json()
-        ]);
+      const [statsData, dicomData, institutionsData] = await Promise.all([
+        statsResponse.json(),
+        dicomResponse.json(),
+        institutionsResponse.json()
+      ]);
 
-        setStats(statsData);
-        setDicomStats(dicomData);
-        
-        // Initialize active modalities
-        const uniqueModalities = [...new Set(dicomData.modalities.map(item => item.name))];
-        setActiveModalities(uniqueModalities);
+      setStats(statsData);
+      setDicomStats(dicomData);
+      setInstitutionsList(institutionsData.institutions || []);
+      
+      // Initialize active modalities
+      const uniqueModalities = [...new Set(dicomData.modalities.map(item => item.name))];
+      setActiveModalities(uniqueModalities);
 
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [timeRange]);
-
+  fetchData();
+}, [timeRange]);
+  
   // Transform data for stacked bar chart
   const getStackedChartData = () => {
     const institutionMap = {};
@@ -161,9 +166,7 @@ const allInstitutions = [...dicomStats.institutions]
     };
   });
 
-  const topInstitutions = [...dicomStats.institutions]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 10);
+const topInstitutions = allInstitutions.slice(0, 10);
 
   return (
     <Box sx={{ p: 3 }}>
