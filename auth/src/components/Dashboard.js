@@ -153,6 +153,10 @@ useEffect(() => {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
+ const topInstitutions = [...dicomStats.institutions]
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
 const allInstitutions = [...dicomStats.institutions]
   .sort((a, b) => b.count - a.count)
   .map(institution => {
@@ -165,8 +169,6 @@ const allInstitutions = [...dicomStats.institutions]
       contactPhone: fullDetails.contactPhone
     };
   });
-
-const topInstitutions = allInstitutions.slice(0, 10);
 
   return (
     <Box sx={{ p: 3 }}>
