@@ -48,7 +48,7 @@ const Institutions = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `https://haske.online:8090/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}`
+        `https://api.haske.online/api/institutions?page=${pagination.page}&pageSize=${pagination.pageSize}&search=${encodeURIComponent(searchTerm)}`
       );
       
       if (!response.ok) {
@@ -87,7 +87,7 @@ const Institutions = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('https://haske.online:8090/api/institutions', {
+      const response = await fetch('https://api.haske.online/api/institutions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newInstitution)
