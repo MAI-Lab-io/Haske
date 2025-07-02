@@ -28,7 +28,7 @@ const VerifyPage = () => {
   useEffect(() => {
     const fetchInstitutions = async () => {
       try {
-        const response = await fetch("https://haske.online:8090/api/institutions");
+        const response = await fetch("https://api.haske.online/api/institutions");
         if (!response.ok) {
           throw new Error("Failed to fetch institutions");
         }
@@ -73,7 +73,7 @@ const VerifyPage = () => {
 
     try {
       const response = await fetch(
-        "https://haske.online:8090/api/verification/submit-verification",
+        "https://api.haske.online/api/verification/submit-verification",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
