@@ -63,7 +63,7 @@ const AIAnalysis = () => {
 
   const fetchConfig = async () => {
     try {
-      const configResponse = await axios.get('https://haske.online:8090/api/ai/config');
+      const configResponse = await axios.get('https://api.haske.online/api/ai/config');
       return {
         models: configResponse.data.models || [],
         githubRepo: configResponse.data.githubRepo || 'https://github.com/MAILABHASKE/mailab-models'
@@ -77,13 +77,13 @@ const AIAnalysis = () => {
   const fetchStudyDetails = async () => {
     try {
       const [studyResponse, seriesResponse] = await Promise.all([
-        axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}`),
-        axios.get(`https://haske.online:8090/proxy/orthanc/studies/${orthancId}/series`)
+        axios.get(`https://api.haske.online/proxy/orthanc/studies/${orthancId}`),
+        axios.get(`https://api.haske.online/proxy/orthanc/studies/${orthancId}/series`)
       ]);
 
       const seriesData = await Promise.all(
         seriesResponse.data.map(async (series) => {
-          const seriesDetails = await axios.get(`https://haske.online:8090/proxy/orthanc/series/${series.ID}`);
+          const seriesDetails = await axios.get(`https://api.haske.online/proxy/orthanc/series/${series.ID}`);
           return {
             ...series,
             Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
@@ -110,7 +110,7 @@ const AIAnalysis = () => {
 
   const startAnalysis = async (modality, bodyPart) => {
     try {
-      const { data } = await axios.post('https://haske.online:8090/api/ai/analyze', {
+      const { data } = await axios.post('https://api.haske.online/api/ai/analyze', {
         orthancId,
         modality,
         bodyPart
@@ -133,7 +133,7 @@ const AIAnalysis = () => {
   const checkJobStatus = async (jobId) => {
     try {
       const { data: jobData } = await axios.get(
-        `https://haske.online:8090/api/ai/job/${jobId}`
+        `https://api.haske.online/api/ai/job/${jobId}`
       );
       
       if (jobData.status === 'completed') {
@@ -229,7 +229,7 @@ const AIAnalysis = () => {
 
   const handleDownloadResults = async () => {
     try {
-      const response = await axios.get(`https://haske.online:8090/api/ai/results/${job.jobId}`, {
+      const response = await axios.get(`https://api.haske.online/api/ai/results/${job.jobId}`, {
         responseType: 'blob'
       });
 
