@@ -57,10 +57,10 @@ useEffect(() => {
       setError(null);
       
       const [statsResponse, dicomResponse, analyticsResponse, institutionsResponse] = await Promise.all([
-        fetch("https://haske.online:8090/api/verification/stats"),
-        fetch("https://haske.online:8090/api/dicom-stats"),
-        fetch(`https://haske.online:8090/api/analytics/logs?timeRange=${timeRange}`),
-        fetch("https://haske.online:8090/api/institutions?page=1&pageSize=100") // Fetch all institutions
+        fetch("https://api.haske.online/api/verification/stats"),
+        fetch("https://api.haske.online/api/dicom-stats"),
+        fetch(`https://api.haske.online/api/analytics/logs?timeRange=${timeRange}`),
+        fetch("https://api.haske.online/api/institutions?page=1&pageSize=100") // Fetch all institutions
       ]);
 
       if (!statsResponse.ok) throw new Error("Failed to fetch user stats");
