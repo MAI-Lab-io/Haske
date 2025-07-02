@@ -37,7 +37,7 @@ const Models = () => {
 
   const fetchModels = async () => {
     try {
-      const { data } = await axios.get('https://haske.online:8090/api/ai/models');
+      const { data } = await axios.get('https://api.haske.online/api/ai/models');
       setModels(data);
     } catch (err) {
       showSnackbar('Error fetching models', 'error');
@@ -47,10 +47,10 @@ const Models = () => {
   const handleSubmit = async () => {
     try {
       if (currentModel) {
-        await axios.put(`https://haske.online:8090/api/ai/models/${currentModel.id}`, formData);
+        await axios.put(`https://api.haske.online/api/ai/models/${currentModel.id}`, formData);
         showSnackbar('Model updated successfully', 'success');
       } else {
-        await axios.post('https://haske.online:8090/api/ai/models', formData);
+        await axios.post('https://api.haske.online/api/ai/models', formData);
         showSnackbar('Model created successfully', 'success');
       }
       fetchModels();
@@ -62,7 +62,7 @@ const Models = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://haske.online:8090/api/ai/models/${id}`);
+      await axios.delete(`https://api.haske.online/api/ai/models/${id}`);
       showSnackbar('Model deleted successfully', 'success');
       fetchModels();
     } catch (err) {
