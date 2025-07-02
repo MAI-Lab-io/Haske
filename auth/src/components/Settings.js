@@ -7,19 +7,19 @@ const Settings = () => {
 
   // Fetch users for role management
   useEffect(() => {
-    fetch("https://haske.online:8090/api/verification/get-users")
+    fetch("https://api.haske.online/api/verification/get-users")
       .then((res) => res.json())
       .then((data) => setUsers(data));
   }, []);
 
   const promoteToAdmin = async (userId) => {
-    await fetch(`https://haske.online:8090/api/verification/promote-user/${userId}`, { method: "POST" });
+    await fetch(`https://api.haske.online/api/verification/promote-user/${userId}`, { method: "POST" });
     toast.success("User promoted to admin!");
     setUsers(users.map((u) => (u.id === userId ? { ...u, role: "admin" } : u)));
   };
 
   const demoteToUser = async (userId) => {
-    await fetch(`https://haske.online:8090/api/verification/demote-user/${userId}`, { method: "POST" });
+    await fetch(`https://api.haske.online/api/verification/demote-user/${userId}`, { method: "POST" });
     toast.info("User demoted to regular user.");
     setUsers(users.map((u) => (u.id === userId ? { ...u, role: "user" } : u)));
   };
