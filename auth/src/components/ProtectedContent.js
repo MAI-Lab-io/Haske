@@ -30,7 +30,7 @@ function ProtectedContent() {
         if (user) {
             logAction('Verification Check Started', {}, user);
             
-            fetch(`https://haske.online:8090/api/verification/check-verification?email=${user.email}`)
+            fetch(`https://api.haske.online/api/verification/check-verification?email=${user.email}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.isVerified) {
@@ -65,7 +65,7 @@ function ProtectedContent() {
             setLoadingInstitutions(true);
             setError(null);
             
-            fetch("https://haske.online:8090/api/institutions")
+            fetch("https://api.haske.online/api/institutions")
                 .then((response) => response.json())
                 .then((data) => {
                     if (data.success && Array.isArray(data.institutions)) {
@@ -94,7 +94,7 @@ function ProtectedContent() {
         if (user) {
             logAction('Sign Out Initiated', {}, user);
             
-            fetch('https://haske.online:8090/api/verification/log-action', {
+            fetch('https://api.haske.online/api/verification/log-action', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -164,8 +164,8 @@ function ProtectedContent() {
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
     const iframeSrc = isAdmin
-        ? `https://haske.online:5000/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
-        : `https://haske.online:5000/ui/app/#${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : ""}`;
+        ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
+        : `https://secure.haske.online/ui/app/#${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : ""}`;
 
     return (
         <div className="protected-container">
