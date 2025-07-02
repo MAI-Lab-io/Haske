@@ -42,7 +42,7 @@ const Analytics = ({ darkMode }) => {
   const fetchAnalytics = async () => {
     setLoading(true);
     try {
-      let url = `https://haske.online:8090/api/analytics/logs?`;
+      let url = `https://api.haske.online/api/analytics/logs?`;
       if (search) url += `&email=${encodeURIComponent(search)}`;
       if (actionFilter) url += `&action=${encodeURIComponent(actionFilter)}`;
       if (startDate) url += `&startDate=${startDate.toISOString()}`;
