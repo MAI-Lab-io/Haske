@@ -4,7 +4,8 @@ import {
   Box, Typography, CircularProgress, Grid, Paper,
   Button, Card, CardContent, CardMedia, Divider,
   Chip, Stack, IconButton, Modal, Container,
-  Avatar, useTheme, useScrollTrigger
+  Avatar, useTheme, useScrollTrigger, Slider,
+  TextField
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -13,7 +14,8 @@ import {
   ZoomIn as ZoomInIcon, Download as DownloadIcon,
   Save as SaveIcon, Refresh as RefreshIcon,
   Close as CloseIcon, Science as ScienceIcon,
-  ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon
+  ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
+  Check as CheckIcon
 } from '@mui/icons-material';
 
 const AIAnalysis = () => {
@@ -31,6 +33,12 @@ const AIAnalysis = () => {
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [feedback, setFeedback] = useState({
+    accuracy: 3,
+    usefulness: 3,
+    comments: '',
+    approved: false
+  });
 
   const orthancId = query.get('orthancId');
   const initialModality = query.get('modality');
@@ -53,11 +61,27 @@ const AIAnalysis = () => {
     }
   };
 
-    const handleScroll = (direction) => {
+  const handleScroll = (direction) => {
     const container = document.getElementById('model-gallery');
     if (container) {
       const scrollAmount = direction === 'left' ? -300 : 300;
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const submitFeedback = async () => {
+    try {
+      await axios.post('https://api.haske.online/api/ai/feedback', {
+        jobId: job.jobId,
+        feedback: {
+          ...feedback,
+          modality: initialModality || seriesDetails[0]?.Modality,
+          bodyPart: initialBodyPart || seriesDetails[0]?.BodyPartExamined
+        }
+      });
+      // Optionally show a success message
+    } catch (err) {
+      console.error('Failed to submit feedback:', err);
     }
   };
 
@@ -253,7 +277,7 @@ const AIAnalysis = () => {
   const currentModality = initialModality || seriesDetails[0]?.Modality;
   const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
 
-if (loading) {
+  if (loading) {
     return (
       <Box sx={{
         display: 'flex',
@@ -836,6 +860,97 @@ if (loading) {
             Model output will be displayed here
           </Typography>
         )}
+      </Box>
+
+      {/* Feedback Section */}
+      <Box sx={{
+        mt: 4,
+        p: 4,
+        backgroundColor: '#1e293b',
+        borderRadius: 12,
+        border: '1px solid #334155'
+      }}>
+        <Typography variant="h5" color="white" gutterBottom>
+          Evaluation
+        </Typography>
+        
+        <Box mb={3}>
+          <Typography variant="body1" color="white" gutterBottom>
+            How accurate was the segmentation?
+          </Typography>
+          <Slider
+            value={feedback.accuracy}
+            onChange={(e, value) => setFeedback({...feedback, accuracy: value})}
+            min={1}
+            max={5}
+            step={1}
+            marks={[
+              {value: 1, label: 'Poor'},
+              {value: 2, label: 'Fair'},
+              {value: 3, label: 'Good'},
+              {value: 4, label: 'Very Good'},
+              {value: 5, label: 'Excellent'}
+            ]}
+            sx={{ maxWidth: 600 }}
+          />
+        </Box>
+        
+        <Box mb={3}>
+          <Typography variant="body1" color="white" gutterBottom>
+            How useful was this analysis for your diagnosis?
+          </Typography>
+          <Slider
+            value={feedback.usefulness}
+            onChange={(e, value) => setFeedback({...feedback, usefulness: value})}
+            min={1}
+            max={5}
+            step={1}
+            marks={[
+              {value: 1, label: 'Not Useful'},
+              {value: 2, label: 'Slightly Useful'},
+              {value: 3, label: 'Moderately Useful'},
+              {value: 4, label: 'Very Useful'},
+              {value: 5, label: 'Extremely Useful'}
+            ]}
+            sx={{ maxWidth: 600 }}
+          />
+        </Box>
+        
+        <TextField
+          label="Additional Comments"
+          fullWidth
+          multiline
+          rows={3}
+          value={feedback.comments}
+          onChange={(e) => setFeedback({...feedback, comments: e.target.value})}
+          sx={{ mb: 3, backgroundColor: '#0f172a' }}
+        />
+        
+        <Box display="flex" alignItems="center" gap={2}>
+          <Button
+            variant={feedback.approved ? "contained" : "outlined"}
+            color="success"
+            onClick={() => setFeedback({...feedback, approved: true})}
+            startIcon={<CheckIcon />}
+          >
+            Approve Results
+          </Button>
+          <Button
+            variant={!feedback.approved ? "contained" : "outlined"}
+            color="error"
+            onClick={() => setFeedback({...feedback, approved: false})}
+            startIcon={<CloseIcon />}
+          >
+            Reject Results
+          </Button>
+          <Button
+            variant="contained"
+            onClick={submitFeedback}
+            sx={{ ml: 'auto' }}
+          >
+            Submit Feedback
+          </Button>
+        </Box>
       </Box>
 
       {/* Image Zoom Modal */}
