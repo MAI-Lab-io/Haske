@@ -181,21 +181,38 @@ const AIAnalysis = () => {
     }
   };
 
-const checkJobStatus = async (jobId) => {  // jobId is now properly defined as parameter
+const checkJobStatus = async (jobId) => {
   try {
     const { data: jobData } = await axios.get(
-      `https://api.haske.online/api/ai/job/${jobId}`
+      `https://api.haske.online/api/ai/job/${jobId}`,
+      { timeout: 5000 }
     );
+    
+    console.log('Job status:', jobData.status);
     
     if (jobData.status === 'completed') {
       return { job: jobData };
     } else if (jobData.status === 'failed') {
-      return { error: jobData.results?.error || 'Analysis failed' };
+      return { 
+        error: jobData.error || 
+              jobData.results?.error || 
+              'Analysis failed' 
+      };
     } else {
+      // If pending/running for more than 30 minutes, consider failed
+      const startedAt = new Date(jobData.started_at || jobData.created_at);
+      const now = new Date();
+      const minutesRunning = (now - startedAt) / (1000 * 60);
+      
+      if (minutesRunning > 30) {
+        return { error: 'Analysis timed out (30+ minutes)' };
+      }
+      
       return { continuePolling: true };
     }
   } catch (err) {
-    return { error: 'Failed to check job status' };
+    console.error('Job status check error:', err);
+    return { error: err.response?.data?.error || 'Failed to check job status' };
   }
 };
 
