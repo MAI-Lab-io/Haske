@@ -18,6 +18,33 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+async function db(data) {
+  const MAX_RETRIES = 3;
+  let attempt = 0;
+  
+  while (attempt < MAX_RETRIES) {
+    try {
+      const response = await fetch('https://api.haske.online/api/analytics/logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      attempt++;
+      if (attempt === MAX_RETRIES) {
+        console.error('Failed to log analytics after 3 attempts:', error);
+        throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+
 const Analytics = ({ darkMode }) => {
   const [data, setData] = useState({
     logs: [],
