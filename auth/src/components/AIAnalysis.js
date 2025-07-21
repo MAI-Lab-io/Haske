@@ -180,89 +180,93 @@ const AIAnalysis = () => {
     }
   };
 
-  const checkJobStatus = async (jobId) => {
-    try {
-      const { data: jobData } = await axios.get(
-        `https://api.haske.online/api/ai/job/${jobId}`
-      );
-      
-      if (jobData.status === 'completed') {
-        return { job: jobData };
-      } else if (jobData.status === 'failed') {
-        return { error: jobData.results?.error || 'Analysis failed' };
-      } else {
-        // Continue polling
-        return { continuePolling: true };
-      }
-    } catch (err) {
-      return { error: 'Failed to check job status' };
+const checkJobStatus = async (jobId) => {
+  try {
+    const { data: jobData } = await axios.get(
+      `https://api.haske.online/api/ai/job/${jobId}`
+    );
+    
+    if (jobData.status === 'completed') {
+      return { job: jobData };
+    } else if (jobData.status === 'failed') {
+      return { error: jobData.results?.error || 'Analysis failed' };
+    } else {
+      // Continue polling
+      return { continuePolling: true };
     }
-  };
+  } catch (err) {
+    return { error: 'Failed to check job status' };
+  }
+};
 
-  useEffect(() => {
-    let isMounted = true;
-    let pollingTimeout;
+useEffect(() => {
+  let isMounted = true;
+  let pollingTimeout;
 
-    const initialize = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const initialize = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        // First validate we have an orthancId
-        if (!orthancId) {
-          throw new Error('Missing required field: orthancId');
+      // First get config data
+      const configData = await fetchConfig();
+      if (!isMounted) return;
+      setAvailableModels(configData.models);
+      setGithubRepo(configData.githubRepo);
+
+      // Case 1: We have a jobId - check its status
+      if (jobId) {
+        const { job: existingJob, error: statusError } = await checkJobStatus(jobId);
+        
+        if (statusError) throw new Error(statusError);
+        if (existingJob) {
+          setJob(existingJob);
+          setLoading(false);
+          
+          // If we have the job but not study details, try to get them
+          if (!patientDetails && existingJob.orthanc_id) {
+            try {
+              const studyData = await fetchStudyDetails(existingJob.orthanc_id);
+              if (isMounted) {
+                setPatientDetails(studyData.patientDetails);
+                setSeriesDetails(studyData.seriesDetails);
+              }
+            } catch (err) {
+              console.error('Could not fetch study details:', err);
+            }
+          }
+          return;
         }
+      }
 
-        const [configData, studyData] = await Promise.all([
-          fetchConfig(),
-          fetchStudyDetails().catch(err => {
-            console.error('Study details error:', err);
-            return {
-              patientDetails: {},
-              seriesDetails: [{
-                Modality: initialModality || 'UNKNOWN',
-                BodyPartExamined: initialBodyPart || 'UNKNOWN'
-              }]
-            };
-          })
-        ]);
-
+      // Case 2: We have an orthancId - start new analysis
+      if (orthancId) {
+        const studyData = await fetchStudyDetails(orthancId);
         if (!isMounted) return;
-
-        setAvailableModels(configData.models);
-        setGithubRepo(configData.githubRepo);
+        
         setPatientDetails(studyData.patientDetails);
         setSeriesDetails(studyData.seriesDetails);
 
         const currentModality = initialModality || studyData.seriesDetails[0]?.Modality;
         const currentBodyPart = initialBodyPart || studyData.seriesDetails[0]?.BodyPartExamined;
 
-        const { jobId, error: analysisError } = await startAnalysis(
+        const { jobId: newJobId, error: analysisError } = await startAnalysis(
           currentModality,
           currentBodyPart
-        ).catch(err => {
-          console.error('Analysis start error:', err);
-          return { error: err.message };
-        });
+        );
 
-        if (analysisError) {
-          throw new Error(analysisError);
-        }
+        if (analysisError) throw new Error(analysisError);
+        if (!newJobId) throw new Error('No job ID returned from server');
 
-        if (!jobId) {
-          throw new Error('No job ID returned from server');
-        }
-
+        // Start polling for the new job
         const pollJobStatus = async () => {
           if (!isMounted) return;
           
           try {
             const { job: completedJob, error: statusError, continuePolling } = 
-              await checkJobStatus(jobId);
+              await checkJobStatus(newJobId);
 
-            if (statusError) {
-              throw new Error(statusError);
-            }
+            if (statusError) throw new Error(statusError);
 
             if (completedJob) {
               if (isMounted) {
@@ -284,21 +288,22 @@ const AIAnalysis = () => {
         };
 
         pollJobStatus();
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message);
-          setLoading(false);
-        }
       }
-    };
+    } catch (err) {
+      if (isMounted) {
+        setError(err.message);
+        setLoading(false);
+      }
+    }
+  };
 
-    initialize();
+  initialize();
 
-    return () => {
-      isMounted = false;
-      clearTimeout(pollingTimeout);
-    };
-  }, [orthancId, initialModality, initialBodyPart]);
+  return () => {
+    isMounted = false;
+    clearTimeout(pollingTimeout);
+  };
+}, [orthancId, jobId, initialModality, initialBodyPart]);
 
   const handleDownloadResults = async () => {
     try {
