@@ -41,6 +41,7 @@ const AIAnalysis = () => {
   });
 
   const orthancId = query.get('orthancId');
+  const jobId = query.get('jobId'); 
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
@@ -180,7 +181,7 @@ const AIAnalysis = () => {
     }
   };
 
-const checkJobStatus = async (jobId) => {
+const checkJobStatus = async (jobId) => {  // jobId is now properly defined as parameter
   try {
     const { data: jobData } = await axios.get(
       `https://api.haske.online/api/ai/job/${jobId}`
@@ -191,7 +192,6 @@ const checkJobStatus = async (jobId) => {
     } else if (jobData.status === 'failed') {
       return { error: jobData.results?.error || 'Analysis failed' };
     } else {
-      // Continue polling
       return { continuePolling: true };
     }
   } catch (err) {
