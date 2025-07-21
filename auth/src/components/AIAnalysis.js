@@ -40,26 +40,8 @@ const AIAnalysis = () => {
     approved: false
   });
 
-const orthancId = query.get('orthancId');
-const jobId = query.get('jobId'); 
-
-if (!orthancId && !jobId) {
-  return (
-    <Box sx={{ 
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      p: 4,
-      textAlign: 'center',
-      background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
-    }}>
-      {/* Error message */}
-    </Box>
-  );
-}
-
+  const orthancId = query.get('orthancId');
+  const jobId = query.get('jobId'); 
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
@@ -350,7 +332,7 @@ useEffect(() => {
   const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
 
 
-  if (!orthancId) {
+  if (!orthancId && !jobId) {
     return (
       <Box sx={{ 
         height: '100vh',
@@ -363,15 +345,15 @@ useEffect(() => {
         background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
       }}>
         <ScienceIcon sx={{ fontSize: 80, color: '#ef4444', mb: 3 }} />
-        
+  
         <Typography variant="h4" color="white" gutterBottom>
-          Error: Missing Study ID
+          Error: Missing Parameters
         </Typography>
-        
+  
         <Typography variant="body1" color="#94a3b8" sx={{ mb: 4, maxWidth: '600px' }}>
-          No Orthanc study ID was provided. Please go back and try again.
+          No Orthanc study ID or job ID was provided. Please go back and try again.
         </Typography>
-        
+  
         <Button
           variant="contained"
           color="primary"
@@ -382,6 +364,7 @@ useEffect(() => {
       </Box>
     );
   }
+
   if (loading) {
     return (
       <Box sx={{
