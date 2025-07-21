@@ -45,38 +45,7 @@ const AIAnalysis = () => {
   const initialBodyPart = query.get('bodyPart');
 
   // Add validation at the start of your component
-  if (!orthancId) {
-    return (
-      <Box sx={{ 
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 4,
-        textAlign: 'center',
-        background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
-      }}>
-        <ScienceIcon sx={{ fontSize: 80, color: '#ef4444', mb: 3 }} />
-        
-        <Typography variant="h4" color="white" gutterBottom>
-          Error: Missing Study ID
-        </Typography>
-        
-        <Typography variant="body1" color="#94a3b8" sx={{ mb: 4, maxWidth: '600px' }}>
-          No Orthanc study ID was provided. Please go back and try again.
-        </Typography>
-        
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate('/')}
-        >
-          Go Back
-        </Button>
-      </Box>
-    );
-  }
+  
 
   const formatPatientName = (name) => {
     if (!name) return 'N/A';
@@ -357,6 +326,39 @@ const AIAnalysis = () => {
   const currentModality = initialModality || seriesDetails[0]?.Modality;
   const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
 
+
+  if (!orthancId) {
+    return (
+      <Box sx={{ 
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 4,
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
+      }}>
+        <ScienceIcon sx={{ fontSize: 80, color: '#ef4444', mb: 3 }} />
+        
+        <Typography variant="h4" color="white" gutterBottom>
+          Error: Missing Study ID
+        </Typography>
+        
+        <Typography variant="body1" color="#94a3b8" sx={{ mb: 4, maxWidth: '600px' }}>
+          No Orthanc study ID was provided. Please go back and try again.
+        </Typography>
+        
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/')}
+        >
+          Go Back
+        </Button>
+      </Box>
+    );
+  }
   if (loading) {
     return (
       <Box sx={{
