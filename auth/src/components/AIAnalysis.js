@@ -44,6 +44,40 @@ const AIAnalysis = () => {
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
+  // Add validation at the start of your component
+  if (!orthancId) {
+    return (
+      <Box sx={{ 
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 4,
+        textAlign: 'center',
+        background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
+      }}>
+        <ScienceIcon sx={{ fontSize: 80, color: '#ef4444', mb: 3 }} />
+        
+        <Typography variant="h4" color="white" gutterBottom>
+          Error: Missing Study ID
+        </Typography>
+        
+        <Typography variant="body1" color="#94a3b8" sx={{ mb: 4, maxWidth: '600px' }}>
+          No Orthanc study ID was provided. Please go back and try again.
+        </Typography>
+        
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/')}
+        >
+          Go Back
+        </Button>
+      </Box>
+    );
+  }
+
   const formatPatientName = (name) => {
     if (!name) return 'N/A';
     return name.replace(/\\/g, ' ').trim();
@@ -100,19 +134,42 @@ const AIAnalysis = () => {
 
   const fetchStudyDetails = async () => {
     try {
-      const [studyResponse, seriesResponse] = await Promise.all([
-        axios.get(`https://api.haske.online/proxy/orthanc/studies/${orthancId}`),
-        axios.get(`https://api.haske.online/proxy/orthanc/studies/${orthancId}/series`)
-      ]);
+      // First verify the study exists
+      const studyResponse = await axios.get(
+        `https://api.haske.online/proxy/orthanc/studies/${orthancId}`,
+        { timeout: 5000 }
+      );
+      
+      if (!studyResponse.data) {
+        throw new Error('Study not found in Orthanc');
+      }
+
+      // Then fetch series details
+      const seriesResponse = await axios.get(
+        `https://api.haske.online/proxy/orthanc/studies/${orthancId}/series`,
+        { timeout: 5000 }
+      );
 
       const seriesData = await Promise.all(
         seriesResponse.data.map(async (series) => {
-          const seriesDetails = await axios.get(`https://api.haske.online/proxy/orthanc/series/${series.ID}`);
-          return {
-            ...series,
-            Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
-            BodyPartExamined: seriesDetails.data.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
-          };
+          try {
+            const seriesDetails = await axios.get(
+              `https://api.haske.online/proxy/orthanc/series/${series.ID}`,
+              { timeout: 3000 }
+            );
+            return {
+              ...series,
+              Modality: seriesDetails.data.MainDicomTags?.Modality || 'UNKNOWN',
+              BodyPartExamined: seriesDetails.data.MainDicomTags?.BodyPartExamined || 'UNKNOWN'
+            };
+          } catch (seriesError) {
+            console.error('Error fetching series details:', seriesError);
+            return {
+              ...series,
+              Modality: 'UNKNOWN',
+              BodyPartExamined: 'UNKNOWN'
+            };
+          }
         })
       );
 
@@ -179,9 +236,26 @@ const AIAnalysis = () => {
 
     const initialize = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
+        // First validate we have an orthancId
+        if (!orthancId) {
+          throw new Error('Missing required field: orthancId');
+        }
+
         const [configData, studyData] = await Promise.all([
           fetchConfig(),
-          fetchStudyDetails()
+          fetchStudyDetails().catch(err => {
+            console.error('Study details error:', err);
+            return {
+              patientDetails: {},
+              seriesDetails: [{
+                Modality: initialModality || 'UNKNOWN',
+                BodyPartExamined: initialBodyPart || 'UNKNOWN'
+              }]
+            };
+          })
         ]);
 
         if (!isMounted) return;
@@ -197,47 +271,53 @@ const AIAnalysis = () => {
         const { jobId, error: analysisError } = await startAnalysis(
           currentModality,
           currentBodyPart
-        );
+        ).catch(err => {
+          console.error('Analysis start error:', err);
+          return { error: err.message };
+        });
 
         if (analysisError) {
-          setError(analysisError);
-          setLoading(false);
-          return;
+          throw new Error(analysisError);
         }
 
         if (!jobId) {
-          setError('No job ID returned from server');
-          setLoading(false);
-          return;
+          throw new Error('No job ID returned from server');
         }
 
         const pollJobStatus = async () => {
           if (!isMounted) return;
           
-          const { job: completedJob, error: statusError, continuePolling } = 
-            await checkJobStatus(jobId);
+          try {
+            const { job: completedJob, error: statusError, continuePolling } = 
+              await checkJobStatus(jobId);
 
-          if (statusError) {
-            setError(statusError);
-            setLoading(false);
-            return;
-          }
+            if (statusError) {
+              throw new Error(statusError);
+            }
 
-          if (completedJob) {
-            setJob(completedJob);
-            setLoading(false);
-            return;
-          }
+            if (completedJob) {
+              if (isMounted) {
+                setJob(completedJob);
+                setLoading(false);
+              }
+              return;
+            }
 
-          if (continuePolling) {
-            pollingTimeout = setTimeout(pollJobStatus, 2000);
+            if (continuePolling && isMounted) {
+              pollingTimeout = setTimeout(pollJobStatus, 2000);
+            }
+          } catch (err) {
+            if (isMounted) {
+              setError(err.message);
+              setLoading(false);
+            }
           }
         };
 
         pollJobStatus();
       } catch (err) {
         if (isMounted) {
-          setError('Initialization failed');
+          setError(err.message);
           setLoading(false);
         }
       }
@@ -430,7 +510,7 @@ const AIAnalysis = () => {
                       key={model.id}
                       sx={{ 
                         width: 400,
-                        height: 300, // Fixed square size
+                        height: 300,
                         flexShrink: 0,
                         display: 'flex',
                         flexDirection: 'column',
@@ -664,7 +744,7 @@ const AIAnalysis = () => {
                 key={model.id}
                 sx={{ 
                   width: 300,
-                  height: 300, // Fixed square size
+                  height: 300,
                   flexShrink: 0,
                   display: 'flex',
                   flexDirection: 'column',
