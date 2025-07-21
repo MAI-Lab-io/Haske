@@ -40,8 +40,26 @@ const AIAnalysis = () => {
     approved: false
   });
 
-  const orthancId = query.get('orthancId');
-  const jobId = query.get('jobId'); 
+const orthancId = query.get('orthancId');
+const jobId = query.get('jobId'); 
+
+if (!orthancId && !jobId) {
+  return (
+    <Box sx={{ 
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      p: 4,
+      textAlign: 'center',
+      background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)'
+    }}>
+      {/* Error message */}
+    </Box>
+  );
+}
+
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
