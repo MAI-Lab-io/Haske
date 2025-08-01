@@ -17,6 +17,7 @@ import {
   ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
   Check as CheckIcon
 } from '@mui/icons-material';
+import VisualizationViewer from './VisualizationViewer';
 
 const AIAnalysis = () => {
   const theme = useTheme();
@@ -44,9 +45,6 @@ const AIAnalysis = () => {
   const jobId = query.get('jobId'); 
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
-
-  // Add validation at the start of your component
-  
 
   const formatPatientName = (name) => {
     if (!name) return 'N/A';
@@ -83,7 +81,6 @@ const AIAnalysis = () => {
           bodyPart: initialBodyPart || seriesDetails[0]?.BodyPartExamined
         }
       });
-      // Optionally show a success message
     } catch (err) {
       console.error('Failed to submit feedback:', err);
     }
@@ -104,7 +101,6 @@ const AIAnalysis = () => {
 
   const fetchStudyDetails = async () => {
     try {
-      // First verify the study exists
       const studyResponse = await axios.get(
         `https://api.haske.online/proxy/orthanc/studies/${orthancId}`,
         { timeout: 5000 }
@@ -114,7 +110,6 @@ const AIAnalysis = () => {
         throw new Error('Study not found in Orthanc');
       }
 
-      // Then fetch series details
       const seriesResponse = await axios.get(
         `https://api.haske.online/proxy/orthanc/studies/${orthancId}/series`,
         { timeout: 5000 }
@@ -181,146 +176,140 @@ const AIAnalysis = () => {
     }
   };
 
-const checkJobStatus = async (jobId) => {
-  try {
-    const { data: jobData } = await axios.get(
-      `https://api.haske.online/api/ai/job/${jobId}`,
-      { timeout: 5000 }
-    );
-    
-    console.log('Job status:', jobData.status);
-    
-    if (jobData.status === 'completed') {
-      return { job: jobData };
-    } else if (jobData.status === 'failed') {
-      return { 
-        error: jobData.error || 
-              jobData.results?.error || 
-              'Analysis failed' 
-      };
-    } else {
-      // If pending/running for more than 30 minutes, consider failed
-      const startedAt = new Date(jobData.started_at || jobData.created_at);
-      const now = new Date();
-      const minutesRunning = (now - startedAt) / (1000 * 60);
-      
-      if (minutesRunning > 30) {
-        return { error: 'Analysis timed out (30+ minutes)' };
-      }
-      
-      return { continuePolling: true };
-    }
-  } catch (err) {
-    console.error('Job status check error:', err);
-    return { error: err.response?.data?.error || 'Failed to check job status' };
-  }
-};
-
-useEffect(() => {
-  let isMounted = true;
-  let pollingTimeout;
-
-  const initialize = async () => {
+  const checkJobStatus = async (jobId) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      // First get config data
-      const configData = await fetchConfig();
-      if (!isMounted) return;
-      setAvailableModels(configData.models);
-      setGithubRepo(configData.githubRepo);
-
-      // Case 1: We have a jobId - check its status
-      if (jobId) {
-        const { job: existingJob, error: statusError } = await checkJobStatus(jobId);
-        
-        if (statusError) throw new Error(statusError);
-        if (existingJob) {
-          setJob(existingJob);
-          setLoading(false);
-          
-          // If we have the job but not study details, try to get them
-          if (!patientDetails && existingJob.orthanc_id) {
-            try {
-              const studyData = await fetchStudyDetails(existingJob.orthanc_id);
-              if (isMounted) {
-                setPatientDetails(studyData.patientDetails);
-                setSeriesDetails(studyData.seriesDetails);
-              }
-            } catch (err) {
-              console.error('Could not fetch study details:', err);
-            }
-          }
-          return;
-        }
-      }
-
-      // Case 2: We have an orthancId - start new analysis
-      if (orthancId) {
-        const studyData = await fetchStudyDetails(orthancId);
-        if (!isMounted) return;
-        
-        setPatientDetails(studyData.patientDetails);
-        setSeriesDetails(studyData.seriesDetails);
-
-        const currentModality = initialModality || studyData.seriesDetails[0]?.Modality;
-        const currentBodyPart = initialBodyPart || studyData.seriesDetails[0]?.BodyPartExamined;
-
-        const { jobId: newJobId, error: analysisError } = await startAnalysis(
-          currentModality,
-          currentBodyPart
-        );
-
-        if (analysisError) throw new Error(analysisError);
-        if (!newJobId) throw new Error('No job ID returned from server');
-
-        // Start polling for the new job
-        const pollJobStatus = async () => {
-          if (!isMounted) return;
-          
-          try {
-            const { job: completedJob, error: statusError, continuePolling } = 
-              await checkJobStatus(newJobId);
-
-            if (statusError) throw new Error(statusError);
-
-            if (completedJob) {
-              if (isMounted) {
-                setJob(completedJob);
-                setLoading(false);
-              }
-              return;
-            }
-
-            if (continuePolling && isMounted) {
-              pollingTimeout = setTimeout(pollJobStatus, 2000);
-            }
-          } catch (err) {
-            if (isMounted) {
-              setError(err.message);
-              setLoading(false);
-            }
-          }
+      const { data: jobData } = await axios.get(
+        `https://api.haske.online/api/ai/job/${jobId}`,
+        { timeout: 5000 }
+      );
+      
+      console.log('Job status:', jobData.status);
+      
+      if (jobData.status === 'completed') {
+        return { job: jobData };
+      } else if (jobData.status === 'failed') {
+        return { 
+          error: jobData.error || 
+                jobData.results?.error || 
+                'Analysis failed' 
         };
-
-        pollJobStatus();
+      } else {
+        const startedAt = new Date(jobData.started_at || jobData.created_at);
+        const now = new Date();
+        const minutesRunning = (now - startedAt) / (1000 * 60);
+        
+        if (minutesRunning > 30) {
+          return { error: 'Analysis timed out (30+ minutes)' };
+        }
+        
+        return { continuePolling: true };
       }
     } catch (err) {
-      if (isMounted) {
-        setError(err.message);
-        setLoading(false);
-      }
+      console.error('Job status check error:', err);
+      return { error: err.response?.data?.error || 'Failed to check job status' };
     }
   };
 
-  initialize();
+  useEffect(() => {
+    let isMounted = true;
+    let pollingTimeout;
 
-  return () => {
-    isMounted = false;
-    clearTimeout(pollingTimeout);
-  };
-}, [orthancId, jobId, initialModality, initialBodyPart]);
+    const initialize = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const configData = await fetchConfig();
+        if (!isMounted) return;
+        setAvailableModels(configData.models);
+        setGithubRepo(configData.githubRepo);
+
+        if (jobId) {
+          const { job: existingJob, error: statusError } = await checkJobStatus(jobId);
+          
+          if (statusError) throw new Error(statusError);
+          if (existingJob) {
+            setJob(existingJob);
+            setLoading(false);
+            
+            if (!patientDetails && existingJob.orthanc_id) {
+              try {
+                const studyData = await fetchStudyDetails(existingJob.orthanc_id);
+                if (isMounted) {
+                  setPatientDetails(studyData.patientDetails);
+                  setSeriesDetails(studyData.seriesDetails);
+                }
+              } catch (err) {
+                console.error('Could not fetch study details:', err);
+              }
+            }
+            return;
+          }
+        }
+
+        if (orthancId) {
+          const studyData = await fetchStudyDetails(orthancId);
+          if (!isMounted) return;
+          
+          setPatientDetails(studyData.patientDetails);
+          setSeriesDetails(studyData.seriesDetails);
+
+          const currentModality = initialModality || studyData.seriesDetails[0]?.Modality;
+          const currentBodyPart = initialBodyPart || studyData.seriesDetails[0]?.BodyPartExamined;
+
+          const { jobId: newJobId, error: analysisError } = await startAnalysis(
+            currentModality,
+            currentBodyPart
+          );
+
+          if (analysisError) throw new Error(analysisError);
+          if (!newJobId) throw new Error('No job ID returned from server');
+
+          const pollJobStatus = async () => {
+            if (!isMounted) return;
+            
+            try {
+              const { job: completedJob, error: statusError, continuePolling } = 
+                await checkJobStatus(newJobId);
+
+              if (statusError) throw new Error(statusError);
+
+              if (completedJob) {
+                if (isMounted) {
+                  setJob(completedJob);
+                  setLoading(false);
+                }
+                return;
+              }
+
+              if (continuePolling && isMounted) {
+                pollingTimeout = setTimeout(pollJobStatus, 2000);
+              }
+            } catch (err) {
+              if (isMounted) {
+                setError(err.message);
+                setLoading(false);
+              }
+            }
+          };
+
+          pollJobStatus();
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      }
+    };
+
+    initialize();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(pollingTimeout);
+    };
+  }, [orthancId, jobId, initialModality, initialBodyPart]);
 
   const handleDownloadResults = async () => {
     try {
@@ -347,7 +336,6 @@ useEffect(() => {
 
   const currentModality = initialModality || seriesDetails[0]?.Modality;
   const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
-
 
   if (!orthancId && !jobId) {
     return (
@@ -418,7 +406,6 @@ useEffect(() => {
     );
   }
 
-  // Error State
   if (error) {
     return (
       <Box sx={{
@@ -428,7 +415,6 @@ useEffect(() => {
         background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)',
         p: 4
       }}>
-        {/* Header Section */}
         <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
           <Typography variant="h2" fontWeight="bold" sx={{
             background: `linear-gradient(90deg, #ffff 0%, #dd841a 100%)`,
@@ -466,7 +452,6 @@ useEffect(() => {
           )}
         </Box>
 
-        {/* Error Message */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
           <Box sx={{ 
             backgroundColor: '#0f172a',
@@ -653,7 +638,6 @@ useEffect(() => {
           )}
         </Box>
 
-        {/* Model Output Placeholder */}
         <Box sx={{
           height: '30vh',
           background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
@@ -673,7 +657,6 @@ useEffect(() => {
     );
   }
 
-  // Success State
   return (
     <Box sx={{
       height: '100vh',
@@ -683,7 +666,6 @@ useEffect(() => {
       p: 4,
       overflow: 'hidden'
     }}>
-      {/* Header Section */}
       <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
         <Typography variant="h2" fontWeight="bold" sx={{
           background: `linear-gradient(90deg, #ffff 0%, #dd841a 100%)`,
@@ -721,7 +703,6 @@ useEffect(() => {
         )}
       </Box>
 
-      {/* Model Gallery */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
           mb: 3,
@@ -885,7 +866,6 @@ useEffect(() => {
         </Box>
       </Box>
 
-      {/* Model Output */}
       <Box sx={{
         height: '30vh',
         background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
@@ -899,67 +879,65 @@ useEffect(() => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {job?.results?.outputs?.[0]?.url ? (
-          <>
-            <CardMedia
-              component="img"
-              image={job.results.outputs[0].url}
-              alt="AI Analysis Output"
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                opacity: 0.7
-              }}
+        {job?.results?.visualization_path ? (
+          <Box sx={{
+            height: '100%',
+            width: '100%',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <VisualizationViewer 
+              originalImage={`https://api.haske.online${job.results.output_path.replace('.nii.gz', '_original.png')}`}
+              overlayImage={`https://api.haske.online${job.results.visualization_path}`}
             />
-            <Button
-              variant="contained"
-              sx={{
-                position: 'absolute',
-                bottom: 16,
-                right: 16,
-                zIndex: 1,
-                borderRadius: 8,
-                fontWeight: 'bold',
-                backgroundColor: '#dd841a',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#f59e0b',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
-                }
-              }}
-              startIcon={<DownloadIcon />}
-              onClick={handleDownloadResults}
-            >
-              Download Results
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                position: 'absolute',
-                bottom: 16,
-                left: 16,
-                zIndex: 1,
-                borderRadius: 8,
-                fontWeight: 'bold',
-                backgroundColor: '#0f172a',
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: '#1e293b',
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
-                }
-              }}
-              startIcon={<RefreshIcon />}
-              onClick={handleProcessAnother}
-            >
-              Process Another
-            </Button>
-          </>
+            
+            <Box sx={{
+              position: 'absolute',
+              bottom: 16,
+              right: 16,
+              zIndex: 1,
+              display: 'flex',
+              gap: 2
+            }}>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: 8,
+                  fontWeight: 'bold',
+                  backgroundColor: '#dd841a',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#f59e0b',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
+                  }
+                }}
+                startIcon={<DownloadIcon />}
+                onClick={handleDownloadResults}
+              >
+                Download Results
+              </Button>
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: 8,
+                  fontWeight: 'bold',
+                  backgroundColor: '#0f172a',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#1e293b',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
+                  }
+                }}
+                startIcon={<RefreshIcon />}
+                onClick={handleProcessAnother}
+              >
+                Process Another
+              </Button>
+            </Box>
+          </Box>
         ) : (
           <Typography variant="h5" color="#94a3b8">
             Model output will be displayed here
@@ -967,7 +945,6 @@ useEffect(() => {
         )}
       </Box>
 
-      {/* Feedback Section */}
       <Box sx={{
         mt: 4,
         p: 4,
@@ -1058,7 +1035,6 @@ useEffect(() => {
         </Box>
       </Box>
 
-      {/* Image Zoom Modal */}
       <Modal
         open={Boolean(zoomedImage)}
         onClose={() => setZoomedImage(null)}
