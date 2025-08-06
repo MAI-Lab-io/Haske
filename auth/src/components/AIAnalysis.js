@@ -46,6 +46,24 @@ const AIAnalysis = () => {
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
 
+  const getVisualizationUrl = () => {
+    if (!job?.results) return null;
+    
+    // Try direct visualization path first
+    if (job.results.visualization_path) {
+      return `https://api.haske.online${job.results.visualization_path}`;
+    }
+    
+    // Fallback to extracting from zip
+    if (job.results.output_path && job.results.output_path.endsWith('.zip')) {
+      return `https://api.haske.online${job.results.output_path.replace('.zip', '_visualization.png')}`;
+    }
+    
+    return null;
+  };
+
+  const visualizationUrl = getVisualizationUrl();
+
   const formatPatientName = (name) => {
     if (!name) return 'N/A';
     return name.replace(/\\/g, ' ').trim();
@@ -879,7 +897,7 @@ const AIAnalysis = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {job?.results?.visualization_path ? (
+        {visualizationUrl ? (
           <Box sx={{
             height: '100%',
             width: '100%',
@@ -889,8 +907,8 @@ const AIAnalysis = () => {
             alignItems: 'center'
           }}>
             <img 
-              src={`https://api.haske.online${job.results.visualization_path}`} 
-              alt="AI Visualization" 
+              src={visualizationUrl}
+              alt="AI Visualization"
               style={{
                 maxHeight: '100%',
                 maxWidth: '100%',
@@ -898,8 +916,7 @@ const AIAnalysis = () => {
               }}
               onError={(e) => {
                 console.error('Failed to load visualization:', e);
-                e.target.onerror = null;
-                e.target.src = '/fallback-image.png'; // Add a fallback image
+                e.target.style.display = 'none';
               }}
             />
             
