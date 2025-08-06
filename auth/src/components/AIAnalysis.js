@@ -885,11 +885,22 @@ const AIAnalysis = () => {
             width: '100%',
             position: 'relative',
             display: 'flex',
-            flexDirection: 'column'
+            justifyContent: 'center',
+            alignItems: 'center'
           }}>
-            <VisualizationViewer 
-              originalImage={`https://api.haske.online${job.results.output_path.replace('.nii.gz', '_original.png')}`}
-              overlayImage={`https://api.haske.online${job.results.visualization_path}`}
+            <img 
+              src={`https://api.haske.online${job.results.visualization_path}`} 
+              alt="AI Visualization" 
+              style={{
+                maxHeight: '100%',
+                maxWidth: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                console.error('Failed to load visualization:', e);
+                e.target.onerror = null;
+                e.target.src = '/fallback-image.png'; // Add a fallback image
+              }}
             />
             
             <Box sx={{
@@ -940,7 +951,9 @@ const AIAnalysis = () => {
           </Box>
         ) : (
           <Typography variant="h5" color="#94a3b8">
-            Model output will be displayed here
+            {job?.status === 'completed' 
+              ? 'Visualization not available' 
+              : 'Model output will be displayed here'}
           </Typography>
         )}
       </Box>
