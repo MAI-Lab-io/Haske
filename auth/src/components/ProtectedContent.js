@@ -163,10 +163,12 @@ function ProtectedContent() {
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
-    const iframeSrc = isAdmin
-        ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
-        : `https://secure.haske.online/ui/app/#${institutionName ? `filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC` : ""}`;
-
+// Modify the iframeSrc logic
+    const iframeSrc = isSuperAdmin
+      ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
+      : isAdmin
+        ? `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${encodeURIComponent(institutionName)}&order-by=Metadata,LastUpdate,DESC`
+        : `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`;
     return (
         <div className="protected-container">
             <iframe 
