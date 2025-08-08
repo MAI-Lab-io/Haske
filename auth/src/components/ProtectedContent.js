@@ -8,22 +8,23 @@ function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null);
     const [institutionName, setInstitutionName] = useState("");
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false); // Added this line
     const [selectedInstitution, setSelectedInstitution] = useState("");
     const [institutionsList, setInstitutionsList] = useState([]);
     const [loadingInstitutions, setLoadingInstitutions] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    // All hooks must be called unconditionally at the top level
     useEffect(() => {
         const user = auth.currentUser;
         if (isVerified && user) {
             logAction('Protected Content Viewed', {
                 isAdmin,
+                isSuperAdmin, // Added this
                 institutionName
             }, user);
         }
-    }, [isVerified, isAdmin, institutionName]);
+    }, [isVerified, isAdmin, isSuperAdmin, institutionName]);
 
     useEffect(() => {
         const user = auth.currentUser;
@@ -37,9 +38,11 @@ function ProtectedContent() {
                         setIsVerified(true);
                         setInstitutionName(data.institutionName || "");
                         setIsAdmin(data.isAdmin || false);
+                        setIsSuperAdmin(data.isSuperAdmin || false); // Added this
                         logAction('User Verified', {
                             institution: data.institutionName,
-                            isAdmin: data.isAdmin
+                            isAdmin: data.isAdmin,
+                            isSuperAdmin: data.isSuperAdmin // Added this
                         }, user);
                     } else {
                         setIsVerified(false);
@@ -163,13 +166,14 @@ function ProtectedContent() {
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
-// Modify the iframeSrc logic
+    // Updated iframeSrc logic with proper isSuperAdmin usage
     const iframeSrc = isSuperAdmin
-      ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
-      : isAdmin
-        ? `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${encodeURIComponent(institutionName)}&order-by=Metadata,LastUpdate,DESC`
-        : `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`;
-    return (
+        ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
+        : isAdmin
+            ? `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${encodeURIComponent(institutionName)}&order-by=Metadata,LastUpdate,DESC`
+            : `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`;
+
+        
         <div className="protected-container">
             <iframe 
                 src={iframeSrc} 
@@ -180,6 +184,7 @@ function ProtectedContent() {
                     logAction('Study Viewer Loaded', {
                         url: iframeSrc,
                         isAdmin,
+                        isSuperAdmin,
                         institution: isAdmin ? selectedInstitution : institutionName
                     }, user);
                 }}
