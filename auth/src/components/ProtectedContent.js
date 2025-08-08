@@ -61,7 +61,7 @@ function ProtectedContent() {
     }, []);
 
     useEffect(() => {
-        if (isVerified && isAdmin) {
+        if (isVerified && isSuperAdmin) {
             const user = auth.currentUser;
             logAction('Admin Institutions Load Started', {}, user);
             
@@ -90,7 +90,7 @@ function ProtectedContent() {
                 })
                 .finally(() => setLoadingInstitutions(false));
         }
-    }, [isVerified, isAdmin]);
+    }, [isVerified, isSuperAdmin]);
 
     const handleSignOut = () => {
         const user = auth.currentUser;
@@ -189,7 +189,7 @@ function ProtectedContent() {
                 }}
             ></iframe>
             <div className="overlay-container">
-                {isAdmin && (
+                {isSuperAdmin && (
                     <div className="filter-section">
                         {loadingInstitutions ? (
                             <div>Loading institutions...</div>
@@ -222,7 +222,7 @@ function ProtectedContent() {
                     </div>
                 )}
                 <div className="signout-container">
-                    {isAdmin && (
+                    {(isAdmin || isSuperAdmin) && (
                         <button 
                             onClick={handleAdminPanelClick} 
                             className="admin-button"
