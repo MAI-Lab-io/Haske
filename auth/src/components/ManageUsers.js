@@ -64,19 +64,39 @@ const ManageUsers = () => {
   };
 
   const handleMakeAdmin = async (userId) => {
-    if (!window.confirm("Are you sure you want to make this user an Admin?")) return;
-
     const user = auth.currentUser;
+    if (!user) return;
+
     try {
-      const response = await fetch(`https://api.haske.online/api/verification/update-role/${userId}`, {
+      // Check if requester is super admin
+      const response = await fetch(
+        `https://api.haske.online/api/verification/check-verification?email=${user.email}`
+      );
+      const data = await response.json();
+      
+      if (!data.isSuperAdmin) {
+        setNotification("Only super admins can modify roles.");
+        return;
+      }
+
+      if (!window.confirm("Are you sure you want to change this user's role?")) return;
+
+      const roleResponse = await fetch(`https://api.haske.online/api/verification/update-role/${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role: "admin", requesterEmail: user.email }),
+        body: JSON.stringify({ 
+          role: "admin", 
+          requesterEmail: user.email 
+        }),
       });
 
-      const result = await response.json();
-      response.ok ? setNotification("User promoted to Admin successfully!") : setNotification(result.message || "Failed to update role.");
-      fetchUsers();
+      const result = await roleResponse.json();
+      if (roleResponse.ok) {
+        setNotification("User role updated successfully!");
+        fetchUsers();
+      } else {
+        setNotification(result.message || "Failed to update role.");
+      }
     } catch (error) {
       console.error("Error updating user role:", error);
       setNotification("An error occurred while updating the role.");
@@ -112,27 +132,26 @@ const ManageUsers = () => {
     }
   };
 
-  
-// Function to log user actions
-const logUserAction = async (userId, action) => {
-  try {
-    const user = auth.currentUser;
-    const response = await fetch("https://api.haske.online/api/verification/log-action", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: user.email,
-        action: `User ${action}d with ID ${userId}`
-      })
-    });
+  // Function to log user actions
+  const logUserAction = async (userId, action) => {
+    try {
+      const user = auth.currentUser;
+      const response = await fetch("https://api.haske.online/api/verification/log-action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user.email,
+          action: `User ${action}d with ID ${userId}`
+        })
+      });
 
-    if (!response.ok) {
-      console.error("Failed to log the action.");
+      if (!response.ok) {
+        console.error("Failed to log the action.");
+      }
+    } catch (error) {
+      console.error("Error logging user action:", error);
     }
-  } catch (error) {
-    console.error("Error logging user action:", error);
-  }
-};
+  };
   
   return (
     <div className="manage-users-container">
@@ -188,7 +207,7 @@ const logUserAction = async (userId, action) => {
                   <input type="checkbox" checked={user.approved} onChange={() => handleApprove(user.id, !user.approved)} disabled={user.deactivated} />
                 </td>
                 <td>
-                  <button onClick={() => handleMakeAdmin(user.id)}>Make Admin</button>
+                  <button onClick={() => handleMakeAdmin(user.id)} disabled={user.role === "admin"}>Make Admin</button>
                 </td>
               </tr>
             ))}
