@@ -42,6 +42,7 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(null);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
@@ -71,8 +72,9 @@ const AdminLayout = () => {
           `https://api.haske.online/api/verification/check-verification?email=${user.email}`
         );
         const data = await response.json();
-        if (data.isAdmin) {
+        if (data.isAdmin || data.isSuperAdmin) {
           setIsAdmin(true);
+          setIsSuperAdmin(data.isSuperAdmin || false);
           if (location.pathname === "/admin") {
             navigate("/admin/dashboard");
           }
@@ -292,6 +294,19 @@ const AdminLayout = () => {
               >
                 {menuItems.find(item => item.path === location.pathname)?.name || 'Admin Panel'}
               </Typography>
+              
+              {isSuperAdmin && (
+                <Typography 
+                  variant="subtitle2" 
+                  sx={{ 
+                    mr: 2,
+                    color: darkMode ? '#dd841a' : '#dd841a',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  SUPER ADMIN
+                </Typography>
+              )}
               
               <Button 
                 onClick={toggleDrawer}
