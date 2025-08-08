@@ -8,7 +8,7 @@ function ProtectedContent() {
     const [isVerified, setIsVerified] = useState(null);
     const [institutionName, setInstitutionName] = useState("");
     const [isAdmin, setIsAdmin] = useState(false);
-    const [isSuperAdmin, setIsSuperAdmin] = useState(false); // Added this line
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
     const [selectedInstitution, setSelectedInstitution] = useState("");
     const [institutionsList, setInstitutionsList] = useState([]);
     const [loadingInstitutions, setLoadingInstitutions] = useState(false);
@@ -20,7 +20,7 @@ function ProtectedContent() {
         if (isVerified && user) {
             logAction('Protected Content Viewed', {
                 isAdmin,
-                isSuperAdmin, // Added this
+                isSuperAdmin,
                 institutionName
             }, user);
         }
@@ -38,11 +38,11 @@ function ProtectedContent() {
                         setIsVerified(true);
                         setInstitutionName(data.institutionName || "");
                         setIsAdmin(data.isAdmin || false);
-                        setIsSuperAdmin(data.isSuperAdmin || false); // Added this
+                        setIsSuperAdmin(data.isSuperAdmin || false);
                         logAction('User Verified', {
                             institution: data.institutionName,
                             isAdmin: data.isAdmin,
-                            isSuperAdmin: data.isSuperAdmin // Added this
+                            isSuperAdmin: data.isSuperAdmin
                         }, user);
                     } else {
                         setIsVerified(false);
@@ -166,14 +166,13 @@ function ProtectedContent() {
 
     const formattedInstitutionName = institutionName ? encodeURIComponent(institutionName) : "";
 
-    // Updated iframeSrc logic with proper isSuperAdmin usage
     const iframeSrc = isSuperAdmin
         ? `https://secure.haske.online/ui/app/#${selectedInstitution ? `filtered-studies?InstitutionName=${encodeURIComponent(selectedInstitution)}&order-by=Metadata,LastUpdate,DESC` : ""}`
         : isAdmin
             ? `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${encodeURIComponent(institutionName)}&order-by=Metadata,LastUpdate,DESC`
             : `https://secure.haske.online/ui/app/#filtered-studies?InstitutionName=${formattedInstitutionName}&order-by=Metadata,LastUpdate,DESC`;
 
-        
+    return (
         <div className="protected-container">
             <iframe 
                 src={iframeSrc} 
