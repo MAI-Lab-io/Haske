@@ -5,7 +5,7 @@ import {
   Button, Card, CardContent, CardMedia, Divider,
   Chip, Stack, IconButton, Modal, Container,
   Avatar, useTheme, useScrollTrigger, Slider,
-  TextField
+  TextField, Alert, Snackbar
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
@@ -15,9 +15,10 @@ import {
   Save as SaveIcon, Refresh as RefreshIcon,
   Close as CloseIcon, Science as ScienceIcon,
   ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
-  Check as CheckIcon
+  Check as CheckIcon, Warning as WarningIcon,
+  Info as InfoIcon, Error as ErrorIcon,
+  PlayArrow as PlayArrowIcon, Timer as TimerIcon
 } from '@mui/icons-material';
-import VisualizationViewer from './VisualizationViewer';
 
 const AIAnalysis = () => {
   const theme = useTheme();
@@ -34,6 +35,8 @@ const AIAnalysis = () => {
   const [availableModels, setAvailableModels] = useState([]);
   const [githubRepo, setGithubRepo] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
+  const [processingStatus, setProcessingStatus] = useState(null);
   const [feedback, setFeedback] = useState({
     accuracy: 3,
     usefulness: 3,
@@ -45,6 +48,10 @@ const AIAnalysis = () => {
   const jobId = query.get('jobId'); 
   const initialModality = query.get('modality');
   const initialBodyPart = query.get('bodyPart');
+
+  const showSnackbar = (message, severity = 'info') => {
+    setSnackbar({ open: true, message, severity });
+  };
 
   const getVisualizationUrl = () => {
     if (!job?.results) return null;
@@ -60,11 +67,11 @@ const AIAnalysis = () => {
       return `https://api.haske.online${basePath}_visualization.png`;
     }
     
-    // Case 3: Fallback to checking container logs for visualization path
-    if (job.logs?.includes('Visualization saved to')) {
-      const logMatch = job.logs.match(/Visualization saved to (\/output\/[^\s]+)/);
-      if (logMatch && logMatch[1]) {
-        return `https://api.haske.online${logMatch[1]}`;
+    // Case 3: Check output_files array for visualization
+    if (job.results.output_files) {
+      const visFile = job.results.output_files.find(f => f.type === 'visualization');
+      if (visFile) {
+        return `https://api.haske.online${visFile.path}`;
       }
     }
     
@@ -90,6 +97,26 @@ const AIAnalysis = () => {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed': return '#10b981';
+      case 'running': return '#f59e0b';
+      case 'pending': return '#6b7280';
+      case 'failed': return '#ef4444';
+      default: return '#6b7280';
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'completed': return <CheckIcon />;
+      case 'running': return <TimerIcon />;
+      case 'pending': return <InfoIcon />;
+      case 'failed': return <ErrorIcon />;
+      default: return <InfoIcon />;
+    }
+  };
+
   const handleScroll = (direction) => {
     const container = document.getElementById('model-gallery');
     if (container) {
@@ -101,15 +128,17 @@ const AIAnalysis = () => {
   const submitFeedback = async () => {
     try {
       await axios.post('https://api.haske.online/api/ai/feedback', {
-        jobId: job.jobId,
+        jobId: job.id,
         feedback: {
           ...feedback,
           modality: initialModality || seriesDetails[0]?.Modality,
           bodyPart: initialBodyPart || seriesDetails[0]?.BodyPartExamined
         }
       });
+      showSnackbar('Feedback submitted successfully!', 'success');
     } catch (err) {
       console.error('Failed to submit feedback:', err);
+      showSnackbar('Failed to submit feedback', 'error');
     }
   };
 
@@ -126,10 +155,10 @@ const AIAnalysis = () => {
     }
   };
 
-  const fetchStudyDetails = async () => {
+  const fetchStudyDetails = async (studyId) => {
     try {
       const studyResponse = await axios.get(
-        `https://api.haske.online/proxy/orthanc/studies/${orthancId}`,
+        `https://api.haske.online/proxy/orthanc/studies/${studyId}`,
         { timeout: 5000 }
       );
       
@@ -138,12 +167,12 @@ const AIAnalysis = () => {
       }
 
       const seriesResponse = await axios.get(
-        `https://api.haske.online/proxy/orthanc/studies/${orthancId}/series`,
+        `https://api.haske.online/proxy/orthanc/studies/${studyId}/series`,
         { timeout: 5000 }
       );
 
       const seriesData = await Promise.all(
-        seriesResponse.data.map(async (series) => {
+        seriesResponse.data.slice(0, 3).map(async (series) => {
           try {
             const seriesDetails = await axios.get(
               `https://api.haske.online/proxy/orthanc/series/${series.ID}`,
@@ -193,8 +222,8 @@ const AIAnalysis = () => {
         return { error: data.message || 'No suitable model found for this study' };
       }
       
-      if (data.status === 'queued') {
-        return { jobId: data.jobId };
+      if (data.status === 'queued' || data.status === 'completed') {
+        return { jobId: data.jobId, cached: data.cached };
       }
 
       return { error: 'Unknown response from server' };
@@ -225,15 +254,85 @@ const AIAnalysis = () => {
         const now = new Date();
         const minutesRunning = (now - startedAt) / (1000 * 60);
         
-        if (minutesRunning > 30) {
-          return { error: 'Analysis timed out (30+ minutes)' };
+        if (minutesRunning > 45) { // Increased timeout to 45 minutes
+          return { error: 'Analysis timed out (45+ minutes)' };
         }
         
-        return { continuePolling: true };
+        return { continuePolling: true, job: jobData };
       }
     } catch (err) {
       console.error('Job status check error:', err);
       return { error: err.response?.data?.error || 'Failed to check job status' };
+    }
+  };
+
+  const retryAnalysis = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const currentModality = initialModality || seriesDetails[0]?.Modality;
+      const currentBodyPart = initialBodyPart || seriesDetails[0]?.BodyPartExamined;
+      
+      const { jobId: newJobId, error: analysisError, cached } = await startAnalysis(
+        currentModality,
+        currentBodyPart
+      );
+
+      if (analysisError) {
+        throw new Error(analysisError);
+      }
+
+      if (cached) {
+        const { job: completedJob } = await checkJobStatus(newJobId);
+        if (completedJob) {
+          setJob(completedJob);
+          setLoading(false);
+          showSnackbar('Using cached results', 'info');
+          return;
+        }
+      }
+
+      // Start polling for new job
+      let pollCount = 0;
+      const maxPolls = 450; // 15 minutes with 2-second intervals
+      
+      const pollJobStatus = async () => {
+        if (pollCount >= maxPolls) {
+          throw new Error('Analysis timed out');
+        }
+        
+        try {
+          const { job: completedJob, error: statusError, continuePolling, job: currentJob } = 
+            await checkJobStatus(newJobId);
+
+          if (statusError) throw new Error(statusError);
+
+          if (completedJob) {
+            setJob(completedJob);
+            setLoading(false);
+            showSnackbar('Analysis completed successfully!', 'success');
+            return;
+          }
+
+          if (continuePolling) {
+            if (currentJob) {
+              setJob(currentJob); // Update with current status
+            }
+            pollCount++;
+            setTimeout(pollJobStatus, 2000);
+          }
+        } catch (err) {
+          throw err;
+        }
+      };
+
+      pollJobStatus();
+      
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+      showSnackbar(err.message, 'error');
     }
   };
 
@@ -257,9 +356,47 @@ const AIAnalysis = () => {
           if (statusError) throw new Error(statusError);
           if (existingJob) {
             setJob(existingJob);
-            setLoading(false);
             
-            if (!patientDetails && existingJob.orthanc_id) {
+            // If job is still running, start polling
+            if (existingJob.status === 'running' || existingJob.status === 'pending') {
+              const pollJobStatus = async () => {
+                if (!isMounted) return;
+                
+                try {
+                  const { job: updatedJob, error: pollError, continuePolling } = 
+                    await checkJobStatus(jobId);
+
+                  if (pollError) throw new Error(pollError);
+
+                  if (updatedJob) {
+                    setJob(updatedJob);
+                    if (updatedJob.status === 'completed') {
+                      setLoading(false);
+                      showSnackbar('Analysis completed!', 'success');
+                      return;
+                    } else if (updatedJob.status === 'failed') {
+                      throw new Error(updatedJob.error || 'Analysis failed');
+                    }
+                  }
+
+                  if (continuePolling && isMounted) {
+                    pollingTimeout = setTimeout(pollJobStatus, 2000);
+                  }
+                } catch (err) {
+                  if (isMounted) {
+                    setError(err.message);
+                    setLoading(false);
+                  }
+                }
+              };
+
+              pollJobStatus();
+            } else {
+              setLoading(false);
+            }
+            
+            // Fetch study details
+            if (existingJob.orthanc_id && !patientDetails) {
               try {
                 const studyData = await fetchStudyDetails(existingJob.orthanc_id);
                 if (isMounted) {
@@ -284,7 +421,7 @@ const AIAnalysis = () => {
           const currentModality = initialModality || studyData.seriesDetails[0]?.Modality;
           const currentBodyPart = initialBodyPart || studyData.seriesDetails[0]?.BodyPartExamined;
 
-          const { jobId: newJobId, error: analysisError } = await startAnalysis(
+          const { jobId: newJobId, error: analysisError, cached } = await startAnalysis(
             currentModality,
             currentBodyPart
           );
@@ -292,11 +429,21 @@ const AIAnalysis = () => {
           if (analysisError) throw new Error(analysisError);
           if (!newJobId) throw new Error('No job ID returned from server');
 
+          if (cached) {
+            const { job: cachedJob } = await checkJobStatus(newJobId);
+            if (cachedJob) {
+              setJob(cachedJob);
+              setLoading(false);
+              showSnackbar('Using cached results', 'info');
+              return;
+            }
+          }
+
           const pollJobStatus = async () => {
             if (!isMounted) return;
             
             try {
-              const { job: completedJob, error: statusError, continuePolling } = 
+              const { job: completedJob, error: statusError, continuePolling, job: currentJob } = 
                 await checkJobStatus(newJobId);
 
               if (statusError) throw new Error(statusError);
@@ -305,8 +452,13 @@ const AIAnalysis = () => {
                 if (isMounted) {
                   setJob(completedJob);
                   setLoading(false);
+                  showSnackbar('Analysis completed!', 'success');
                 }
                 return;
+              }
+
+              if (currentJob && isMounted) {
+                setJob(currentJob);
               }
 
               if (continuePolling && isMounted) {
@@ -340,20 +492,27 @@ const AIAnalysis = () => {
 
   const handleDownloadResults = async () => {
     try {
-      const response = await axios.get(`https://api.haske.online/api/ai/results/${job.jobId}`, {
+      const response = await axios.get(`https://api.haske.online/api/ai/results/${job.id}`, {
         responseType: 'blob'
       });
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `ai_results_${orthancId}.zip`);
+      
+      // Get filename from job results or use default
+      const filename = job.results?.output_files?.[0]?.filename || `ai_results_${orthancId || job.orthanc_id}.nii.gz`;
+      link.setAttribute('download', filename);
+      
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      showSnackbar('Download started', 'success');
     } catch (err) {
       console.error('Failed to download results:', err);
-      setError('Failed to download results');
+      showSnackbar('Failed to download results', 'error');
     }
   };
 
@@ -424,11 +583,30 @@ const AIAnalysis = () => {
           WebkitTextFillColor: 'transparent',
           textAlign: 'center'
         }}>
-          Processing AI Analysis
+          {job?.status === 'running' ? 'AI Analysis In Progress' : 'Processing AI Analysis'}
         </Typography>
         <Typography variant="body1" color="white" textAlign="center">
-          Analyzing {initialModality || seriesDetails[0]?.Modality} scan of {initialBodyPart || seriesDetails[0]?.BodyPartExamined}
+          Analyzing {currentModality || 'unknown'} scan of {currentBodyPart || 'unknown'}
         </Typography>
+        
+        {job && (
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Chip 
+              icon={getStatusIcon(job.status)}
+              label={`Status: ${job.status.toUpperCase()}`}
+              sx={{ 
+                backgroundColor: getStatusColor(job.status),
+                color: 'white',
+                fontWeight: 'bold'
+              }}
+            />
+            {job.started_at && (
+              <Typography variant="caption" color="#94a3b8" sx={{ display: 'block', mt: 1 }}>
+                Started: {new Date(job.started_at).toLocaleString()}
+              </Typography>
+            )}
+          </Box>
+        )}
       </Box>
     );
   }
@@ -464,6 +642,7 @@ const AIAnalysis = () => {
                 fontWeight: 'bold',
                 backgroundColor: '#dd841a',
                 color: 'white',
+                mr: 2,
                 '&:hover': {
                   backgroundColor: '#f59e0b',
                   transform: 'translateY(-2px)',
@@ -477,27 +656,45 @@ const AIAnalysis = () => {
               View on GitHub
             </Button>
           )}
+          <Button
+            variant="outlined"
+            sx={{
+              px: 4,
+              py: 1.5,
+              borderRadius: 8,
+              fontWeight: 'bold',
+              borderColor: '#dd841a',
+              color: '#dd841a',
+              '&:hover': {
+                backgroundColor: '#dd841a',
+                color: 'white',
+                transform: 'translateY(-2px)'
+              }
+            }}
+            startIcon={<RefreshIcon />}
+            onClick={retryAnalysis}
+          >
+            Retry Analysis
+          </Button>
         </Box>
 
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
-          <Box sx={{ 
-            backgroundColor: '#0f172a',
-            p: 4,
-            borderRadius: 12,
-            mb: 4,
-            borderLeft: '4px solid #dd841a',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
-          }}>
-            <Typography variant="h4" color="white" gutterBottom fontWeight="bold">
-              Analysis Not Available
+          <Alert severity="error" sx={{ mb: 4 }}>
+            <Typography variant="h6" gutterBottom>
+              Analysis Failed
             </Typography>
-            <Typography variant="body1" color="white" sx={{ mb: 3 }}>
+            <Typography variant="body1" sx={{ mb: 2 }}>
               {error}
             </Typography>
-            <Typography variant="body1" color="#94a3b8">
-              We couldn't find a suitable AI model for this study.
-            </Typography>
-          </Box>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={retryAnalysis}
+              startIcon={<RefreshIcon />}
+            >
+              Retry Analysis
+            </Button>
+          </Alert>
           
           {availableModels.length > 0 && (
             <>
@@ -587,59 +784,28 @@ const AIAnalysis = () => {
                         </Stack>
                         
                         <Box sx={{ flex: 1, overflow: 'hidden', mb: 1 }}>
-                          <Typography variant="body2" color="#e2e8f0" sx={{ 
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                          <Typography variant="body2" color="#e2e8f0" sx={{                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
                             WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontSize: '0.875rem'
+                            overflow: 'hidden'
                           }}>
                             {model.description}
                           </Typography>
                         </Box>
                         
-                        <Box sx={{ mb: 1 }}>
-                          <Typography variant="caption" color="#94a3b8" gutterBottom>
-                            MODALITIES
-                          </Typography>
-                          <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
-                            {model.modality?.slice(0, 3).map(m => (
-                              <Chip 
-                                key={m} 
-                                label={m} 
-                                size="small" 
-                                sx={{ 
-                                  backgroundColor: '#1e293b',
-                                  color: '#dd841a',
-                                  fontSize: '0.6rem',
-                                  height: 20
-                                }}
-                              />
-                            ))}
-                          </Stack>
-                        </Box>
-                        
-                        <Box sx={{ mb: 1 }}>
-                          <Typography variant="caption" color="#94a3b8" gutterBottom>
-                            BODY PARTS
-                          </Typography>
-                          <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
-                            {model.body_part?.slice(0, 3).map(b => (
-                              <Chip 
-                                key={b} 
-                                label={b} 
-                                size="small" 
-                                sx={{
-                                  backgroundColor: '#1e293b',
-                                  color: '#dd841a',
-                                  fontSize: '0.6rem',
-                                  height: 20
-                                }}
-                              />
-                            ))}
-                          </Stack>
-                        </Box>
+                        <Stack direction="row" spacing={1} sx={{ mt: 'auto' }}>
+                          {model.modalities?.map(modality => (
+                            <Chip
+                              key={modality}
+                              label={modality}
+                              size="small"
+                              sx={{
+                                backgroundColor: '#334155',
+                                color: '#e2e8f0'
+                              }}
+                            />
+                          ))}
+                        </Stack>
                       </CardContent>
                     </Card>
                   ))}
@@ -664,456 +830,543 @@ const AIAnalysis = () => {
             </>
           )}
         </Box>
-
-        <Box sx={{
-          height: '30vh',
-          background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-          borderRadius: 12,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          p: 4,
-          boxShadow: 'inset 0 4px 6px rgba(0, 0, 0, 0.3)',
-          border: '1px solid #334155'
-        }}>
-          <Typography variant="h5" color="#94a3b8">
-            Model output will be displayed here
-          </Typography>
-        </Box>
       </Box>
     );
   }
 
   return (
     <Box sx={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: 'linear-gradient(135deg, #0a1128 0%, #1a2a4a 100%)',
-      p: 4,
-      overflow: 'hidden'
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #020617 0%, #0f172a 100%)',
+      color: 'white',
+      pb: 8
     }}>
-      <Box sx={{ textAlign: 'center', mb: 4, pt: 4 }}>
-        <Typography variant="h2" fontWeight="bold" sx={{
-          background: `linear-gradient(90deg, #ffff 0%, #dd841a 100%)`,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          mb: 2
+      {/* Header */}
+      <Box sx={{
+        pt: 4,
+        pb: 2,
+        px: 4,
+        borderBottom: '1px solid #1e293b',
+        background: 'rgba(2, 6, 23, 0.7)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          maxWidth: '1800px',
+          margin: '0 auto'
         }}>
-          Haske MedAI
-        </Typography>
-        <Typography variant="subtitle1" color="white" sx={{ mb: 3 }}>
-          Advanced diagnostic imaging analysis powered by AI
-        </Typography>
-        {githubRepo && (
-          <Button
-            variant="contained"
-            sx={{
-              px: 4,
-              py: 1.5,
-              borderRadius: 8,
-              fontWeight: 'bold',
-              backgroundColor: '#dd841a',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#f59e0b',
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
-              }
-            }}
-            startIcon={<GitHubIcon />}
-            href={githubRepo}
-            target="_blank"
-          >
-            View on GitHub
-          </Button>
-        )}
-      </Box>
-
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', mb: 4 }}>
-        <Typography variant="h4" gutterBottom fontWeight="bold" sx={{ 
-          mb: 3,
-          textAlign: 'center',
-          color: 'white'
-        }}>
-          Available AI Models
-        </Typography>
-        
-        <Box sx={{ position: 'relative', width: '100%', mb: 4 }}>
-          <IconButton
-            onClick={() => handleScroll('left')}
-            sx={{
-              position: 'absolute',
-              left: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              backgroundColor: '#1e293b',
-              color: '#dd841a',
-              '&:hover': { backgroundColor: '#334155' }
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
-          
-          <Box
-            id="model-gallery"
-            sx={{
-              display: 'flex',
-              overflowX: 'auto',
-              scrollBehavior: 'smooth',
-              py: 2,
-              px: 1,
-              gap: 3,
-              '&::-webkit-scrollbar': { height: '6px' },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#dd841a',
-                borderRadius: '3px',
-              }
-            }}
-          >
-            {availableModels.map((model) => (
-              <Card 
-                key={model.id}
-                sx={{ 
-                  width: 300,
-                  height: 300,
-                  flexShrink: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  border: selectedModel?.id === model.id ? 
-                    `2px solid #dd841a` : `1px solid #334155`,
-                  borderRadius: 12,
-                  backgroundColor: '#1e293b',
-                  boxShadow: selectedModel?.id === model.id ? 
-                    `0 10px 15px -3px rgba(221, 132, 26, 0.3)` : 
-                    '0 4px 6px rgba(0, 0, 0, 0.1)',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 15px -3px rgba(221, 132, 26, 0.4)'
-                  }
-                }}
-                onClick={() => setSelectedModel(model)}
-              >
-                <CardContent sx={{ 
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  p: 2,
-                  overflow: 'hidden'
-                }}>
-                  <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
-                    <Avatar sx={{ 
-                      bgcolor: '#dd841a',
-                      width: 32,
-                      height: 32
-                    }}>
-                      <ScienceIcon fontSize="small" />
-                    </Avatar>
-                    <Typography variant="h6" fontWeight="bold" color="white" noWrap>
-                      {model.name}
-                    </Typography>
-                  </Stack>
-                  
-                  <Box sx={{ flex: 1, overflow: 'hidden', mb: 1 }}>
-                    <Typography variant="body2" color="#e2e8f0" sx={{ 
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      fontSize: '0.875rem'
-                    }}>
-                      {model.description}
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ mb: 1 }}>
-                    <Typography variant="caption" color="#94a3b8" gutterBottom>
-                      MODALITIES
-                    </Typography>
-                    <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
-                      {model.modality?.slice(0, 3).map(m => (
-                        <Chip 
-                          key={m} 
-                          label={m} 
-                          size="small" 
-                          sx={{ 
-                            backgroundColor: '#1e293b',
-                            color: '#dd841a',
-                            fontSize: '0.6rem',
-                            height: 20
-                          }}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                  
-                  <Box sx={{ mb: 1 }}>
-                    <Typography variant="caption" color="#94a3b8" gutterBottom>
-                      BODY PARTS
-                    </Typography>
-                    <Stack direction="row" spacing={0.5} useFlexGap flexWrap="wrap" sx={{ mt: 0.5 }}>
-                      {model.body_part?.slice(0, 3).map(b => (
-                        <Chip 
-                          key={b} 
-                          label={b} 
-                          size="small" 
-                          sx={{
-                            backgroundColor: '#1e293b',
-                            color: '#dd841a',
-                            fontSize: '0.6rem',
-                            height: 20
-                          }}
-                        />
-                      ))}
-                    </Stack>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <ScienceIcon sx={{ fontSize: 40, color: '#dd841a' }} />
+            <Typography variant="h4" fontWeight="bold" sx={{
+              background: `linear-gradient(90deg, #dd841a 0%, #f59e0b 100%)`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              Haske MedAI
+            </Typography>
           </Box>
           
-          <IconButton
-            onClick={() => handleScroll('right')}
-            sx={{
-              position: 'absolute',
-              right: 0,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              backgroundColor: '#1e293b',
-              color: '#dd841a',
-              '&:hover': { backgroundColor: '#334155' }
-            }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
-      </Box>
-
-      <Box sx={{
-        height: '30vh',
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        borderRadius: 12,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 4,
-        boxShadow: 'inset 0 4px 6px rgba(0, 0, 0, 0.3)',
-        border: '1px solid #334155',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {visualizationUrl ? (
-          <Box sx={{
-            height: '100%',
-            width: '100%',
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <img 
-              src={visualizationUrl}
-              alt="AI Visualization"
-              style={{
-                maxHeight: '100%',
-                maxWidth: '100%',
-                objectFit: 'contain'
-              }}
-              onError={(e) => {
-                console.error('Failed to load visualization:', e);
-                e.target.style.display = 'none';
-                setError('Failed to load visualization. The output might be available for download.');
-              }}
-            />
-            
-            {/* Download button for the raw output */}
-            {job?.results?.output_path && (
+          <Stack direction="row" spacing={2}>
+            {githubRepo && (
               <Button
                 variant="contained"
                 sx={{
-                  position: 'absolute',
-                  bottom: 16,
-                  right: 16,
-                  zIndex: 1,
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 8,
+                  fontWeight: 'bold',
                   backgroundColor: '#dd841a',
                   color: 'white',
                   '&:hover': {
-                    backgroundColor: '#f59e0b'
+                    backgroundColor: '#f59e0b',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
                   }
                 }}
-                startIcon={<DownloadIcon />}
-                onClick={handleDownloadResults}
+                startIcon={<GitHubIcon />}
+                href={githubRepo}
+                target="_blank"
               >
-                Download Raw Output
+                View on GitHub
               </Button>
             )}
-          </Box>
-        ) : (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h5" color="#94a3b8" gutterBottom>
-              Visualization not available
-            </Typography>
-            {job?.logs?.includes('Shape mismatch') && (
-              <Typography variant="body2" color="#ef4444">
-                Warning: The input data required resampling due to shape mismatch
-              </Typography>
-            )}
-            {job?.results?.output_path && (
-              <Button
-                variant="outlined"
-                color="primary"
-                startIcon={<DownloadIcon />}
-                onClick={handleDownloadResults}
-                sx={{ mt: 2 }}
-              >
-                Download Output Files
-              </Button>
-            )}
-          </Box>
-        )}
-      </Box>
-    
-      <Box sx={{
-        mt: 4,
-        p: 4,
-        backgroundColor: '#1e293b',
-        borderRadius: 12,
-        border: '1px solid #334155'
-      }}>
-        <Typography variant="h5" color="white" gutterBottom>
-          Evaluation
-        </Typography>
-        
-        <Box mb={3}>
-          <Typography variant="body1" color="white" gutterBottom>
-            How accurate was the segmentation?
-          </Typography>
-          <Slider
-            value={feedback.accuracy}
-            onChange={(e, value) => setFeedback({...feedback, accuracy: value})}
-            min={1}
-            max={5}
-            step={1}
-            marks={[
-              {value: 1, label: 'Poor'},
-              {value: 2, label: 'Fair'},
-              {value: 3, label: 'Good'},
-              {value: 4, label: 'Very Good'},
-              {value: 5, label: 'Excellent'}
-            ]}
-            sx={{ maxWidth: 600 }}
-          />
-        </Box>
-        
-        <Box mb={3}>
-          <Typography variant="body1" color="white" gutterBottom>
-            How useful was this analysis for your diagnosis?
-          </Typography>
-          <Slider
-            value={feedback.usefulness}
-            onChange={(e, value) => setFeedback({...feedback, usefulness: value})}
-            min={1}
-            max={5}
-            step={1}
-            marks={[
-              {value: 1, label: 'Not Useful'},
-              {value: 2, label: 'Slightly Useful'},
-              {value: 3, label: 'Moderately Useful'},
-              {value: 4, label: 'Very Useful'},
-              {value: 5, label: 'Extremely Useful'}
-            ]}
-            sx={{ maxWidth: 600 }}
-          />
-        </Box>
-        
-        <TextField
-          label="Additional Comments"
-          fullWidth
-          multiline
-          rows={3}
-          value={feedback.comments}
-          onChange={(e) => setFeedback({...feedback, comments: e.target.value})}
-          sx={{ mb: 3, backgroundColor: '#0f172a' }}
-        />
-        
-        <Box display="flex" alignItems="center" gap={2}>
-          <Button
-            variant={feedback.approved ? "contained" : "outlined"}
-            color="success"
-            onClick={() => setFeedback({...feedback, approved: true})}
-            startIcon={<CheckIcon />}
-          >
-            Approve Results
-          </Button>
-          <Button
-            variant={!feedback.approved ? "contained" : "outlined"}
-            color="error"
-            onClick={() => setFeedback({...feedback, approved: false})}
-            startIcon={<CloseIcon />}
-          >
-            Reject Results
-          </Button>
-          <Button
-            variant="contained"
-            onClick={submitFeedback}
-            sx={{ ml: 'auto' }}
-          >
-            Submit Feedback
-          </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                px: 4,
+                py: 1.5,
+                borderRadius: 8,
+                fontWeight: 'bold',
+                borderColor: '#dd841a',
+                color: '#dd841a',
+                '&:hover': {
+                  backgroundColor: '#dd841a',
+                  color: 'white',
+                  transform: 'translateY(-2px)'
+                }
+              }}
+              onClick={handleProcessAnother}
+            >
+              Process Another
+            </Button>
+          </Stack>
         </Box>
       </Box>
 
+      {/* Main Content */}
+      <Container maxWidth="xl" sx={{ mt: 4 }}>
+        <Grid container spacing={4}>
+          {/* Patient Info */}
+          <Grid item xs={12} md={4} lg={3}>
+            <Paper sx={{
+              p: 3,
+              borderRadius: 12,
+              backgroundColor: '#1e293b',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: '#dd841a' }}>
+                Patient Information
+              </Typography>
+              
+              {patientDetails ? (
+                <>
+                  <Stack spacing={2} sx={{ mb: 3 }}>
+                    <Box>
+                      <Typography variant="subtitle2" color="#94a3b8">
+                        Patient Name
+                      </Typography>
+                      <Typography variant="body1" color="white">
+                        {formatPatientName(patientDetails.PatientName)}
+                      </Typography>
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="subtitle2" color="#94a3b8">
+                        Patient ID
+                      </Typography>
+                      <Typography variant="body1" color="white">
+                        {patientDetails.PatientID || 'N/A'}
+                      </Typography>
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="subtitle2" color="#94a3b8">
+                        Birth Date
+                      </Typography>
+                      <Typography variant="body1" color="white">
+                        {formatDate(patientDetails.PatientBirthDate)}
+                      </Typography>
+                    </Box>
+                    
+                    <Box>
+                      <Typography variant="subtitle2" color="#94a3b8">
+                        Sex
+                      </Typography>
+                      <Typography variant="body1" color="white">
+                        {patientDetails.PatientSex || 'N/A'}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  
+                  <Divider sx={{ my: 2, borderColor: '#334155' }} />
+                </>
+              ) : (
+                <Typography variant="body2" color="#94a3b8" sx={{ mb: 3 }}>
+                  Patient details not available
+                </Typography>
+              )}
+              
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: '#dd841a' }}>
+                Study Information
+              </Typography>
+              
+              <Stack spacing={2}>
+                <Box>
+                  <Typography variant="subtitle2" color="#94a3b8">
+                    Modality
+                  </Typography>
+                  <Typography variant="body1" color="white">
+                    {currentModality || 'N/A'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="#94a3b8">
+                    Body Part
+                  </Typography>
+                  <Typography variant="body1" color="white">
+                    {currentBodyPart || 'N/A'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="#94a3b8">
+                    Analysis Model
+                  </Typography>
+                  <Typography variant="body1" color="white">
+                    {job?.model_name || 'N/A'}
+                  </Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="#94a3b8">
+                    Analysis Status
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: '50%',
+                      backgroundColor: getStatusColor(job?.status)
+                    }} />
+                    <Typography variant="body1" color="white" textTransform="capitalize">
+                      {job?.status || 'unknown'}
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="#94a3b8">
+                    Completed At
+                  </Typography>
+                  <Typography variant="body1" color="white">
+                    {job?.completed_at ? new Date(job.completed_at).toLocaleString() : 'N/A'}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Paper>
+          </Grid>
+          
+          {/* Results Visualization */}
+          <Grid item xs={12} md={8} lg={9}>
+            <Paper sx={{
+              p: 3,
+              borderRadius: 12,
+              backgroundColor: '#1e293b',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              mb: 4
+            }}>
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 3
+              }}>
+                <Typography variant="h6" fontWeight="bold" sx={{ color: '#dd841a' }}>
+                  AI Analysis Results
+                </Typography>
+                
+                <Stack direction="row" spacing={2}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<DownloadIcon />}
+                    onClick={handleDownloadResults}
+                    sx={{
+                      color: '#dd841a',
+                      borderColor: '#dd841a',
+                      '&:hover': {
+                        backgroundColor: '#dd841a',
+                        color: 'white'
+                      }
+                    }}
+                  >
+                    Download Results
+                  </Button>
+                  
+                  <Button
+                    variant="contained"
+                    startIcon={<RefreshIcon />}
+                    onClick={retryAnalysis}
+                    sx={{
+                      backgroundColor: '#dd841a',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#f59e0b'
+                      }
+                    }}
+                  >
+                    Re-run Analysis
+                  </Button>
+                </Stack>
+              </Box>
+              
+              {visualizationUrl ? (
+                <Box sx={{
+                  position: 'relative',
+                  borderRadius: 8,
+                  overflow: 'hidden',
+                  border: '1px solid #334155'
+                }}>
+                  <img
+                    src={visualizationUrl}
+                    alt="AI Analysis Visualization"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      display: 'block'
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => setZoomedImage(visualizationUrl)}
+                    sx={{
+                      position: 'absolute',
+                      bottom: 16,
+                      right: 16,
+                      backgroundColor: 'rgba(0,0,0,0.6)',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0,0,0,0.8)'
+                      }
+                    }}
+                  >
+                    <ZoomInIcon />
+                  </IconButton>
+                </Box>
+              ) : (
+                <Box sx={{
+                  height: '400px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#0f172a',
+                  borderRadius: 8,
+                  border: '1px dashed #334155'
+                }}>
+                  <ScienceIcon sx={{ fontSize: 60, color: '#334155', mb: 2 }} />
+                  <Typography variant="h6" color="#64748b">
+                    No visualization available
+                  </Typography>
+                  <Typography variant="body2" color="#64748b" sx={{ mt: 1 }}>
+                    The AI analysis did not produce a visual output
+                  </Typography>
+                </Box>
+              )}
+            </Paper>
+            
+            {/* Results Details */}
+            {job?.results && (
+              <Paper sx={{
+                p: 3,
+                borderRadius: 12,
+                backgroundColor: '#1e293b',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                mb: 4
+              }}>
+                <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: '#dd841a' }}>
+                  Detailed Results
+                </Typography>
+                
+                <Box sx={{
+                  backgroundColor: '#0f172a',
+                  borderRadius: 8,
+                  p: 3,
+                  fontFamily: 'monospace',
+                  whiteSpace: 'pre-wrap',
+                  overflowX: 'auto',
+                  color: '#e2e8f0'
+                }}>
+                  {JSON.stringify(job.results, null, 2)}
+                </Box>
+              </Paper>
+            )}
+            
+            {/* Feedback Section */}
+            <Paper sx={{
+              p: 3,
+              borderRadius: 12,
+              backgroundColor: '#1e293b',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+            }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: '#dd841a' }}>
+                Provide Feedback
+              </Typography>
+              
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle1" gutterBottom color="white">
+                    How accurate was the analysis?
+                  </Typography>
+                  <Slider
+                    value={feedback.accuracy}
+                    onChange={(e, value) => setFeedback({...feedback, accuracy: value})}
+                    min={1}
+                    max={5}
+                    step={1}
+                    marks={[
+                      { value: 1, label: '1 - Poor' },
+                      { value: 2, label: '2' },
+                      { value: 3, label: '3 - Average' },
+                      { value: 4, label: '4' },
+                      { value: 5, label: '5 - Excellent' }
+                    ]}
+                    valueLabelDisplay="auto"
+                    sx={{
+                      color: '#dd841a',
+                      '& .MuiSlider-markLabel': {
+                        color: '#94a3b8'
+                      }
+                    }}
+                  />
+                </Grid>
+                
+                <Grid item xs={12} md={6}>
+                  <Typography variant="subtitle1" gutterBottom color="white">
+                    How useful was the analysis?
+                  </Typography>
+                  <Slider
+                    value={feedback.usefulness}
+                    onChange={(e, value) => setFeedback({...feedback, usefulness: value})}
+                    min={1}
+                    max={5}
+                    step={1}
+                    marks={[
+                      { value: 1, label: '1 - Not Useful' },
+                      { value: 2, label: '2' },
+                      { value: 3, label: '3 - Somewhat Useful' },
+                      { value: 4, label: '4' },
+                      { value: 5, label: '5 - Very Useful' }
+                    ]}
+                    valueLabelDisplay="auto"
+                    sx={{
+                      color: '#dd841a',
+                      '& .MuiSlider-markLabel': {
+                        color: '#94a3b8'
+                      }
+                    }}
+                  />
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <TextField
+                    label="Additional Comments"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    value={feedback.comments}
+                    onChange={(e) => setFeedback({...feedback, comments: e.target.value})}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#334155'
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#dd841a'
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#dd841a'
+                        }
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: '#94a3b8'
+                      },
+                      '& .MuiInputBase-input': {
+                        color: 'white'
+                      }
+                    }}
+                  />
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Checkbox
+                        checked={feedback.approved}
+                        onChange={(e) => setFeedback({...feedback, approved: e.target.checked})}
+                        sx={{
+                          color: '#dd841a',
+                          '&.Mui-checked': {
+                            color: '#dd841a'
+                          }
+                        }}
+                      />
+                      <Typography variant="body1" color="white">
+                        I approve these results for research purposes
+                      </Typography>
+                    </Box>
+                    
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                      onClick={submitFeedback}
+                      sx={{
+                        backgroundColor: '#dd841a',
+                        color: 'white',
+                        '&:hover': {
+                          backgroundColor: '#f59e0b'
+                        }
+                      }}
+                    >
+                      Submit Feedback
+                    </Button>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+      
+      {/* Zoomed Image Modal */}
       <Modal
-        open={Boolean(zoomedImage)}
+        open={!!zoomedImage}
         onClose={() => setZoomedImage(null)}
-        sx={{ 
+        sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backdropFilter: 'blur(8px)'
+          p: 2
         }}
       >
-        <Box sx={{ 
+        <Box sx={{
           position: 'relative',
-          bgcolor: '#1e293b',
-          p: 2,
-          borderRadius: 12,
-          outline: 'none',
-          maxWidth: '90%',
-          maxHeight: '90%',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-          border: '1px solid #334155'
+          outline: 'none'
         }}>
-          <IconButton
-            sx={{ 
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              zIndex: 1,
-              backgroundColor: '#ef4444',
-              color: 'white',
-              '&:hover': { backgroundColor: '#dc2626' }
-            }}
-            onClick={() => setZoomedImage(null)}
-          >
-            <CloseIcon />
-          </IconButton>
-          <img 
-            src={zoomedImage} 
-            alt="Zoomed view" 
-            style={{ 
-              maxWidth: '100%',
-              maxHeight: 'calc(90vh - 32px)',
-              display: 'block',
+          <img
+            src={zoomedImage}
+            alt="Zoomed Analysis"
+            style={{
+              maxHeight: '90vh',
+              maxWidth: '90vw',
               borderRadius: 8
             }}
           />
+          <IconButton
+            onClick={() => setZoomedImage(null)}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.8)'
+              }
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
         </Box>
       </Modal>
+      
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({...snackbar, open: false})}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({...snackbar, open: false})}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
