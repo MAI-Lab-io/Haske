@@ -21,7 +21,8 @@ const Models = () => {
     docker_image: '',
     entry_point: '',
     is_active: true,
-    github_link: ''
+    github_link: '',
+    priority: 50 // Default priority
   });
   const [tempModality, setTempModality] = useState('');
   const [tempBodyPart, setTempBodyPart] = useState('');
@@ -46,17 +47,28 @@ const Models = () => {
 
   const handleSubmit = async () => {
     try {
+      // Prepare the data to match backend expectations
+      const submissionData = {
+        ...formData,
+        // Ensure arrays are properly formatted
+        modality: formData.modality || [],
+        body_part: formData.body_part || [],
+        // Convert priority to number
+        priority: Number(formData.priority) || 50
+      };
+
       if (currentModel) {
-        await axios.put(`https://api.haske.online/api/ai/models/${currentModel.id}`, formData);
+        await axios.put(`https://api.haske.online/api/ai/models/${currentModel.id}`, submissionData);
         showSnackbar('Model updated successfully', 'success');
       } else {
-        await axios.post('https://api.haske.online/api/ai/models', formData);
+        await axios.post('https://api.haske.online/api/ai/models', submissionData);
         showSnackbar('Model created successfully', 'success');
       }
       fetchModels();
       setOpenDialog(false);
     } catch (err) {
       showSnackbar('Error saving model', 'error');
+      console.error('Error saving model:', err.response?.data || err.message);
     }
   };
 
@@ -112,7 +124,9 @@ const Models = () => {
               body_part: [],
               docker_image: '',
               entry_point: '',
-              is_active: true
+              is_active: true,
+              github_link: '',
+              priority: 50
             });
             setOpenDialog(true);
           }}
@@ -121,7 +135,7 @@ const Models = () => {
         </Button>
       </Box>
 
-     <TableContainer component={Paper}>
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
@@ -130,6 +144,7 @@ const Models = () => {
               <TableCell>Modalities</TableCell>
               <TableCell>Body Parts</TableCell>
               <TableCell>Docker Image</TableCell>
+              <TableCell>Priority</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Actions</TableCell>
               <TableCell>GitHub</TableCell>
@@ -151,6 +166,7 @@ const Models = () => {
                   ))}
                 </TableCell>
                 <TableCell>{model.docker_image}</TableCell>
+                <TableCell>{model.priority}</TableCell>
                 <TableCell>
                   <Chip 
                     label={model.is_active ? 'Active' : 'Inactive'} 
@@ -169,7 +185,8 @@ const Models = () => {
                       docker_image: model.docker_image,
                       entry_point: model.entry_point,
                       is_active: model.is_active,
-                      github_link: model.github_link || ''
+                      github_link: model.github_link || '',
+                      priority: model.priority || 50
                     });
                     setOpenDialog(true);
                   }}>
@@ -205,6 +222,7 @@ const Models = () => {
               fullWidth
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: e.target.value})}
+              required
             />
             
             <TextField
@@ -215,15 +233,24 @@ const Models = () => {
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
             />
+            
             <TextField
               label="GitHub Repository Link"
               fullWidth
               value={formData.github_link}
               onChange={(e) => setFormData({...formData, github_link: e.target.value})}
               placeholder="https://github.com/Heartz00/mailabhaske"
-              sx={{ mb: 2 }}
             />
-                        
+            
+            <TextField
+              label="Priority (higher runs first)"
+              type="number"
+              fullWidth
+              value={formData.priority}
+              onChange={(e) => setFormData({...formData, priority: e.target.value})}
+              inputProps={{ min: 0, max: 100 }}
+            />
+            
             <Box>
               <Typography variant="subtitle1" gutterBottom>Supported Modalities</Typography>
               <Box display="flex" alignItems="center" gap={1} mb={1}>
@@ -280,6 +307,7 @@ const Models = () => {
               value={formData.docker_image}
               onChange={(e) => setFormData({...formData, docker_image: e.target.value})}
               placeholder="e.g., username/repo:tag"
+              required
             />
             
             <TextField
@@ -288,20 +316,19 @@ const Models = () => {
               value={formData.entry_point}
               onChange={(e) => setFormData({...formData, entry_point: e.target.value})}
               placeholder="e.g., python predict.py"
+              required
             />
             
-            {currentModel && (
-              <Box display="flex" alignItems="center">
-                <Typography variant="body1" sx={{ mr: 2 }}>Status:</Typography>
-                <Button
-                  variant={formData.is_active ? "contained" : "outlined"}
-                  color={formData.is_active ? "success" : "error"}
-                  onClick={() => setFormData({...formData, is_active: !formData.is_active})}
-                >
-                  {formData.is_active ? 'Active' : 'Inactive'}
-                </Button>
-              </Box>
-            )}
+            <Box display="flex" alignItems="center">
+              <Typography variant="body1" sx={{ mr: 2 }}>Status:</Typography>
+              <Button
+                variant={formData.is_active ? "contained" : "outlined"}
+                color={formData.is_active ? "success" : "error"}
+                onClick={() => setFormData({...formData, is_active: !formData.is_active})}
+              >
+                {formData.is_active ? 'Active' : 'Inactive'}
+              </Button>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>
