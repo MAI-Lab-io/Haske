@@ -5,7 +5,7 @@ import {
   Button, Card, CardContent, CardMedia, Divider,
   Chip, Stack, IconButton, Modal, Container,
   Avatar, useTheme, useScrollTrigger, Slider,
-  TextField, Alert, Snackbar
+  TextField, Alert, Snackbar, Checkbox
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
