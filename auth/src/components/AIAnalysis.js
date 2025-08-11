@@ -906,74 +906,75 @@ const AIAnalysis = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-
-{visualizationUrl ? (
-  <Box sx={{
-    height: '100%',
-    width: '100%',
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }}>
-    <img 
-      src={visualizationUrl}
-      alt="AI Visualization"
-      style={{
-        maxHeight: '100%',
-        maxWidth: '100%',
-        objectFit: 'contain'
-      }}
-      onError={(e) => {
-        console.error('Failed to load visualization:', e);
-        e.target.style.display = 'none';
-        setError('Failed to load visualization. The output might be available for download.');
-      }}
-    />
-    
-      {/* Download button for the raw output */}
-      {job?.results?.output_path && (
-        <Button
-          variant="contained"
-          sx={{
-            position: 'absolute',
-            bottom: 16,
-            right: 16,
-            zIndex: 1,
-            backgroundColor: '#dd841a',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#f59e0b'
-            }
-          }}
-          startIcon={<DownloadIcon />}
-          onClick={handleDownloadResults}
-        >
-          Download Raw Output
-        </Button>
-      )}
-      </Box>
-      ) : (
-      <Box sx={{ textAlign: 'center' }}>
-      <Typography variant="h5" color="#94a3b8" gutterBottom>
-        Visualization not available
-      </Typography>
-      {job?.logs?.includes('Shape mismatch') && (
-        <Typography variant="body2" color="#ef4444">
-          Warning: The input data required resampling due to shape mismatch
-        </Typography>
-      )}
-      {job?.results?.output_path && (
-        <Button
-          variant="outlined"
-          color="primary"
-          startIcon={<DownloadIcon />}
-          onClick={handleDownloadResults}
-          sx={{ mt: 2 }}
-        >
-          Download Output Files
-        </Button>
-      )}
+        {visualizationUrl ? (
+          <Box sx={{
+            height: '100%',
+            width: '100%',
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <img 
+              src={visualizationUrl}
+              alt="AI Visualization"
+              style={{
+                maxHeight: '100%',
+                maxWidth: '100%',
+                objectFit: 'contain'
+              }}
+              onError={(e) => {
+                console.error('Failed to load visualization:', e);
+                e.target.style.display = 'none';
+                setError('Failed to load visualization. The output might be available for download.');
+              }}
+            />
+            
+            {/* Download button for the raw output */}
+            {job?.results?.output_path && (
+              <Button
+                variant="contained"
+                sx={{
+                  position: 'absolute',
+                  bottom: 16,
+                  right: 16,
+                  zIndex: 1,
+                  backgroundColor: '#dd841a',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: '#f59e0b'
+                  }
+                }}
+                startIcon={<DownloadIcon />}
+                onClick={handleDownloadResults}
+              >
+                Download Raw Output
+              </Button>
+            )}
+          </Box>
+        ) : (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" color="#94a3b8" gutterBottom>
+              Visualization not available
+            </Typography>
+            {job?.logs?.includes('Shape mismatch') && (
+              <Typography variant="body2" color="#ef4444">
+                Warning: The input data required resampling due to shape mismatch
+              </Typography>
+            )}
+            {job?.results?.output_path && (
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<DownloadIcon />}
+                onClick={handleDownloadResults}
+                sx={{ mt: 2 }}
+              >
+                Download Output Files
+              </Button>
+            )}
+          </Box>
+        )}
       </Box>
     
       <Box sx={{
