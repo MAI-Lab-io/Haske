@@ -49,14 +49,23 @@ const AIAnalysis = () => {
   const getVisualizationUrl = () => {
     if (!job?.results) return null;
     
-    // Try direct visualization path first
+    // Case 1: Direct visualization path from container logs
     if (job.results.visualization_path) {
       return `https://api.haske.online${job.results.visualization_path}`;
     }
     
-    // Fallback to extracting from zip
-    if (job.results.output_path && job.results.output_path.endsWith('.zip')) {
-      return `https://api.haske.online${job.results.output_path.replace('.zip', '_visualization.png')}`;
+    // Case 2: Check for visualization.png in the output directory
+    if (job.results.output_path) {
+      const basePath = job.results.output_path.split('.')[0]; // Remove extension
+      return `https://api.haske.online${basePath}_visualization.png`;
+    }
+    
+    // Case 3: Fallback to checking container logs for visualization path
+    if (job.logs?.includes('Visualization saved to')) {
+      const logMatch = job.logs.match(/Visualization saved to (\/output\/[^\s]+)/);
+      if (logMatch && logMatch[1]) {
+        return `https://api.haske.online${logMatch[1]}`;
+      }
     }
     
     return null;
@@ -897,84 +906,76 @@ const AIAnalysis = () => {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {visualizationUrl ? (
-          <Box sx={{
-            height: '100%',
-            width: '100%',
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <img 
-              src={visualizationUrl}
-              alt="AI Visualization"
-              style={{
-                maxHeight: '100%',
-                maxWidth: '100%',
-                objectFit: 'contain'
-              }}
-              onError={(e) => {
-                console.error('Failed to load visualization:', e);
-                e.target.style.display = 'none';
-              }}
-            />
-            
-            <Box sx={{
-              position: 'absolute',
-              bottom: 16,
-              right: 16,
-              zIndex: 1,
-              display: 'flex',
-              gap: 2
-            }}>
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: 8,
-                  fontWeight: 'bold',
-                  backgroundColor: '#dd841a',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: '#f59e0b',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
-                  }
-                }}
-                startIcon={<DownloadIcon />}
-                onClick={handleDownloadResults}
-              >
-                Download Results
-              </Button>
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: 8,
-                  fontWeight: 'bold',
-                  backgroundColor: '#0f172a',
-                  color: 'white',
-                  '&:hover': {
-                    backgroundColor: '#1e293b',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.4)'
-                  }
-                }}
-                startIcon={<RefreshIcon />}
-                onClick={handleProcessAnother}
-              >
-                Process Another
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Typography variant="h5" color="#94a3b8">
-            {job?.status === 'completed' 
-              ? 'Visualization not available' 
-              : 'Model output will be displayed here'}
-          </Typography>
-        )}
-      </Box>
 
+{visualizationUrl ? (
+  <Box sx={{
+    height: '100%',
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }}>
+    <img 
+      src={visualizationUrl}
+      alt="AI Visualization"
+      style={{
+        maxHeight: '100%',
+        maxWidth: '100%',
+        objectFit: 'contain'
+      }}
+      onError={(e) => {
+        console.error('Failed to load visualization:', e);
+        e.target.style.display = 'none';
+        setError('Failed to load visualization. The output might be available for download.');
+      }}
+    />
+    
+      {/* Download button for the raw output */}
+      {job?.results?.output_path && (
+        <Button
+          variant="contained"
+          sx={{
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+            zIndex: 1,
+            backgroundColor: '#dd841a',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#f59e0b'
+            }
+          }}
+          startIcon={<DownloadIcon />}
+          onClick={handleDownloadResults}
+        >
+          Download Raw Output
+        </Button>
+      )}
+      </Box>
+      ) : (
+      <Box sx={{ textAlign: 'center' }}>
+      <Typography variant="h5" color="#94a3b8" gutterBottom>
+        Visualization not available
+      </Typography>
+      {job?.logs?.includes('Shape mismatch') && (
+        <Typography variant="body2" color="#ef4444">
+          Warning: The input data required resampling due to shape mismatch
+        </Typography>
+      )}
+      {job?.results?.output_path && (
+        <Button
+          variant="outlined"
+          color="primary"
+          startIcon={<DownloadIcon />}
+          onClick={handleDownloadResults}
+          sx={{ mt: 2 }}
+        >
+          Download Output Files
+        </Button>
+      )}
+      </Box>
+    
       <Box sx={{
         mt: 4,
         p: 4,
