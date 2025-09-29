@@ -48,7 +48,7 @@ const Footer = () => {
 // Sponsors Section with improved structure
 const Sponsors = () => (
   <section className="sponsors-section">
-    <h3 className="sponsors-title">Our Partners & Sponsors</h3>
+    <h3 className="sponsors-title">Our Partner & Sponsors</h3>
     <p className="sponsors-description">
       We are proud to collaborate with leading organizations and institutions supporting our mission.
     </p>
