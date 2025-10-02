@@ -1,6 +1,6 @@
 # **Haske - DICOM PACS Website** 🌍📊
 
-**Haske** is a powerful, cloud-based **DICOM PACS (Picture Archiving and Communication System)** website hosted on **AWS**, designed to enable the **storage**, **transfer**, and **management** of medical images for healthcare centers across Africa. With a focus on accessibility, security, and scalability, Haske provides a streamlined solution for handling medical imaging data in a diverse range of healthcare facilities.
+**Haske** is a powerful, cloud-based **DICOM PACS (Picture Archiving and Communication System)** website hosted on **Cloudflare**, designed to enable the **storage**, **transfer**, and **management** of medical images for healthcare centers across Africa. With a focus on accessibility, security, and scalability, Haske provides a streamlined solution for handling medical imaging data in a diverse range of healthcare facilities.
 
 ---
 ![Uploading image.png…]()
@@ -14,7 +14,7 @@
 - 🩺 **PACS Management**: Provides tools for organizing and retrieving patient data and imaging records.  
 - 🔒 **User Authentication**: Implements secure user authentication, ensuring authorized access only.  
 - 🏥 **Multi-Center Support**: Designed to support multiple healthcare centers across Africa.  
-- ☁️ **Cloud-Based Hosting**: Hosted on **AWS** for scalability, reliability, and accessibility.
+- ☁️ **Cloud-Based Hosting**: Hosted on **Cloudflare** for scalability, reliability, and accessibility.
 
 ---
 
@@ -49,7 +49,7 @@ HAske is built using modern and scalable technologies:
 - **Frontend**: React.js. vue.js 
 - **Backend**: Node.js
 - **Database**: AWS S3 bucket
-- **Cloud Hosting**: AWS (Amazon Web Services) , firebase
+- **Cloud Hosting**: Cloudflare , firebase
 - **Medical Imaging**: DICOM standards and PACS framework  
 
 ---
