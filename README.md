@@ -3,7 +3,8 @@
 **Haske** is a powerful, cloud-based **DICOM PACS (Picture Archiving and Communication System)** website hosted on **Cloudflare**, designed to enable the **storage**, **transfer**, and **management** of medical images for healthcare centers across Africa. With a focus on accessibility, security, and scalability, Haske provides a streamlined solution for handling medical imaging data in a diverse range of healthcare facilities.
 
 ---
-!(Screenshot from 2025-10-02 12-44-04.png)
+![Screenshot](Screenshot from 2025-10-02 12-44-04.png)
+
 
 
 ## **Key Features**
