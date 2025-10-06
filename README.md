@@ -65,15 +65,17 @@ HAske is built using modern and scalable technologies:
 ---
 
 
-We welcome contributions to improve **HAske**! Please follow these steps:  
+We welcome contributions to improve **Haske**! Please follow these steps:  
 1. Fork the repository.  
 2. Create a feature branch: `git checkout -b feature-name`.  
 3. Commit your changes: `git commit -m "Add feature"`.  
 4. Push to the branch: `git push origin feature-name`.  
 5. Create a pull request.
-  
+<!-- 
 ## **Setting it up**
 HASKE SETUP ON THE LOCAL SERVER IN THE LAB - https://www.protocols.io/private/8DA4A5889D4111F09DDD0A58A9FEAC02
 Orthanc Expanded Storage Setup Using MergerFS - https://www.protocols.io/private/8DA4A5889D4111F09DDD0A58A9FEAC02
+-->
+
 
 ---
